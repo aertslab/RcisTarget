@@ -1,0 +1,39 @@
+---
+title: "RcisTarget: Transcription factor binding motif enrichment"
+package: "`r pkg_ver('RcisTarget')`"
+abstract: >
+  This tutorial shows how to use **RcisTarget** to obtain the transcription factor binding motifs enriched on a gene list. 
+vignette: >
+  %\VignetteIndexEntry{RcisTarget: Transcription factor binding motif enrichment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+output: 
+  BiocStyle::html_document:
+    number_sections: false
+  pdf_document:
+    toc: yes
+---
+
+RcisTarget allows to perform similar analyses to the ones produced by **(i-cisTarget)[http://gbiomed.kuleuven.be/apps/lcb/i-cisTarget]** (web interface, region-based) and **[iRegulon](http://iregulon.aertslab.org)** (Cytoscape plug-in, gene-based). 
+
+
+# Overview of the workflow to run RcisTarget
+```{r eval=FALSE}
+library(RcisTarget)
+
+# Load gene sets to analyze. e.g.:
+genes <- c("gene1", "gene2", "gene3")
+geneLists <- list(geneSet1=genes)
+
+# Select motif database to use (i.e. organism and distance around TSS)
+library(RcisTarget.hg19.motifDatabases)
+data(hg19_10kbpAroundTss_motifRanking)
+data(hg19_direct_motifAnnotation)
+motifRankings <- hg19_10kbpAroundTss_motifRanking
+
+# Motif enrichment analysis:
+motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
+                                         motifAnnot_direct=hg19_direct_motifAnnotation)
+```
+
+A more detailed tutorial will come soon.

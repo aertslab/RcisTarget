@@ -1,0 +1,24 @@
+Package: RcisTarget
+Type: Package
+Title: RcisTarget
+Version: 0.1.0
+Date: 2016-08-31
+Author: Sara Aibar, Stein Aerts. Laboratory of Computational Biology, KU Leuven
+    Center for Human Genetics. Leuven, Belgium.
+Maintainer: Sara Aibar <sara.aibar@kuleuven.be>
+Description: Identify transcription factor binding motifs enriched on a gene list
+URL: http://www.aertslab.org
+Imports:
+    data.table
+Enhances: doMC, doRNG, zoo
+Suggests:
+    visNetwork,
+    DT,
+    RcisTarget.mm9.motifDatabases,
+    BiocStyle,
+    knitr,
+    rmarkdown
+License: file LICENSE
+LazyData: TRUE
+VignetteBuilder: knitr
+RoxygenNote: 5.0.1
