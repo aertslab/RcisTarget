@@ -1,4 +1,6 @@
 # RcisTarget
+RcisTarget is an R-package to identify transcription factor (TF) binding motifs over-represented on a gene list. 
+
 To install from R:
 ```
 library(devtools)
