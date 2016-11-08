@@ -16,27 +16,26 @@ motifRankings <- hg19_10kbpAroundTss_motifRanking
 # DO NOT use in real analyses!
 set.seed(123)
 motifRankings <- hg19_10kbpAroundTss_motifRanking[,c("rn",
-  sample(colnames(hg19_10kbpAroundTss_motifRanking), 5000)), with=FALSE]
+    sample(colnames(hg19_10kbpAroundTss_motifRanking), 5000)), with=FALSE]
 
 # RcisTarget
 # Step 1. Calculate AUC
 motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 ##################################################
-
-
-# Step 2. Select significant motifs, add TF annotation & format as table
+# (This step: Step 2)
+# Select significant motifs, add TF annotation & format as table
 data(hg19_direct_motifAnnotation)
 
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, highlightTFs="HIF1A",
-                       motifAnnot_direct=hg19_direct_motifAnnotation)
+   motifAnnot_direct=hg19_direct_motifAnnotation)
 
 # Adding indirect annotation and modifying some options
 data(hg19_indirect_motifAnnotation)
 motifEnrichment_wIndirect <- addMotifAnnotation(motifs_AUC, nesThreshold=2,
-              motifAnnot_direct=hg19_direct_motifAnnotation,
-              motifAnnot_indirect=hg19_indirect_motifAnnotation,
-              highlightTFs="HIF1A", digits=2)
+                        motifAnnot_direct=hg19_direct_motifAnnotation,
+                        motifAnnot_indirect=hg19_indirect_motifAnnotation,
+                        highlightTFs="HIF1A", digits=2)
 
 # Exploring the output:
 # Note: Using the fake-database, these results are not meaningful.
@@ -51,19 +50,16 @@ datatable(motifEnrichmentTable, filter="top", options=list(pageLength=50))
 # The object returned is a data.table (for faster computation),
 # which has a diferent syntax from the standard data.frame or matrix
 class(motifEnrichmentTable)
-motifEnrichmentTable[,1:9, with=FALSE]
+motifEnrichmentTable[,1:4, with=FALSE]
 
 # Feel free to convert it to a data.frame:
-motifEnrichmentTable <- as.data.frame(motifEnrichmentTable)
-motifEnrichmentTable[,1:9]
+motifEnrichmentTable.df <- as.data.frame(motifEnrichmentTable)
+head(motifEnrichmentTable.df[,1:6])
 
 
 ##################################################
 # Next step (step 3, optional):
 motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
-                                                   geneSets=geneLists,
-                                                   rankings=motifRankings,
-                                                   method="aprox")
-
-
-
+                                   geneSets=geneLists,
+                                   rankings=motifRankings,
+                                   method="aprox")

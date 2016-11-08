@@ -13,46 +13,52 @@ cisTarget(geneSets, motifRankings, motifAnnot_direct = NULL,
 \item{geneSets}{List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})}
 
 \item{motifRankings}{Database of the appropiate organism and search-space (i.e. 10kbp around- or 500bp upstream the TSS).
-These objects are provided in separate packages: \link[http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases]{RcisTarget.hg19.motifDatabases} (Human), \link[http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases]{RcisTarget.mm9.motifDatabases} (Mouse).
-See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDatabases)}.}
+These objects are provided in separate packages:
+\itemize{
+\item \url{http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases} (Human)
+\item \url{http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases} (Mouse)
+}
+See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDatabases)}}
 
-\item{motifAnnot_direct}{TO DO}
+\item{motifAnnot_direct}{Motif annotation database containing DIRECT annotations of the motif to transcription factors.}
 
-\item{motifAnnot_indirect}{TO DO}
+\item{motifAnnot_indirect}{Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.}
 
-\item{highlightTFs}{TO DO}
+\item{highlightTFs}{Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *) of the motif. The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.}
 
-\item{nesThreshold}{TO DO}
+\item{nesThreshold}{Numeric. NES threshold to calculate the motif significant (3.0 by default). The NES is calculated -for each motif- based on the AUC distribution of all the motifs for the gene-set [(x-mean)/sd]. The motifs are considered significantly enriched if they pass the the Normalized Enrichment Score (NES) threshold.}
 
 \item{aucThresholdPERC}{Threshold to calculate the AUC.
 In a simplified way, the AUC value represents the fraction of genes -within the top X genes in the ranking- that are included in the signature.
 The parameter 'aucThresholdPERC' allows to modify the percentage of genes (of the top of the ranking) that is used to perform this computation.
 By default it is set to 5\% of the total number of genes in the rankings. Common values range from 1 to 10\%.}
 
-\item{geneErnMethod}{TO DO}
+\item{geneErnMethod}{"iCisTarget" or "aprox". Method to identify the highly ranked genes (see \link{addSignificantGenes} for details).}
 
-\item{geneErnMmaxRank}{TO DO}
+\item{geneErnMmaxRank}{Maximum rank to take into account for the gene enrichment recovery curve (see \link{addSignificantGenes} for details).}
 
 \item{nCores}{Number of cores to use for computation.
 Note: In general, using a higher number of cores (e.g. processes) decreases overall running time. However, it also deppends on the available memory and overall system load. Setting nCores too high might also decrease performance.}
 
-\item{verbose}{Should the function show progress messages? (TRUE / FALSE)
-See \code{vignette("RcisTarget")} for examples and more details.}
+\item{verbose}{Should the function show progress messages? (TRUE / FALSE)}
 }
 \value{
-Data table containing the over-represented motifs (according to the selected NES threshold),
+\code{\link[data.table]{data.table}} containing the over-represented motifs (according to the selected NES threshold),
 their statistics, annotation to transcription factors and the genes with high enrichment of the motif.
 }
 \description{
 Identifies DNA motifs significantly over-represented in a gene-set.
 
-This is the main function to run RcisTarget (motif enrichment analysis):
-It is a wrapper that calls \link{calcAUC}, \link{addMotifAnnotation}
-and \link{addSignificantGenes}.
+This is the main function to run RcisTarget. It includes on the following steps:
+\itemize{
+\item 1. Motif enrichment analysis (\link{calcAUC})
+\item 2. Motif-TF annotation (\link{addMotifAnnotation})
+\item 3. Selection of significant genes (\link{addSignificantGenes})
+}
 }
 \examples{
 
-# ~~ Quick example on how to run (R)cisTarget through the wrapper function ~~
+# Example for running RcisTarget using cisTarget() function (workflow wrapper)
 
 ##################################################
 # Format gene sets
@@ -72,13 +78,15 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 # Load databases
 
 # Select the package/database according to the organism and distance around TSS
-# Load the motif rankings to calculate the AUC
+# Load the motif databases
 library(RcisTarget.hg19.motifDatabases)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 
-# If you only want to explore the workflow & interface, you can run the example faster
-# using a fake-database with 5000 random motifs
+data(hg19_direct_motifAnnotation)
+
+# This example is run using a fake-database with 5000 random motifs
+# (for faster execution, only to explore the workflow & interface)
 # DO NOT use in real analyses! To identify statistically significant motifs,
 # RcisTarget needs the whole motif database.
 set.seed(123)
@@ -121,5 +129,8 @@ strsplit(enrGenes, ";")
 # Interactive exploration
 library(DT)
 datatable(motifEnrichmentTable_wGenes[,1:9], filter="top", options=list(pageLength=5))
+}
+\seealso{
+See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
 

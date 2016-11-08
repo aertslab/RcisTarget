@@ -7,7 +7,11 @@
 #' @description Calculates the Area Under the Curve (AUC) of each gene-set for each motif ranking. This measure is used in the following steps to identify the DNA motifs that are significantly over-represented in the gene-set.
 #' @param geneSets List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})
 #' @param rankings 'Motif rankings' database for the required organism and search-space (i.e. 10kbp around- or 500bp upstream the TSS).
-#' These objects are provided in separate packages: \link[http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases]{RcisTarget.hg19.motifDatabases} (Human), \link[http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases]{RcisTarget.mm9.motifDatabases} (Mouse).
+#' These objects are provided in separate packages:
+#' \itemize{
+#' \item \url{http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases} (Human)
+#' \item \url{http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases} (Mouse)
+#' }
 #' See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDatabases)}.
 #' @param nCores Number of cores to use for computation.
 #' Note: In general, using a higher number of cores (e.g. processes) decreases overall running time. However, it also deppends on the available memory and overall system load. Setting nCores too high might also decrease performance.
@@ -18,7 +22,9 @@
 #' See \code{vignette("RcisTarget")} for examples and more details.
 #' @param verbose Should the function show progress messages? (TRUE / FALSE)
 #' @return Matrix of motifs (row) by gene-sets (columns) with the value of AUC for each pair as content.
-#' @seealso \code{vignette("RcisTarget")}. Next step in the workflow: \link[addMotifAnnotation]{addMotifAnnotation}
+#' @seealso Next step in the workflow: \code{\link{addMotifAnnotation}}.
+#'
+#' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 #' @example inst/examples/workflow_example.R
 #' @export
 calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE) #, seed=123, plotHist=TRUE
@@ -34,7 +40,8 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
   #### 1. Calculate the AUC for each gene set
   if(nCores==1)
   {
-    aucMatrix <- sapply(names(geneSets), function(gSetName)  .AUC.geneSet(geneSet=geneSets[[gSetName]], rankings=rankings, aucMaxRank=aucMaxRank, gSetName=gSetName))
+    aucMatrix <- sapply(names(geneSets), function(gSetName)
+      .AUC.geneSet(geneSet=geneSets[[gSetName]], rankings=rankings, aucMaxRank=aucMaxRank, gSetName=gSetName))
   }else
   {
     # Run each geneSet in parallel
@@ -101,7 +108,7 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
 }
 
 
-# oneRanking <- gSetRanks[,3, with=F]
+# oneRanking <- gSetRanks[,3, with=FALSE]
 .calcAUC <- function(oneRanking, aucThreshold, maxAUC)
 {
   x <- unlist(oneRanking)

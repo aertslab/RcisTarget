@@ -1,19 +1,35 @@
-
-
-# Intput TFs: If not named, all TFs will be used with all geneSets
-
-
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 #' @import data.table
 #'
-#' @title to do
-#' @description to do
-#' @param to do
-#' @return to do Columna TF
-# @example to do
+#' @title Add motif annotation
+#' @description Select significant motifs and/or annotate motifs to transcription factors.
+#' The motifs are considered significantly enriched if they pass the the Normalized Enrichment Score (NES) threshold.
+#' @param auc Output from calcAUC.
+#' @param nesThreshold Numeric. NES threshold to calculate the motif significant (3.0 by default). The NES is calculated -for each motif- based on the AUC distribution of all the motifs for the gene-set [(x-mean)/sd].
+#' @param digits Integer. Number of digits for the AUC and NES in the output table.
+#' @param motifAnnot_direct Motif annotation database containing DIRECT annotations of the motif to transcription factors.
+#' @param motifAnnot_indirect Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.
+#' @param highlightTFs Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *) of the motif.
+#' The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.
+#' @return \code{\link[data.table]{data.table}} with the folowing columns:
+#' \itemize{
+#' \item geneSet: Name of the gene set
+#' \item motif: ID of the motif
+#' \item NES: Normalized enrichment score of the motif in the gene-set
+#' \item AUC: Area Under the Curve (used to calculate the NES)
+#' \item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *).
+#' \item TF_direct: Transcription factors annotated to the motif according to 'direct annotation'.
+#' \item TF_indirect: Transcription factors annotated to the motif according to 'indirect annotation'.
+#' }
+#' @seealso Next step in the workflow: \code{\link{addSignificantGenes}}.
+#'
+#' Previous step in the workflow: \code{\link{calcAUC}}.
+#'
+#' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
+#' @example inst/examples/addMotifAnnotation_example.R
 #' @export
-addMotifAnnotation <- AUC.asDataTable <- function(AUCellOutput, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
+addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
 {
   #### Check inputs
   if(!is.null(highlightTFs))
@@ -21,17 +37,17 @@ addMotifAnnotation <- AUC.asDataTable <- function(AUCellOutput, nesThreshold=3.0
     if(is.null(motifAnnot_direct) && is.null(motifAnnot_indirect)) stop("To hightlight TFs, please provide a motif-TF annotation.")
     if(is.null(names(highlightTFs))) {
       warning("The input TFs are not named, all TFs will be used with all Gene Sets.")
-      highlightTFs <- setNames(rep(list(highlightTFs), ncol(AUCellOutput)), colnames(AUCellOutput))
+      highlightTFs <- setNames(rep(list(highlightTFs), ncol(auc)), colnames(auc))
     }
 
-    if(!all(names(highlightTFs) %in% colnames(AUCellOutput))) warning("TFs 1")
-    if(!all(colnames(AUCellOutput) %in% names(highlightTFs))) warning("TFs 2")
+    if(!all(names(highlightTFs) %in% colnames(auc))) warning("TFs 1")
+    if(!all(colnames(auc) %in% names(highlightTFs))) warning("TFs 2")
   }
 
   #### Runs "auc.asTable" on each AUC columns i.e. signatures/cells
-  ret <- lapply(colnames(AUCellOutput), function(geneSet) {
+  ret <- lapply(colnames(auc), function(geneSet) {
       tfs <- highlightTFs[[geneSet]]
-      aucTable <- .auc.asTable(AUCellOutput[,geneSet], nesThreshold=nesThreshold, digits=digits)
+      aucTable <- .auc.asTable(auc[,geneSet], nesThreshold=nesThreshold, digits=digits)
       if(nrow(aucTable)>0)
       {
         aucTable <- .addTfs(aucTable, motifAnnot_direct=motifAnnot_direct, motifAnnot_indirect=motifAnnot_indirect, highlightTFs=tfs)
@@ -45,23 +61,9 @@ addMotifAnnotation <- AUC.asDataTable <- function(AUCellOutput, nesThreshold=3.0
   #### Merge the results from each signature/cell into a single data.table
   # ret <- do.call(rbind, unname(ret))  # Slower?
   # library(data.table)
-  ret <- rbindlist(ret)
+  ret <- data.table::rbindlist(ret)
   return(ret)
 }
-
-#### Output:
-#             geneSet                            motif  NES    AUC TF_direct
-# 1:  Astrocyte_Cahoy                   stark__AAASTTT 5.70 0.0608
-# 2:  Astrocyte_Cahoy                     cisbp__M0574 5.58 0.0603
-# 3:  Astrocyte_Cahoy                     cisbp__M0648 4.29 0.0550
-# 4:  Astrocyte_Cahoy                     cisbp__M0659 4.25 0.0549
-# 5:  Astrocyte_Cahoy                     cisbp__M0664 4.19 0.0546
-# ---
-#   1075: RandGeneSet_100g                     cisbp__M6289 3.03 0.0823     Hoxa9
-# 1076: RandGeneSet_100g homer__ATAGTGCCACCTGGTGGCCA_CTCF 3.02 0.0821      Ctcf
-# 1077: RandGeneSet_100g                     cisbp__M0828 3.02 0.0821
-# 1078: RandGeneSet_100g                elemento__TGGGGCC 3.02 0.0821
-# 1079: RandGeneSet_100g  taipale__HNF4A_NRGTCCAAAGTCCANY 3.01 0.0819     Hnf4a
 
 
 ############ PRIVATE
@@ -75,7 +77,7 @@ addMotifAnnotation <- AUC.asDataTable <- function(AUCellOutput, nesThreshold=3.0
   return(NES)
 }
 
-
+#' @import data.table
 .auc.asTable <- function(auc, nesThreshold=3.0, digits=3)
 {
   nes <- .calcNES(auc)
@@ -88,6 +90,7 @@ addMotifAnnotation <- AUC.asDataTable <- function(AUCellOutput, nesThreshold=3.0
   aucTable
 }
 
+#' @import data.table
 .addTfs <- function(aucTable, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
 {
   if((!is.null(motifAnnot_direct)) || (!is.null(motifAnnot_indirect)) || (!is.null(highlightTFs))) colnames(aucTable)[which(colnames(aucTable) == "ranking")] <- "motif"
@@ -127,6 +130,7 @@ addMotifAnnotation <- AUC.asDataTable <- function(AUCellOutput, nesThreshold=3.0
 
 # Not exclusive!
 # TO DO: Optimize??
+#' @import data.table
 .tfInAnnot <- function(motifList, inputTFs, motifAnnot_direct=NULL, motifAnnot_indirect=NULL)
 {
   in000 <- NULL

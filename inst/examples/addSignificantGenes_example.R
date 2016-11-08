@@ -28,18 +28,16 @@ motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=5,
                       motifAnnot_direct=hg19_direct_motifAnnotation)
 
 ##################################################
-
-# Step 3: Identify the genes that have the motif significantly enriched
+# (This step: Step 3)
+# Identify the genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)
 par(mfrow=c(1,2))
 motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
-                                                   plotCurve = TRUE,
-                                                   geneSets=geneLists,
-                                                   rankings=motifRankings,
-                                                   method="aprox")
-
-
-
+                                       genesFormat="geneList",
+                                       plotCurve=TRUE,
+                                       geneSets=geneLists,
+                                       rankings=motifRankings,
+                                       method="aprox")
 ##################################################
 # Exploring the output:
 # Note: Using the fake-database, these results are not meaningful.
@@ -55,7 +53,8 @@ strsplit(enrGenes, ";")
 
 # As incidence matrix
 motifEnr_wIncidMat <- addSignificantGenes(motifEnrichmentTable,
-                geneSets=geneLists, rankings=motifRankings, method="aprox",
+                geneSets=geneLists, rankings=motifRankings,
+                method="aprox",
                 genesFormat = "incidMatrix")
 
 motifEnr_wIncidMat <- as.data.frame(motifEnr_wIncidMat)
@@ -66,5 +65,17 @@ rownames(incidMat) <- motifEnr_wIncidMat[,"motif"]
 incidMat <- incidMat[, colSums(incidMat)>0, drop=FALSE]
 
 # Plot as network
+par(mfrow=c(1,1))
 library(igraph)
 plot(graph.incidence(incidMat))
+
+###############################################################
+# Alternative method: getSignificantGenes()
+selectedMotif <- rownames(incidMat)
+onlyGenes <- getSignificantGenes(geneSet=geneLists$hypoxia,
+                            signifRankingNames=selectedMotif,
+                            genesFormat="incidMatrix",
+                            plotCurve=TRUE,
+                            rankings=motifRankings,
+                            method="aprox")
+

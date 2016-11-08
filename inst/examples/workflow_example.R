@@ -1,5 +1,5 @@
 
-# ~~ Quick example on how to run RcisTarget workflow ~~
+# RcisTarget workflow (for advanced users: Running the workflow steps individually)
 
 ##################################################
 # Format gene sets
@@ -24,8 +24,8 @@ library(RcisTarget.hg19.motifDatabases)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 
-# If you only want to explore the workflow & interface, you can run the example faster
-# using a fake-database with 5000 random motifs
+# This example is run using a fake-database with 5000 random motifs
+# (for faster execution, only to explore the workflow & interface)
 # DO NOT use in real analyses! To identify statistically significant motifs,
 # RcisTarget needs the whole motif database.
 set.seed(123)

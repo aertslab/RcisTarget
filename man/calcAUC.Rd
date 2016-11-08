@@ -11,7 +11,11 @@ calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
 \item{geneSets}{List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})}
 
 \item{rankings}{'Motif rankings' database for the required organism and search-space (i.e. 10kbp around- or 500bp upstream the TSS).
-These objects are provided in separate packages: \link[http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases]{RcisTarget.hg19.motifDatabases} (Human), \link[http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases]{RcisTarget.mm9.motifDatabases} (Mouse).
+These objects are provided in separate packages:
+\itemize{
+\item \url{http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases} (Human)
+\item \url{http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases} (Mouse)
+}
 See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDatabases)}.}
 
 \item{nCores}{Number of cores to use for computation.
@@ -33,7 +37,7 @@ Calculates the Area Under the Curve (AUC) of each gene-set for each motif rankin
 }
 \examples{
 
-# ~~ Quick example on how to run RcisTarget workflow ~~
+# RcisTarget workflow (for advanced users: Running the workflow steps individually)
 
 ##################################################
 # Format gene sets
@@ -58,8 +62,8 @@ library(RcisTarget.hg19.motifDatabases)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 
-# If you only want to explore the workflow & interface, you can run the example faster
-# using a fake-database with 5000 random motifs
+# This example is run using a fake-database with 5000 random motifs
+# (for faster execution, only to explore the workflow & interface)
 # DO NOT use in real analyses! To identify statistically significant motifs,
 # RcisTarget needs the whole motif database.
 set.seed(123)
@@ -87,6 +91,8 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
 # Note: Using the fake-database, these results are not meaningful.
 }
 \seealso{
-\code{vignette("RcisTarget")}. Next step in the workflow: \link[addMotifAnnotation]{addMotifAnnotation}
+Next step in the workflow: \code{\link{addMotifAnnotation}}.
+
+See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
 

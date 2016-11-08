@@ -1,5 +1,5 @@
 
-# ~~ Quick example on how to run (R)cisTarget through the wrapper function ~~
+# Example for running RcisTarget using cisTarget() function (workflow wrapper)
 
 ##################################################
 # Format gene sets
@@ -19,13 +19,15 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 # Load databases
 
 # Select the package/database according to the organism and distance around TSS
-# Load the motif rankings to calculate the AUC
+# Load the motif databases
 library(RcisTarget.hg19.motifDatabases)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 
-# If you only want to explore the workflow & interface, you can run the example faster
-# using a fake-database with 5000 random motifs
+data(hg19_direct_motifAnnotation)
+
+# This example is run using a fake-database with 5000 random motifs
+# (for faster execution, only to explore the workflow & interface)
 # DO NOT use in real analyses! To identify statistically significant motifs,
 # RcisTarget needs the whole motif database.
 set.seed(123)
