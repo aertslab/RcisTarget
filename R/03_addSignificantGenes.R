@@ -43,7 +43,7 @@
 #' @seealso Previous step in the workflow: \code{\link{addMotifAnnotation}}.
 #'
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
-#' @example inst/examples/addSignificantGenes_example.R
+#' @example inst/examples/example_addSignificantGenes.R
 #' @export
 addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nCores=1)
 {

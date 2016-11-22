@@ -27,7 +27,7 @@
 #' Previous step in the workflow: \code{\link{calcAUC}}.
 #'
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
-#' @example inst/examples/addMotifAnnotation_example.R
+#' @example inst/examples/example_addMotifAnnotation.R
 #' @export
 addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
 {

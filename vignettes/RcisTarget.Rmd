@@ -100,7 +100,7 @@ biocLite(c("DT", "visNetwork"))
 
 ## Some tips...
 ### Help
-At any time, remember you an access the **help** files for any function (i.e. `?cisTarget`), and the other tutorials in the package with the following commands:
+At any time, remember you an access the help files for any function (i.e. `?cisTarget`), and the other tutorials in the package with the following commands:
 ```{r vignette, eval=FALSE}
 # Explore tutorials in the web browser:
 browseVignettes(package="RcisTarget") 
@@ -226,7 +226,7 @@ dim(motifs_AUC)
 
 The AUC is provided as a matrix of Motifs by GeneSets. In principle, the AUC is mostly meant as input for the next step. However, it is also possible to explore the distribution of the scores, for example in a gene-set of interest: 
 
-```{r cache=TRUE}
+```{r AUChistogram, cache=TRUE}
 hist(motifs_AUC[,"hypoxia"], main="hypoxia", xlab="AUC histogram",
      breaks=100, col="#ff000050", border="darkred")
 nes3 <- (3*sd(motifs_AUC[,"hypoxia"])) + mean(motifs_AUC[,"hypoxia"])

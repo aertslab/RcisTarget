@@ -25,7 +25,7 @@
 #' @seealso Next step in the workflow: \code{\link{addMotifAnnotation}}.
 #'
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
-#' @example inst/examples/workflow_example.R
+#' @example inst/examples/example_workflow.R
 #' @export
 calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE) #, seed=123, plotHist=TRUE
 {

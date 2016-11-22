@@ -35,7 +35,7 @@
 #' @return \code{\link[data.table]{data.table}} containing the over-represented motifs (according to the selected NES threshold),
 #' their statistics, annotation to transcription factors and the genes with high enrichment of the motif.
 #' @seealso See the package vignette for examples and more details: \code{vignette("RcisTarget")}
-#' @example inst/examples/cisTarget_example.R
+#' @example inst/examples/example_cisTarget.R
 #' @export
 cisTarget <- function(geneSets, motifRankings,
             motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL,
