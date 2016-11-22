@@ -8,6 +8,6 @@ library(devtools)
 install_github("aertslab/RcisTarget")
 ```
 
-A tutorial (vignette) is available in the package ([vignettes/RcisTarget.Rmd](https://github.com/aertslab/RcisTarget/blob/master/vignettes/RcisTarget.Rmd)). 
-Note that this vignette is meant to be run from R. Therefore, opening it directly from Github website will not render it propperly (the R code will not be interpreted). 
+A tutorial is available in the package ([vignettes/RcisTarget.Rmd](https://github.com/aertslab/RcisTarget/blob/master/vignettes/RcisTarget.Rmd)). 
+Note that this vignette is meant to be run from R. Therefore, opening it directly from Github website will not render it properly (the R code will not be interpreted). 
 A HTML version of this tutorial is in available the folder 'tutorial_html'
