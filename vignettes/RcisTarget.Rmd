@@ -100,7 +100,7 @@ biocLite(c("DT", "visNetwork"))
 
 ## Some tips...
 ### Help
-At any time, remember you an access the **help** files for any function (i.e. `?cisTarget`), and the other tutorials in the package with the following commands:
+At any time, remember you an access the help files for any function (i.e. `?cisTarget`), and the other tutorials in the package with the following commands:
 ```{r vignette, eval=FALSE}
 # Explore tutorials in the web browser:
 browseVignettes(package="RcisTarget") 
