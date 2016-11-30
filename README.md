@@ -16,4 +16,4 @@ install_github("aertslab/RcisTarget")
 ```
 
 A tutorial (vignette) is included in the package.
-Includes an HTML version of the tutorial and the databases are available at http://scenic.aertslab.org.
+An HTML version of the tutorial, and the databases required to use RcisTarget are available at http://scenic.aertslab.org.
