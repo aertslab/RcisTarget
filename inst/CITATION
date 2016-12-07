@@ -1,0 +1,16 @@
+citEntry(entry="Article",
+  author = personList(
+    person(given="Sara", family="Aibar"),
+    person(given="Stein", family="Aerts")),
+  title ="RcisTarget",
+  journal ="Bioconductor",
+  volume ="",
+  number = "",
+  pages = "",
+  year ="2016",
+  doi = "",
+  textVersion = "Aibar. et al. (2016) RcisTarget: Identify transcription factor binding motifs enriched on a gene list. R/Bioconductor package.")
+
+
+
+

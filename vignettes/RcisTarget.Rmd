@@ -25,14 +25,12 @@ library(doMC);library(doRNG) # Loaded by the package, to avoid messages
 ```
 
 # What is RcisTarget?
-**TO DO:** *expand? (add figure?) & Update publication*
-
 RcisTarget is an R-package to identify transcription factor (TF) binding motifs over-represented on a gene list. 
 
 RcisTarget is based on the methods previously implemented in 
 [i-cisTarget](http://gbiomed.kuleuven.be/apps/lcb/i-cisTarget) (web interface, region-based) and [iRegulon](http://iregulon.aertslab.org) (Cytoscape plug-in, gene-based). 
 
-If you use RcisTarget in your research, please cite: 
+If you use RcisTarget in your research, please cite: *(TO DO: Update publication)*
 ```{r citation, echo=FALSE}
 print(citation("RcisTarget"), style="textVersion")
 ```
@@ -350,6 +348,7 @@ visNetwork(nodes, edges) %>% visOptions(highlightNearest = TRUE,
 # sessionInfo()
 This is the output of `sessionInfo()` on the system on which this document was compiled:
 ```{r}
+date()
 sessionInfo()
 ```
 

@@ -1,12 +1,12 @@
 Package: RcisTarget
 Type: Package
 Title: RcisTarget: Identify transcription factor binding motifs enriched on a gene list
-Version: 0.99.0
-Date: 2016-11-08
+Version: 0.5.0
+Date: 2016-12-07
 Author: Sara Aibar, Stein Aerts. Laboratory of Computational Biology, KU Leuven Center for Human Genetics. Leuven, Belgium.
 Maintainer: Sara Aibar <sara.aibar@kuleuven.be>
 Description: Identify transcription factor binding motifs enriched on a gene list.
-URL: http://www.aertslab.org
+URL: http://scenic.aertslab.org
 Imports: data.table
 Enhances: doMC, doRNG, zoo
 Suggests: visNetwork,
