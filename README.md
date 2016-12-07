@@ -1,10 +1,19 @@
 # RcisTarget
 RcisTarget is an R-package to identify transcription factor (TF) binding motifs over-represented on a gene list. 
 
-To install from R:
+
+
+
+
+
+
+*Note:* This is a version in development. The main version of the package will be submitted Bioconductor. 
+
+To install this BETA version, you can run the following commands from R:
 ```
 library(devtools)
 install_github("aertslab/RcisTarget")
 ```
 
-A tutorial is available at: [vignettes/RcisTarget.Rmd](https://github.com/aertslab/RcisTarget/blob/master/vignettes/RcisTarget.Rmd)
+A tutorial (vignette) is included in the package.
+An HTML version of the tutorial, and the databases required to use RcisTarget are available at http://scenic.aertslab.org.
