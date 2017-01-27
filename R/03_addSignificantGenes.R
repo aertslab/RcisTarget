@@ -19,6 +19,7 @@
 #' @param plotCurve Logical. Wether to plot the recovery curve (Default: FALSE).
 #' @param genesFormat "geneList" or "incidMatrix". Format to return the genes (Default: "geneList").
 #' @param method "iCisTarget" or "aprox". There are two methods to identify the highly ranked genes: (1) equivalent to the ones used in iRegulon and i-cisTarget (method="iCisTarget", recommended if running time is not an issue), and (2) a faster implementation based on an approximate distribution using the average at each rank (method="aprox", useful to scan multiple gene sets). (Default: "aprox")
+#' @param nMean Only used for "aprox" method: Interval to calculate the running mean and sd. Default: 20 (aprox. nGenesInRanking/1000).
 #' @param nCores Number of cores to use for parallelization (Default: 1).
 #' @param geneSet [getSignificantGenes] Gene-set to analyze (Only one).
 #' @param signifRankingNames [getSignificantGenes] Motif ranking name.
@@ -27,7 +28,7 @@
 #' \itemize{
 #'   \item nErnGenes: Number of genes highly ranked
 #'   \item rankAtMax: Ranking at the maximum enrichment, used to determine the number of enriched genes.
-#'   \item enrichedGenes: Genes that are highly ranked for the given motif. If genesFormat="geneList", the gene names are collapsed into a comma separated text field. If genesFormat="incidMatrix", they are formatted as an indicence matrix, i.e. indicanting with 1 the genes present, and 0 absent.
+#'   \item enrichedGenes: Genes that are highly ranked for the given motif. If genesFormat="geneList", the gene names are collapsed into a comma separated text field (alphabetical order). If genesFormat="incidMatrix", they are formatted as an indicence matrix, i.e. indicanting with 1 the genes present, and 0 absent.
 #' }
 #' @return If plotCurve=TRUE, the recovery curve is plotted.
 #' @details
@@ -45,7 +46,7 @@
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 #' @example inst/examples/example_addSignificantGenes.R
 #' @export
-addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nCores=1)
+addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
 {
   # suppressPackageStartupMessages(library(data.table))
   method <- tolower(method[1])
@@ -67,7 +68,7 @@ addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, 
                                        maxRank=maxRank,
                                        plotCurve=plotCurve,
                                        genesFormat=genesFormat,
-                                       nCores=nCores, digits=3)
+                                       nCores=nCores, digits=3, nMean=nMean)
 
     enrRnkT_ByGs <- cbind(enrRnkT_ByGs, signifGenes$enrStats)
     if("geneList" %in% genesFormat) enrRnkT_ByGs <- cbind(enrRnkT_ByGs, enrichedGenes=sapply(signifGenes$enrichedGenes, function(x) paste(unlist(x), collapse=";")))
@@ -81,7 +82,7 @@ addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, 
 #' @import data.table
 #' @rdname addSignificantGenes
 #' @export
-getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3)
+getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
 {
   ################################################################################
   # Argument checks & init. vars
@@ -114,7 +115,7 @@ getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, meth
 
   ################################################################################
   # Calculate enrichment
-  enrStats <- t(calcEnrFunct(gSetRanks[,-"rn", with=FALSE], maxRank, signifRankingNames, plotCurve, nCores))
+  enrStats <- t(calcEnrFunct(gSetRanks[,-"rn", with=FALSE], maxRank, signifRankingNames, plotCurve, nCores, nMean))
   enrStats <- enrStats[,c("y", "x"), drop=FALSE]
   colnames(enrStats) <- c("nErnGenes", "rankAtMax")
 

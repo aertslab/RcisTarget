@@ -8,17 +8,17 @@
 #' @param auc Output from calcAUC.
 #' @param nesThreshold Numeric. NES threshold to calculate the motif significant (3.0 by default). The NES is calculated -for each motif- based on the AUC distribution of all the motifs for the gene-set [(x-mean)/sd].
 #' @param digits Integer. Number of digits for the AUC and NES in the output table.
-#' @param motifAnnot_direct Motif annotation database containing DIRECT annotations of the motif to transcription factors.
+#' @param motifAnnot_direct Motif annotation database containing DIRECT annotations of the motif to transcription factors. The names should match the ranking column names.
 #' @param motifAnnot_indirect Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.
 #' @param highlightTFs Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *) of the motif.
 #' The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.
 #' @return \code{\link[data.table]{data.table}} with the folowing columns:
 #' \itemize{
 #' \item geneSet: Name of the gene set
-#' \item motif: ID of the motif
+#' \item motif: ID of the motif (colnames of the ranking, it might be other kind of feature)
 #' \item NES: Normalized enrichment score of the motif in the gene-set
 #' \item AUC: Area Under the Curve (used to calculate the NES)
-#' \item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *).
+#' \item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *)
 #' \item TF_direct: Transcription factors annotated to the motif according to 'direct annotation'.
 #' \item TF_indirect: Transcription factors annotated to the motif according to 'indirect annotation'.
 #' }
@@ -58,7 +58,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
       aucTable
     })
 
-  #### Merge the results from each signature/cell into a single data.table
+  #### Merge the results from each signature/geneSet/regionSet into a single data.table
   # ret <- do.call(rbind, unname(ret))  # Slower?
   # library(data.table)
   ret <- data.table::rbindlist(ret)
@@ -84,7 +84,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
   nes <- sort(nes, decreasing=TRUE)
 
   signifRankings <- names(nes)[which(nes >= nesThreshold)]
-  aucTable <- data.table(ranking=signifRankings,
+  aucTable <- data.table(motif=signifRankings,
                          NES=signif(nes[signifRankings], digits=digits),
                          AUC=signif(auc[signifRankings],digits=digits))
   aucTable
@@ -93,8 +93,6 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
 #' @import data.table
 .addTfs <- function(aucTable, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
 {
-  if((!is.null(motifAnnot_direct)) || (!is.null(motifAnnot_indirect)) || (!is.null(highlightTFs))) colnames(aucTable)[which(colnames(aucTable) == "ranking")] <- "motif"
-
   if(!is.null(highlightTFs))
   {
     aucTable <- data.table(aucTable, highlightedTFs=paste(highlightTFs, collapse=", ") , TFinDB="")

@@ -36,7 +36,7 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
   if(!is.data.table(rankings)) stop("Rankings should be a data.table (i.e. genes x [cells or motifs])")
   # if(!key(rankings) == "rn") stop("The rankings key should be 'rn'.")
   allGenes <- unique(unlist(geneSets))
-  if(sum(allGenes %in% rankings$rn)/length(allGenes) < .80) stop("Fewer than 20% of the genes in the gene sets are included in the rankings. Check wether the gene IDs in the 'rankings' and 'geneSets' match.")
+  if(sum(allGenes %in% rankings$rn)/length(allGenes) < .80) stop("Fewer than 80% of the genes in the gene sets are included in the rankings. Check wether the gene IDs in the 'rankings' and 'geneSets' match.")
 
 
   ######################################################################
@@ -115,8 +115,8 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
 .calcAUC <- function(oneRanking, aucThreshold, maxAUC)
 {
   x <- unlist(oneRanking)
-
   x <- sort(x[x<aucThreshold])
+
   y <- 1:length(x)
   sum(diff(c(x, aucThreshold)) * y)/maxAUC
 }
