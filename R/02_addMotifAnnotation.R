@@ -62,6 +62,8 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
   # ret <- do.call(rbind, unname(ret))  # Slower?
   # library(data.table)
   ret <- data.table::rbindlist(ret)
+
+  colnames(ret)[which(colnames(ret) == "ranking")] <- "motif"
   return(ret)
 }
 
