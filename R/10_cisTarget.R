@@ -2,6 +2,7 @@
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 #' @import data.table
 #' @title cisTarget
+#' @rdname RcisTarget
 #' @description Identifies DNA motifs significantly over-represented in a gene-set.
 #'
 #' This is the main function to run RcisTarget. It includes on the following steps:

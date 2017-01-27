@@ -58,10 +58,12 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
       aucTable
     })
 
-  #### Merge the results from each signature/cell into a single data.table
+  #### Merge the results from each signature/geneSet/regionSet into a single data.table
   # ret <- do.call(rbind, unname(ret))  # Slower?
   # library(data.table)
   ret <- data.table::rbindlist(ret)
+
+  colnames(ret)[which(colnames(ret) == "ranking")] <- "motif"
   return(ret)
 }
 
@@ -93,8 +95,6 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
 #' @import data.table
 .addTfs <- function(aucTable, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
 {
-  if((!is.null(motifAnnot_direct)) || (!is.null(motifAnnot_indirect)) || (!is.null(highlightTFs))) colnames(aucTable)[which(colnames(aucTable) == "ranking")] <- "motif"
-
   if(!is.null(highlightTFs))
   {
     aucTable <- data.table(aucTable, highlightedTFs=paste(highlightTFs, collapse=", ") , TFinDB="")
