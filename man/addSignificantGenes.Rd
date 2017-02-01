@@ -42,7 +42,7 @@ getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
 \value{
 Output from \code{\link{addMotifAnnotation}} adding the folowing columns:
 \itemize{
-  \item nErnGenes: Number of genes highly ranked
+  \item nEnrGenes: Number of genes highly ranked
   \item rankAtMax: Ranking at the maximum enrichment, used to determine the number of enriched genes.
   \item enrichedGenes: Genes that are highly ranked for the given motif. If genesFormat="geneList", the gene names are collapsed into a comma separated text field (alphabetical order). If genesFormat="incidMatrix", they are formatted as an indicence matrix, i.e. indicanting with 1 the genes present, and 0 absent.
 }

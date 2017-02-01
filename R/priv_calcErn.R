@@ -1,12 +1,12 @@
 
 ############################################################################################
 # Calculates gene enrichment: i-CisTarget version
-# Arguments should be kept in the same order as .calcErn_Aprox
+# Arguments should be kept in the same order as .calcEnr_Aprox
 #' @import data.table
-.calcErn_iCisTarget <- function(gsRankings, maxRank, signifRankingNames, plotCurve, nCores, nMean)
+.calcEnr_iCisTarget <- function(gsRankings, maxRank, signifRankingNames, plotCurve, nCores, nMean)
 {
   # nMean: ignored
-  
+
   # Calculate RCC for all motifs
   rccs <- .calcRCC(gsRankings, maxRank, nCores)
 
@@ -34,9 +34,9 @@
 
 ############################################################################################
 # Calculates gene enrichment: Aproximated/faster version
-# Arguments should be kept in the same order as .calcErn_iCisTarget
+# Arguments should be kept in the same order as .calcEnr_iCisTarget
 #' @import data.table
-.calcErn_Aprox <- function(gsRankings, maxRank, signifRankingNames, plotCurve, nCores, nMean)
+.calcEnr_Aprox <- function(gsRankings, maxRank, signifRankingNames, plotCurve, nCores, nMean)
 {
   # Calculate aproximated-RCC across all motifs at each rank position
   maxRankExtra <- maxRank+nMean

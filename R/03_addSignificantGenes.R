@@ -26,7 +26,7 @@
 #' @param digits  [getSignificantGenes] Number of digits to include in the output.
 #' @return Output from \code{\link{addMotifAnnotation}} adding the folowing columns:
 #' \itemize{
-#'   \item nErnGenes: Number of genes highly ranked
+#'   \item nEnrGenes: Number of genes highly ranked
 #'   \item rankAtMax: Ranking at the maximum enrichment, used to determine the number of enriched genes.
 #'   \item enrichedGenes: Genes that are highly ranked for the given motif. If genesFormat="geneList", the gene names are collapsed into a comma separated text field (alphabetical order). If genesFormat="incidMatrix", they are formatted as an indicence matrix, i.e. indicanting with 1 the genes present, and 0 absent.
 #' }
@@ -98,9 +98,9 @@ getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, meth
   method <- tolower(method[1])
   if(!method %in% c("icistarget", "icistargetaprox", "aprox")) stop("'method' should be either 'iCisTarget' or 'iCisTargetAprox'.")
   if(method == "icistarget") {
-    calcEnrFunct <- .calcErn_iCisTarget
+    calcEnrFunct <- .calcEnr_iCisTarget
   } else {
-    calcEnrFunct <- .calcErn_Aprox
+    calcEnrFunct <- .calcEnr_Aprox
     if(!"zoo" %in% rownames(installed.packages())) stop("Package 'zoo' is required to calculate the aproximate RCC distributions. To install it, run:\t install.packages('zoo')")
   }
 
@@ -117,7 +117,7 @@ getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, meth
   # Calculate enrichment
   enrStats <- t(calcEnrFunct(gSetRanks[,-"rn", with=FALSE], maxRank, signifRankingNames, plotCurve, nCores, nMean))
   enrStats <- enrStats[,c("y", "x"), drop=FALSE]
-  colnames(enrStats) <- c("nErnGenes", "rankAtMax")
+  colnames(enrStats) <- c("nEnrGenes", "rankAtMax")
 
   enrichedGenes <- list()
   if("incidMatrix" %in% genesFormat) incidMatrix <- matrix(0, nrow=length(signifRankingNames), ncol=length(geneSet),
