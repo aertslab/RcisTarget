@@ -64,7 +64,7 @@
   nas <- which(is.na(rccStatsRaw), arr.ind=TRUE)
   if(any(nas[,2] == 1)) {  # First value cannot be assigned to left
     rccStatsRaw[nas[which(nas[,2]==1), ]] <- 0
-    nas <- nas[which(nas[,2]!=1), ]
+    nas <- nas[which(nas[,2]!=1), , drop=FALSE]
   }
   if(nrow(nas)>0) apply(nas, 1, function(x) rccStatsRaw[x[1], x[2]] <<- rccStatsRaw[x[1], x[2]-1])
 
