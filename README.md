@@ -19,5 +19,5 @@ install.packages("devtools", "data.table", "zoo")
 source("https://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")
 ```
 
-A **tutorial** (vignette) is included in the package.
+A **[tutorial](http://scenic.aertslab.org/tutorials/RcisTarget_tutorial.html)** (vignette) is included in the package.
 An HTML version of the tutorial, and the **databases** required to use RcisTarget are available at http://scenic.aertslab.org.
