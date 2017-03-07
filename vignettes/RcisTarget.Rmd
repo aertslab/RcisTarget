@@ -12,6 +12,8 @@ output:
     number_sections: false
   pdf_document:
     toc: yes
+  html_notebook:
+    toc: yes
 ---
 ```{r libraries, echo=FALSE, message=FALSE, warning=FALSE}
 suppressPackageStartupMessages({
@@ -109,7 +111,7 @@ vignette("RcisTarget") # open
 ```
 
 ### Reports
-You can use the [Markdown](http://rmarkdown.rstudio.com/authoring_quick_tour.html#markdown_basics) file of this tutorial as template to generate an HTML report with your own data and comments (i.e. copy the file, edit it in RStudio, and click "Knit HTML" when you are done).
+To generate an HTML report with your own data and comments, you can use the `.Rmd file` of this tutorial as template  (i.e. copy the .Rmd file, and edit it as [R notebook](http://rmarkdown.rstudio.com/r_notebooks.html) in RStudio).
 ```{r editRmd, eval=FALSE}
 vignetteFile <- paste(file.path(system.file('doc', package='RcisTarget')), "RcisTarget.Rmd", sep="/")
 # Copy to edit as markdown
@@ -167,11 +169,11 @@ For each species, the packages contain two types of databases: (1) the gene-moti
 For each species, there are two **gene-motif rankings** available: **10kb around the TSS** or **500 bp upstream**, which determine the search space around the transcription start site (TSS). To see the names of the rankings and annotations for each species, you can type on your console: `?RcisTarget.mm9.motifDatabases` or `?RcisTarget.hg9.motifDatabases`. 
 
 Database | Search space
-------- | -----
+------- | ---------------------
 `hg19_500bpUpstream_motifRanking` | 500 bp uptream TSS 
 `hg19_10kbpAroundTss_motifRanking` | 10kbp upstream and 10kbp downstream of the TSS 
 
-**(changing the prefix to the relevant species, i.e. mm9_500bpUpstream_motifRanking)**
+*(Change the prefix to the relevant species, i.e. mm9_500bpUpstream_motifRanking)*
 
 
 ```{r installDatabases, eval=FALSE}
@@ -197,7 +199,7 @@ Database| Motif-TF annotation
 `hg19_direct_motifAnnotation` | Direct 
 `hg19_indirect_motifAnnotation` | Indirect 
 
-**(changing the prefix to the relevant species, i.e. mm9_direct_motifAnnotation)**
+*(Change the prefix to the relevant species, i.e. mm9_500bpUpstream_motifRanking)*
 
 ## Running the analysis 
 
@@ -219,15 +221,15 @@ The first step to estimate the over-representation of each motif on the gene-set
 
 ```{r calcAUC, cache=TRUE}
 motifs_AUC <- calcAUC(geneLists, motifRankings, nCores=4)
-dim(motifs_AUC)
+motifs_AUC
 ```
 
 The AUC is provided as a matrix of Motifs by GeneSets. In principle, the AUC is mostly meant as input for the next step. However, it is also possible to explore the distribution of the scores, for example in a gene-set of interest: 
 
 ```{r AUChistogram, cache=TRUE}
-hist(motifs_AUC[,"hypoxia"], main="hypoxia", xlab="AUC histogram",
+hist(motifs_AUC@AUC["hypoxia",], main="hypoxia", xlab="AUC histogram",
      breaks=100, col="#ff000050", border="darkred")
-nes3 <- (3*sd(motifs_AUC[,"hypoxia"])) + mean(motifs_AUC[,"hypoxia"])
+nes3 <- (3*sd(motifs_AUC@AUC["hypoxia",])) + mean(motifs_AUC@AUC["hypoxia",])
 abline(v=nes3, col="red")
 ```
 
@@ -294,8 +296,11 @@ The final output of RcisTarget is a `data.table` containing the information abou
 
 
 ```{r output}
+motifEnrichmentTable_wGenes_wLogo <- addLogo(motifEnrichmentTable_wGenes)
+
 library(DT)
-datatable(motifEnrichmentTable_wGenes[,-c("enrichedGenes", "TF_indirect"), with=FALSE], 
+datatable(motifEnrichmentTable_wGenes_wLogo[,-c("enrichedGenes", "TF_indirect"), with=FALSE], 
+          escape = FALSE, # To show the logo
           filter="top", options=list(pageLength=5))
 ```
 

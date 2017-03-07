@@ -125,12 +125,12 @@ motifEnrichmentTable_wGenes[,1:9]
 enrGenes <- motifEnrichmentTable_wGenes[1,"enrichedGenes"]
 strsplit(enrGenes, ";")
 
+motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
 
 # Interactive exploration
 library(DT)
-datatable(motifEnrichmentTable_wGenes[,1:9], filter="top", options=list(pageLength=5))
+datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", options=list(pageLength=5))
 }
 \seealso{
 See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
-

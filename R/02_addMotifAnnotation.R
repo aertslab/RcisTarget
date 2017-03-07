@@ -31,23 +31,24 @@
 #' @export
 addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
 {
+  auc <- auc@AUC
   #### Check inputs
   if(!is.null(highlightTFs))
   {
     if(is.null(motifAnnot_direct) && is.null(motifAnnot_indirect)) stop("To hightlight TFs, please provide a motif-TF annotation.")
     if(is.null(names(highlightTFs))) {
       warning("The input TFs are not named, all TFs will be used with all Gene Sets.")
-      highlightTFs <- setNames(rep(list(highlightTFs), ncol(auc)), colnames(auc))
+      highlightTFs <- setNames(rep(list(highlightTFs), nrow(auc)), rownames(auc))
     }
 
-    if(!all(names(highlightTFs) %in% colnames(auc))) warning("TFs 1")
-    if(!all(colnames(auc) %in% names(highlightTFs))) warning("TFs 2")
+    if(!all(names(highlightTFs) %in% rownames(auc))) warning("TFs 1")
+    if(!all(rownames(auc) %in% names(highlightTFs))) warning("TFs 2")
   }
 
   #### Runs "auc.asTable" on each AUC columns i.e. signatures/cells
-  ret <- lapply(colnames(auc), function(geneSet) {
+  ret <- lapply(rownames(auc), function(geneSet) {
       tfs <- highlightTFs[[geneSet]]
-      aucTable <- .auc.asTable(auc[,geneSet], nesThreshold=nesThreshold, digits=digits)
+      aucTable <- .auc.asTable(auc[geneSet,], nesThreshold=nesThreshold, digits=digits)
       if(nrow(aucTable)>0)
       {
         aucTable <- .addTfs(aucTable, motifAnnot_direct=motifAnnot_direct, motifAnnot_indirect=motifAnnot_indirect, highlightTFs=tfs)

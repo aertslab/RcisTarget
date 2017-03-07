@@ -104,6 +104,7 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
                                    geneSets=geneLists,
                                    rankings=motifRankings,
                                    method="aprox")
+
 }
 \seealso{
 Next step in the workflow: \code{\link{addSignificantGenes}}.
@@ -112,4 +113,3 @@ Previous step in the workflow: \code{\link{calcAUC}}.
 
 See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
-

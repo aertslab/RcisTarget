@@ -30,7 +30,8 @@ See \code{vignette("RcisTarget")} for examples and more details.}
 \item{verbose}{Should the function show progress messages? (TRUE / FALSE)}
 }
 \value{
-Matrix of motifs (row) by gene-sets (columns) with the value of AUC for each pair as content.
+Matrix of gene-sets (rows) by motifs (columns) with the value of AUC for each pair as content.
+WARNING: The default databases contain over 18k motifs. Therefore, the size of this matrix is usually too big to show at once. Careful when using functions such as View(), head()...
 }
 \description{
 Calculates the Area Under the Curve (AUC) of each gene-set for each motif ranking. This measure is used in the following steps to identify the DNA motifs that are significantly over-represented in the gene-set.
@@ -95,4 +96,3 @@ Next step in the workflow: \code{\link{addMotifAnnotation}}.
 
 See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
-

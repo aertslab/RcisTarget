@@ -21,7 +21,8 @@
 #' By default it is set to 5\% of the total number of genes in the rankings. Common values range from 1 to 10\%.
 #' See \code{vignette("RcisTarget")} for examples and more details.
 #' @param verbose Should the function show progress messages? (TRUE / FALSE)
-#' @return Matrix of motifs (row) by gene-sets (columns) with the value of AUC for each pair as content.
+#' @return Matrix of gene-sets (rows) by motifs (columns) with the value of AUC for each pair as content.
+#' WARNING: The default databases contain over 18k motifs. Therefore, the size of this matrix is usually too big to show at once. Careful when using functions such as View(), head()...
 #' @seealso Next step in the workflow: \code{\link{addMotifAnnotation}}.
 #'
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
@@ -45,6 +46,7 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
   {
     aucMatrix <- sapply(names(geneSets), function(gSetName)
       .AUC.geneSet(geneSet=geneSets[[gSetName]], rankings=rankings, aucMaxRank=aucMaxRank, gSetName=gSetName))
+    aucMatrix <- t(aucMatrix)
   }else
   {
     # Run each geneSet in parallel
@@ -56,37 +58,37 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
     {
       setNames(list(.AUC.geneSet(geneSet=geneSets[[gSetName]], rankings=rankings, aucMaxRank=aucMaxRank, gSetName=gSetName)), gSetName)
     }
-    aucMatrix <- do.call(cbind, unlist(aucMatrix, recursive = FALSE)[names(geneSets)])
+    aucMatrix <- do.call(rbind, unlist(aucMatrix, recursive = FALSE)[names(geneSets)])
   }
 
   ######################################################################
   ##### Messages for missing genes
-  missinGenes <- aucMatrix[c("missing", "nGenes"), , drop=FALSE]
-  missingPercent <- missinGenes["missing",, drop=FALSE]/missinGenes["nGenes",, drop=FALSE]
+  missinGenes <- aucMatrix[,c("missing", "nGenes") , drop=FALSE]
+  missingPercent <- missinGenes[,"missing", drop=FALSE]/missinGenes[,"nGenes", drop=FALSE]
   if(all(missingPercent>=.80)) stop("Fewer than 20% of the genes in the gene sets are included in the rankings. Check wether the gene IDs in the 'rankings' and 'geneSets' match.")
 
   if(any(missingPercent>.80))
   {
     warning(paste("The following gene sets will be excluded from the analysis (less than 20% of their genes are available):\n",
-     paste(names(missingPercent)[which(missingPercent >= .80)], collapse=", "), sep=""), immediate.=TRUE)
-    aucMatrix <- aucMatrix[,which(missingPercent < .80),drop=FALSE]
+                  paste(names(missingPercent)[which(missingPercent >= .80)], collapse=", "), sep=""), immediate.=TRUE)
+    aucMatrix <- aucMatrix[which(missingPercent < .80),,drop=FALSE]
   }
 
-  if(sum(missinGenes["missing",])>0)
+  if(sum(missinGenes[,"missing"])>0)
   {
     msg1 <- "Genes in the gene sets NOT available in the dataset: \n"
-    msg2 <-  sapply(colnames(missinGenes)[which(missinGenes["missing",]>0)], function(gSetName)
-        paste("\t", gSetName, ": \t", missinGenes["missing",gSetName],
-          " (",round(missingPercent[,gSetName]*100),"% of ", missinGenes["nGenes",gSetName],")",sep=""))
+    msg2 <-  sapply(rownames(missinGenes)[which(missinGenes[,"missing"]>0)], function(gSetName)
+      paste("\t", gSetName, ": \t", missinGenes[gSetName,"missing"],
+            " (",round(missingPercent[gSetName,]*100),"% of ", missinGenes[gSetName,"nGenes"],")",sep=""))
     if(verbose) message(paste(msg1, paste(msg2, collapse="\n"), sep=""))
   }
   # (remove missing genes info from AUC matrix)
-  aucMatrix <- aucMatrix[1:(nrow(aucMatrix)-2),, drop=FALSE]
+  aucMatrix <- aucMatrix[,1:(ncol(aucMatrix)-2), drop=FALSE]
 
 
   ######################################################################
   #### End: Return
-  aucMatrix
+  motifsAUC(AUC=aucMatrix)
 }
 
 .AUC.geneSet <- function(geneSet, rankings, aucMaxRank, gSetName="")  # add?: AUCThreshold
@@ -109,7 +111,6 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
 
   c(auc, missing=missing, nGenes=nGenes)
 }
-
 
 # oneRanking <- gSetRanks[,3, with=FALSE]
 .calcAUC <- function(oneRanking, aucThreshold, maxAUC)

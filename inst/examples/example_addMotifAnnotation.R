@@ -63,3 +63,4 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
                                    geneSets=geneLists,
                                    rankings=motifRankings,
                                    method="aprox")
+
