@@ -227,9 +227,9 @@ motifs_AUC
 The AUC is provided as a matrix of Motifs by GeneSets. In principle, the AUC is mostly meant as input for the next step. However, it is also possible to explore the distribution of the scores, for example in a gene-set of interest: 
 
 ```{r AUChistogram, cache=TRUE}
-hist(motifs_AUC@AUC["hypoxia",], main="hypoxia", xlab="AUC histogram",
+hist(motifs_AUC["hypoxia",], main="hypoxia", xlab="AUC histogram",
      breaks=100, col="#ff000050", border="darkred")
-nes3 <- (3*sd(motifs_AUC@AUC["hypoxia",])) + mean(motifs_AUC@AUC["hypoxia",])
+nes3 <- (3*sd(motifs_AUC["hypoxia",])) + mean(motifs_AUC["hypoxia",])
 abline(v=nes3, col="red")
 ```
 
@@ -298,8 +298,10 @@ The final output of RcisTarget is a `data.table` containing the information abou
 ```{r output}
 motifEnrichmentTable_wGenes_wLogo <- addLogo(motifEnrichmentTable_wGenes)
 
+resultsSubset <- motifEnrichmentTable_wGenes_wLogo[1:20,]
+
 library(DT)
-datatable(motifEnrichmentTable_wGenes_wLogo[,-c("enrichedGenes", "TF_indirect"), with=FALSE], 
+datatable(resultsSubset[,-c("enrichedGenes", "TF_indirect"), with=FALSE], 
           escape = FALSE, # To show the logo
           filter="top", options=list(pageLength=5))
 ```

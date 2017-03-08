@@ -31,7 +31,7 @@
 #' @export
 addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
 {
-  auc <- auc@AUC
+  auc <- getAuc(auc)
   #### Check inputs
   if(!is.null(highlightTFs))
   {

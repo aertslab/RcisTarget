@@ -2,7 +2,8 @@
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 #' @import data.table
-#'
+#' @import AUCell
+#          AUCell::matrixWrapper & its methods
 #' @title Calculate AUC
 #' @description Calculates the Area Under the Curve (AUC) of each gene-set for each motif ranking. This measure is used in the following steps to identify the DNA motifs that are significantly over-represented in the gene-set.
 #' @param geneSets List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})
@@ -88,7 +89,7 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
 
   ######################################################################
   #### End: Return
-  motifsAUC(AUC=aucMatrix)
+  matrixWrapper(matrix=aucMatrix, rowType="gene-set", colType="motif", matrixType="AUC")
 }
 
 .AUC.geneSet <- function(geneSet, rankings, aucMaxRank, gSetName="")  # add?: AUCThreshold
