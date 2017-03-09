@@ -1,3 +1,7 @@
+VERSION 0.7
+----------------------
+- Converted the ranking databases to an S4 class.
+
 VERSION 0.6
 ----------------------
 - Added function addLogo()
