@@ -26,9 +26,10 @@ ____
 Note: From version 0.6+, RcisTarget uses a new format for the ranking databases. As temporary solution, you can convert the current databases with the following code (adapt according to the organism/distance around TSS):
 
 ```
-library(RcisTarget.hg19.motifDatabases)
-data(hg19_10kbpAroundTss_motifRanking) # Addapt database name for 
+library(RcisTarget.mm9.motifDatabases)
+data(mm9_10kbpAroundTss_motifRanking) # Adapt database name
 
-motifRankings <- rankingWrapper(rankings=hg19_10kbpAroundTss_motifRanking, 
-          rowType="gene", colType="motif", org="human", genome="hg19", description="")
+motifRankings <- rankingWrapper(rankings=mm9_10kbpAroundTss_motifRanking, 
+          rowType="gene", colType="motif", org="mouse", genome="mm9", description="")
 ```
+
