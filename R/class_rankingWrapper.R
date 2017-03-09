@@ -1,4 +1,3 @@
-
 #' @title Class to store the motif databases for RcisTarget.
 #' @description
 #' This class is only meant for internal use. Modify at your own risk.
