@@ -29,75 +29,12 @@ setMethod("show",
             message <- paste("Rankings for RcisTarget.", "\n",
                             "  Organism: ", object@org, " (", object@genome,")","\n",
                             "  Number of ", toupper(object@rowType), "S: ", nrow(object@rankings),"\n",
-                            "  Number of ", object@colType, "s: ", ncol(object@rankings),"\n\n",
+                            "  Number of ", object@colType, "s: ", ncol(object@rankings)-1,"\n\n",
                             object@description, sep="")
 
             cat(message)
           }
 )
-
-#' @export
-setMethod('[', signature(x="rankingWrapper"),
-          definition=function(x, i, j, drop){
-            x@rankings[i,j, drop=drop]
-          })
-
-#' @export
-setMethod("subset",
-          signature="rankingWrapper",
-          definition = function(x, elements, select=x@rowType) {
-
-            if(length(select) > 1) stop()
-
-            if(grepl("cell", tolower(select))) {
-              x@rankings <- x@rankings[,elements, drop=FALSE]
-            }else{
-              x@rankings <- x@rankings[elements,, drop=FALSE]
-            }
-            x
-          }
-)
-
-#' @export
-setMethod("dim",
-          signature="rankingWrapper",
-          definition = function(x) {
-            dim(x@rankings)
-          }
-)
-
-#' @export
-setMethod("rownames",
-          signature="rankingWrapper",
-          definition = function(x) {
-            rownames(x@rankings)
-          }
-)
-
-#' @export
-setMethod("colnames",
-          signature="rankingWrapper",
-          definition = function(x) {
-            colnames(x@rankings)
-          }
-)
-
-#' @export
-setMethod("nrow",
-          signature="rankingWrapper",
-          definition = function(x) {
-            nrow(x@rankings)
-          }
-)
-
-#' @export
-setMethod("ncol",
-          signature="rankingWrapper",
-          definition = function(x) {
-            ncol(x@rankings)
-          }
-)
-
 
 ##### Access the rankings:
 #' @export
@@ -105,7 +42,41 @@ setGeneric(name="getRanking", def=function(object) standardGeneric("getRanking")
 setMethod("getRanking",
           signature="rankingWrapper",
           definition = function(object) {
-              object@rankings
+            object@rankings
           }
 )
 
+##### Subset the object:
+#' @export
+setMethod("subset",
+          signature="rankingWrapper",
+          definition = function(x, elements, select=x@rowType) {
+
+            if(length(select) > 1) stop()
+
+            if(grepl("col", tolower(select))) {
+             
+              if(is.numeric(elements))
+              {
+                x@rankings <- x@rankings[, unique(c(1, elements)), with=FALSE]
+              }else{
+                x@rankings <- x@rankings[, unique(c("rn", elements)), with=FALSE]
+              }
+              
+            }else{
+              if(grepl("row", tolower(select))) {
+                if(is.numeric(elements))
+                {
+                  x@rankings <- x@rankings[elements,]
+                }else{
+                  x@rankings <- x@rankings[rn %in% elements]
+                }
+               
+            }}
+            x
+          }
+)
+
+
+# Regular "matrix" methods (rownames, []...) not behave as a data.table. 
+# Get the @ranking slot manually...

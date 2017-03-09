@@ -9,8 +9,10 @@
 #' @param nesThreshold Numeric. NES threshold to calculate the motif significant (3.0 by default). The NES is calculated -for each motif- based on the AUC distribution of all the motifs for the gene-set [(x-mean)/sd].
 #' @param digits Integer. Number of digits for the AUC and NES in the output table.
 #' @param motifAnnot_direct Motif annotation database containing DIRECT annotations of the motif to transcription factors. The names should match the ranking column names.
-#' @param motifAnnot_indirect Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.
-#' @param highlightTFs Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *) of the motif.
+#' @param motifAnnot_bySimilarity Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.
+#' @param highlightTFs Character. If a list of transcription factors is provided,
+#' the column TFinDB in the otuput table will indicate whether any of those TFs are included within the 'direct' annotation (two asterisks, **)
+#' or 'bySimilarity' annotation (one asterisk, *) of the motif.
 #' The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.
 #' @return \code{\link[data.table]{data.table}} with the folowing columns:
 #' \itemize{
@@ -18,9 +20,9 @@
 #' \item motif: ID of the motif (colnames of the ranking, it might be other kind of feature)
 #' \item NES: Normalized enrichment score of the motif in the gene-set
 #' \item AUC: Area Under the Curve (used to calculate the NES)
-#' \item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *)
+#' \item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or bySimilarity annotation (one asterisk, *)
 #' \item TF_direct: Transcription factors annotated to the motif according to 'direct annotation'.
-#' \item TF_indirect: Transcription factors annotated to the motif according to 'indirect annotation'.
+#' \item TF_bySimilarity: Transcription factors annotated to the motif according to 'bySimilarity annotation'.
 #' }
 #' @seealso Next step in the workflow: \code{\link{addSignificantGenes}}.
 #'
@@ -29,13 +31,13 @@
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 #' @example inst/examples/example_addMotifAnnotation.R
 #' @export
-addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
+addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_bySimilarity=NULL, highlightTFs=NULL)
 {
   auc <- getAuc(auc)
   #### Check inputs
   if(!is.null(highlightTFs))
   {
-    if(is.null(motifAnnot_direct) && is.null(motifAnnot_indirect)) stop("To hightlight TFs, please provide a motif-TF annotation.")
+    if(is.null(motifAnnot_direct) && is.null(motifAnnot_bySimilarity)) stop("To hightlight TFs, please provide a motif-TF annotation.")
     if(is.null(names(highlightTFs))) {
       warning("The input TFs are not named, all TFs will be used with all Gene Sets.")
       highlightTFs <- setNames(rep(list(highlightTFs), nrow(auc)), rownames(auc))
@@ -51,7 +53,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
       aucTable <- .auc.asTable(auc[geneSet,], nesThreshold=nesThreshold, digits=digits)
       if(nrow(aucTable)>0)
       {
-        aucTable <- .addTfs(aucTable, motifAnnot_direct=motifAnnot_direct, motifAnnot_indirect=motifAnnot_indirect, highlightTFs=tfs)
+        aucTable <- .addTfs(aucTable, motifAnnot_direct=motifAnnot_direct, motifAnnot_bySimilarity=motifAnnot_bySimilarity, highlightTFs=tfs)
         aucTable <- data.table(geneSet=geneSet, aucTable)
       }else{
         aucTable <- NULL
@@ -64,7 +66,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
   # library(data.table)
   ret <- data.table::rbindlist(ret)
 
-  colnames(ret)[which(colnames(ret) == "ranking")] <- "motif"
+  if(nrow(ret)>0) colnames(ret)[which(colnames(ret) == "ranking")] <- "motif"
   return(ret)
 }
 
@@ -94,19 +96,19 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
 }
 
 #' @import data.table
-.addTfs <- function(aucTable, motifAnnot_direct=NULL, motifAnnot_indirect=NULL, highlightTFs=NULL)
+.addTfs <- function(aucTable, motifAnnot_direct=NULL, motifAnnot_bySimilarity=NULL, highlightTFs=NULL)
 {
   if(!is.null(highlightTFs))
   {
     aucTable <- data.table(aucTable, highlightedTFs=paste(highlightTFs, collapse=", ") , TFinDB="")
-    tmp <- .tfInAnnot(aucTable$motif, inputTFs=highlightTFs, motifAnnot_direct=motifAnnot_direct, motifAnnot_indirect=motifAnnot_indirect)
-    if(!is.null(motifAnnot_indirect)){
-      wMotifs <- names(tmp$indirectAnnot)[which(tmp$indirectAnnot)]
+    tmp <- .tfInAnnot(aucTable$motif, inputTFs=highlightTFs, motifAnnot_direct=motifAnnot_direct, motifAnnot_bySimilarity=motifAnnot_bySimilarity)
+    if(!is.null(motifAnnot_bySimilarity)){
+      wMotifs <- names(tmp$bySimilarityAnnot)[which(tmp$bySimilarityAnnot)]
       aucTable[which(aucTable$motif %in% wMotifs),"TFinDB"] <- "*"
     }
     if(!is.null(motifAnnot_direct)) {
       wMotifs <- names(tmp$directAnnot)[which(tmp$directAnnot)]
-      aucTable[which(aucTable$motif %in% wMotifs),"TFinDB"] <- "**" # (Overrides indirect)
+      aucTable[which(aucTable$motif %in% wMotifs),"TFinDB"] <- "**" # (Overrides bySimilarity)
     }
   }
 
@@ -118,12 +120,12 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
     aucTable <- data.table(aucTable, TF_direct=TF_direct)
   }
 
-  if(!is.null(motifAnnot_indirect))
+  if(!is.null(motifAnnot_bySimilarity))
   {
-    TF_indirect <- sapply(aucTable$motif, function(x) {
-      paste(motifAnnot_indirect[[x]][,1], collapse="; ")
+    TF_bySimilarity <- sapply(aucTable$motif, function(x) {
+      paste(motifAnnot_bySimilarity[[x]][,1], collapse="; ")
     })
-    aucTable <- data.table(aucTable, TF_indirect=TF_indirect)
+    aucTable <- data.table(aucTable, TF_bySimilarity=TF_bySimilarity)
   }
   aucTable
 }
@@ -132,7 +134,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
 # Not exclusive!
 # TO DO: Optimize??
 #' @import data.table
-.tfInAnnot <- function(motifList, inputTFs, motifAnnot_direct=NULL, motifAnnot_indirect=NULL)
+.tfInAnnot <- function(motifList, inputTFs, motifAnnot_direct=NULL, motifAnnot_bySimilarity=NULL)
 {
   in000 <- NULL
   in001 <- NULL
@@ -143,13 +145,13 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direc
     in000 <- sapply(motifAnnot_direct[motifs_00], function(x) any(inputTFs %in% x[,1]))
     if(length(in000)==0) in000 <- setNames(rep(FALSE, length(motifList)), motifList)
   }
-  if(!is.null(motifAnnot_indirect))
+  if(!is.null(motifAnnot_bySimilarity))
   {
-    motifs_001 <- motifList[which(motifList %in% names(motifAnnot_indirect))]
-    in001 <- sapply(motifAnnot_indirect[motifs_001], function(x) any(inputTFs %in% x[,1]))
+    motifs_001 <- motifList[which(motifList %in% names(motifAnnot_bySimilarity))]
+    in001 <- sapply(motifAnnot_bySimilarity[motifs_001], function(x) any(inputTFs %in% x[,1]))
     if(length(in001)==0) in001 <- setNames(rep(FALSE, length(motifList)), motifList)
   }
-  list(directAnnot=in000, indirectAnnot=in001)
+  list(directAnnot=in000, bySimilarityAnnot=in001)
 }
 
 

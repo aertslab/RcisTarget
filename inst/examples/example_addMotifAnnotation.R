@@ -8,15 +8,16 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
 # Motif databases
 # (Select the package/database according to the organism and distance around TSS)
-library(RcisTarget.hg19.motifDatabases)
+library(RcisTarget.hg19.motifDatabases.20k)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 
 # Fake-database with 5000 random motifs (to run the example faster)
 # DO NOT use in real analyses!
 set.seed(123)
-motifRankings <- hg19_10kbpAroundTss_motifRanking[,c("rn",
-    sample(colnames(hg19_10kbpAroundTss_motifRanking), 5000)), with=FALSE]
+motifRankings <- subset(hg19_10kbpAroundTss_motifRanking,
+    sample(2:ncol(hg19_10kbpAroundTss_motifRanking@rankings), 5000), select="col")
+motifRankings
 
 # RcisTarget
 # Step 1. Calculate AUC
@@ -27,15 +28,15 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 # Select significant motifs, add TF annotation & format as table
 data(hg19_direct_motifAnnotation)
 
-motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, highlightTFs="HIF1A",
+motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
    motifAnnot_direct=hg19_direct_motifAnnotation)
 
 # Adding indirect annotation and modifying some options
-data(hg19_indirect_motifAnnotation)
+data(hg19_bySimilarity_motifAnnotation)
 motifEnrichment_wIndirect <- addMotifAnnotation(motifs_AUC, nesThreshold=2,
                         motifAnnot_direct=hg19_direct_motifAnnotation,
-                        motifAnnot_indirect=hg19_indirect_motifAnnotation,
-                        highlightTFs="HIF1A", digits=2)
+                        motifAnnot_bySimilarity=hg19_bySimilarity_motifAnnotation,
+                        highlightTFs = "HIF1A", digits=3)
 
 # Exploring the output:
 # Note: Using the fake-database, these results are not meaningful.
@@ -44,17 +45,14 @@ motifEnrichment_wIndirect <- addMotifAnnotation(motifs_AUC, nesThreshold=2,
 nrow(motifEnrichmentTable)
 
 # Interactive exploration
-library(DT)
-datatable(motifEnrichmentTable, filter="top", options=list(pageLength=50))
+motifEnrichmentTable <- addLogo(motifEnrichmentTable)
+DT::datatable(motifEnrichmentTable, filter="top", escape=FALSE, options=list(pageLength=50))
+# Note: If using the fake database, the results of this analysis are meaningless
 
 # The object returned is a data.table (for faster computation),
 # which has a diferent syntax from the standard data.frame or matrix
-class(motifEnrichmentTable)
-motifEnrichmentTable[,1:4, with=FALSE]
-
-# Feel free to convert it to a data.frame:
-motifEnrichmentTable.df <- as.data.frame(motifEnrichmentTable)
-head(motifEnrichmentTable.df[,1:6])
+# Feel free to convert it to a data.frame (as.data.frame())
+motifEnrichmentTable[,1:6]
 
 
 ##################################################

@@ -4,14 +4,14 @@
 \alias{addLogo}
 \title{Add motif logo to RcisTarget results table}
 \usage{
-addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v7")
+addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v8")
 }
 \arguments{
 \item{motifEnrDT}{Results from RcisTarget (data.table)}
 
 \item{addHTML}{Whether to add the HTML tag <img> around the URL or not (boolean).}
 
-\item{dbVersion}{For current databases use "v7"}
+\item{dbVersion}{For current databases use "v8"}
 }
 \value{
 Returns the results table with a new column: 'logo'.

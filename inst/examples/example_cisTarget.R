@@ -20,28 +20,26 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
 # Select the package/database according to the organism and distance around TSS
 # Load the motif databases
-library(RcisTarget.hg19.motifDatabases)
+library(RcisTarget.hg19.motifDatabases.20k)
+data(hg19_direct_motifAnnotation)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
-
-data(hg19_direct_motifAnnotation)
 
 # This example is run using a fake-database with 5000 random motifs
 # (for faster execution, only to explore the workflow & interface)
 # DO NOT use in real analyses! To identify statistically significant motifs,
 # RcisTarget needs the whole motif database.
 set.seed(123)
-motifRankings <- hg19_10kbpAroundTss_motifRanking[,c("rn",
-        sample(colnames(hg19_10kbpAroundTss_motifRanking), 5000)), with=FALSE]
-
+motifRankings <- subset(hg19_10kbpAroundTss_motifRanking,
+     sample(2:ncol(hg19_10kbpAroundTss_motifRanking@rankings), 5000), select="col")
+motifRankings
 
 ##################################################
 # Run (R)cisTarget
 
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
                        motifAnnot_direct=hg19_direct_motifAnnotation,
-                       highlightTFs="HIF1A", nesThreshold=5,
-                       geneErnMethod="aprox", nCores=2)
+                       nesThreshold=3.5, geneErnMethod="aprox", nCores=2)
 
 ##################################################
 # Exploring the output:
@@ -55,19 +53,17 @@ colnames(motifEnrichmentTable_wGenes)
 
 # The object returned is a data.table (for faster computation),
 # which has a diferent syntax from the standard data.frame or matrix
+# Feel free to convert it to a data.frame (as.data.frame())
 class(motifEnrichmentTable_wGenes)
-motifEnrichmentTable_wGenes[,1:9, with=FALSE]
-
-# Feel free to convert it to a data.frame:
-motifEnrichmentTable_wGenes <- as.data.frame(motifEnrichmentTable_wGenes)
-motifEnrichmentTable_wGenes[,1:9]
+motifEnrichmentTable_wGenes[,1:5]
 
 # Enriched genes
-enrGenes <- motifEnrichmentTable_wGenes[1,"enrichedGenes"]
+enrGenes <- as.character(motifEnrichmentTable_wGenes[1,"enrichedGenes"])
 strsplit(enrGenes, ";")
 
-motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
+
 
 # Interactive exploration
-library(DT)
-datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", options=list(pageLength=5))
+motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
+DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", options=list(pageLength=5))
+# Note: If using the fake database, the results of this analysis are meaningless

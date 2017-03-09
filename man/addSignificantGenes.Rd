@@ -97,6 +97,8 @@ data(hg19_direct_motifAnnotation)
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=5,
                       motifAnnot_direct=hg19_direct_motifAnnotation)
 
+# Note: If using the fake database, the results of this analysis are meaningless
+
 ##################################################
 # (This step: Step 3)
 # Identify the genes that have the motif significantly enriched
@@ -148,6 +150,7 @@ onlyGenes <- getSignificantGenes(geneSet=geneLists$hypoxia,
                             plotCurve=TRUE,
                             rankings=motifRankings,
                             method="aprox")
+
 
 }
 \seealso{

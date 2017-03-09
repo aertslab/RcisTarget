@@ -48,6 +48,8 @@
 #' @export
 addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
 {
+  if(isS4(rankings)) rankings <- rankings@rankings
+
   # suppressPackageStartupMessages(library(data.table))
   method <- tolower(method[1])
   if(!method %in% c("icistarget", "icistargetaprox", "aprox")) stop("'method' should be either 'iCisTarget' or 'iCisTargetAprox'.")
@@ -87,11 +89,14 @@ getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, meth
   ################################################################################
   # Argument checks & init. vars
   # aucThreshold <- 0.05*nrow(rankings)
+  if(isS4(rankings)) rankings <- rankings@rankings
+
   maxRank <- round(maxRank)
   if(is.null(signifRankingNames)) {
     signifRankingNames <- colnames(rankings)
     warning("'signifRankingNames' has not been provided. The significant genes will be calculated for all rankings.")
   }
+
   signifRankingNames <- unname(signifRankingNames)
   if(!all(genesFormat %in% c("geneList", "incidMatrix", "none"))) stop('"genesFormat" should be ither "geneList" and/or "incidMatrix".')
 

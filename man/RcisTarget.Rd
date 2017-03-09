@@ -5,8 +5,8 @@
 \title{cisTarget}
 \usage{
 cisTarget(geneSets, motifRankings, motifAnnot_direct = NULL,
-  motifAnnot_indirect = NULL, highlightTFs = NULL, nesThreshold = 3,
-  aucThresholdPERC = 0.05, geneErnMethod = "aprox",
+  motifAnnot_bySimilarity = NULL, highlightTFs = NULL, nesThreshold = 3,
+  aucMaxRank = 0.05 * nrow(motifRankings@rankings), geneErnMethod = "aprox",
   geneErnMmaxRank = 5000, nCores = 1, verbose = TRUE)
 }
 \arguments{
@@ -22,13 +22,13 @@ See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDa
 
 \item{motifAnnot_direct}{Motif annotation database containing DIRECT annotations of the motif to transcription factors.}
 
-\item{motifAnnot_indirect}{Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.}
+\item{motifAnnot_bySimilarity}{Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.}
 
-\item{highlightTFs}{Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or indirect annotation (one asterisk, *) of the motif. The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.}
+\item{highlightTFs}{Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or bySimilarity annotation (one asterisk, *) of the motif. The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.}
 
 \item{nesThreshold}{Numeric. NES threshold to calculate the motif significant (3.0 by default). The NES is calculated -for each motif- based on the AUC distribution of all the motifs for the gene-set [(x-mean)/sd]. The motifs are considered significantly enriched if they pass the the Normalized Enrichment Score (NES) threshold.}
 
-\item{aucThresholdPERC}{Threshold to calculate the AUC.
+\item{aucMaxRank}{Threshold to calculate the AUC.
 In a simplified way, the AUC value represents the fraction of genes -within the top X genes in the ranking- that are included in the signature.
 The parameter 'aucThresholdPERC' allows to modify the percentage of genes (of the top of the ranking) that is used to perform this computation.
 By default it is set to 5\% of the total number of genes in the rankings. Common values range from 1 to 10\%.}
@@ -79,28 +79,26 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
 # Select the package/database according to the organism and distance around TSS
 # Load the motif databases
-library(RcisTarget.hg19.motifDatabases)
+library(RcisTarget.hg19.motifDatabases.20k)
+data(hg19_direct_motifAnnotation)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
-
-data(hg19_direct_motifAnnotation)
 
 # This example is run using a fake-database with 5000 random motifs
 # (for faster execution, only to explore the workflow & interface)
 # DO NOT use in real analyses! To identify statistically significant motifs,
 # RcisTarget needs the whole motif database.
 set.seed(123)
-motifRankings <- hg19_10kbpAroundTss_motifRanking[,c("rn",
-        sample(colnames(hg19_10kbpAroundTss_motifRanking), 5000)), with=FALSE]
-
+motifRankings <- subset(hg19_10kbpAroundTss_motifRanking,
+     sample(2:ncol(hg19_10kbpAroundTss_motifRanking@rankings), 5000), select="col")
+motifRankings
 
 ##################################################
 # Run (R)cisTarget
 
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
                        motifAnnot_direct=hg19_direct_motifAnnotation,
-                       highlightTFs="HIF1A", nesThreshold=5,
-                       geneErnMethod="aprox", nCores=2)
+                       nesThreshold=3.5, geneErnMethod="aprox", nCores=2)
 
 ##################################################
 # Exploring the output:
@@ -114,22 +112,20 @@ colnames(motifEnrichmentTable_wGenes)
 
 # The object returned is a data.table (for faster computation),
 # which has a diferent syntax from the standard data.frame or matrix
+# Feel free to convert it to a data.frame (as.data.frame())
 class(motifEnrichmentTable_wGenes)
-motifEnrichmentTable_wGenes[,1:9, with=FALSE]
-
-# Feel free to convert it to a data.frame:
-motifEnrichmentTable_wGenes <- as.data.frame(motifEnrichmentTable_wGenes)
-motifEnrichmentTable_wGenes[,1:9]
+motifEnrichmentTable_wGenes[,1:5]
 
 # Enriched genes
-enrGenes <- motifEnrichmentTable_wGenes[1,"enrichedGenes"]
+enrGenes <- as.character(motifEnrichmentTable_wGenes[1,"enrichedGenes"])
 strsplit(enrGenes, ";")
 
-motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
+
 
 # Interactive exploration
-library(DT)
-datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", options=list(pageLength=5))
+motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
+DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", options=list(pageLength=5))
+# Note: If using the fake database, the results of this analysis are meaningless
 }
 \seealso{
 See the package vignette for examples and more details: \code{vignette("RcisTarget")}
