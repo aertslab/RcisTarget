@@ -21,3 +21,14 @@ source("https://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")
 
 A **[tutorial](http://scenic.aertslab.org/tutorials/RcisTarget_tutorial.html)** (vignette) is included in the package.
 An HTML version of the tutorial, and the **databases** required to use RcisTarget are available at http://scenic.aertslab.org.
+
+____
+Note: From version 0.6+, RcisTarget uses a new format for the ranking databases. As temporary solution, you can convert the current databases with the following code (adapt according to the organism/distance around TSS):
+
+```
+library(RcisTarget.hg19.motifDatabases)
+data(hg19_10kbpAroundTss_motifRanking) # Addapt database name for 
+
+motifRankings <- rankingWrapper(rankings=hg19_10kbpAroundTss_motifRanking, 
+          rowType="gene", colType="motif", org="human", genome="hg19", description="")
+```
