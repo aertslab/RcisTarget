@@ -35,7 +35,8 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
   if(is.null(names(geneSets))) stop("geneSets should be a named list.")
   if(nCores > length(geneSets)) nCores <- length(geneSets) # No point in using more...
 
-  if(!is.data.table(rankings)) stop("Rankings should be a data.table (i.e. genes x [cells or motifs])")
+  if(isS4(rankings)) rankings <- rankings@rankings
+  if(!is.data.table(rankings)) stop("Rankings does not have the right format.")
   # if(!key(rankings) == "rn") stop("The rankings key should be 'rn'.")
   allGenes <- unique(unlist(geneSets))
   if(sum(allGenes %in% rankings$rn)/length(allGenes) < .80) stop("Fewer than 80% of the genes in the gene sets are included in the rankings. Check wether the gene IDs in the 'rankings' and 'geneSets' match.")
