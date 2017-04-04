@@ -5,7 +5,7 @@
 \title{Add motif annotation}
 \usage{
 addMotifAnnotation(auc, nesThreshold = 3, digits = 3,
-  motifAnnot_direct = NULL, motifAnnot_bySimilarity = NULL,
+  motifAnnot_direct = NULL, motifAnnot_inferred = NULL,
   highlightTFs = NULL)
 }
 \arguments{
@@ -17,11 +17,11 @@ addMotifAnnotation(auc, nesThreshold = 3, digits = 3,
 
 \item{motifAnnot_direct}{Motif annotation database containing DIRECT annotations of the motif to transcription factors. The names should match the ranking column names.}
 
-\item{motifAnnot_bySimilarity}{Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.}
+\item{motifAnnot_inferred}{Motif annotation database containing the inferred annotations of the motif to transcription factors based on motif similarity.}
 
 \item{highlightTFs}{Character. If a list of transcription factors is provided,
 the column TFinDB in the otuput table will indicate whether any of those TFs are included within the 'direct' annotation (two asterisks, **)
-or 'bySimilarity' annotation (one asterisk, *) of the motif.
+or 'inferred' annotation (one asterisk, *) of the motif.
 The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.}
 }
 \value{
@@ -31,9 +31,9 @@ The vector can be named to indicate which TF to highlight for each gene-set. Oth
 \item motif: ID of the motif (colnames of the ranking, it might be other kind of feature)
 \item NES: Normalized enrichment score of the motif in the gene-set
 \item AUC: Area Under the Curve (used to calculate the NES)
-\item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or bySimilarity annotation (one asterisk, *)
+\item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or inferred annotation (one asterisk, *)
 \item TF_direct: Transcription factors annotated to the motif according to 'direct annotation'.
-\item TF_bySimilarity: Transcription factors annotated to the motif according to 'bySimilarity annotation'.
+\item TF_inferred: Transcription factors annotated to the motif according to 'inferred annotation'.
 }
 }
 \description{

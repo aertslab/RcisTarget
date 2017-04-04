@@ -29,7 +29,7 @@
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 #' @example inst/examples/example_workflow.R
 #' @export
-calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(motifRankings@rankings), verbose=TRUE) #, seed=123, plotHist=TRUE
+calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE) #, seed=123, plotHist=TRUE
 {
   if(!is.list(geneSets)) stop("geneSets should be a named list.")
   if(is.null(names(geneSets))) stop("geneSets should be a named list.")

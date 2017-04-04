@@ -4,8 +4,8 @@
 \alias{calcAUC}
 \title{Calculate AUC}
 \usage{
-calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 *
-  nrow(motifRankings@rankings), verbose = TRUE)
+calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
+  verbose = TRUE)
 }
 \arguments{
 \item{geneSets}{List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})}

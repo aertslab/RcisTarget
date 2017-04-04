@@ -1,24 +1,32 @@
 Package: RcisTarget
 Type: Package
-Title: RcisTarget: Identify transcription factor binding motifs enriched on a gene list
-Version: 0.7.2
-Date: 2017-03-08
-Author: Sara Aibar, Stein Aerts. Laboratory of Computational Biology, KU Leuven Center for Human Genetics. Leuven, Belgium.
+Title: RcisTarget: Identify transcription factor binding motifs enriched on a
+    gene list
+Version: 0.99.0
+Date: 2017-04-04
+Author: Sara Aibar, Stein Aerts. Laboratory of Computational Biology. VIB-KU
+    Leuven Center for Brain & Disease Research. Leuven, Belgium
 Maintainer: Sara Aibar <sara.aibar@kuleuven.vib.be>
-Description: Identify transcription factor binding motifs enriched on a gene list.
+Description: RcisTarget is an R-package to identify transcription factor binding
+    motifs (TFBS) over-represented on a gene list.
 URL: http://scenic.aertslab.org
-Imports: data.table, BiocGenerics, AUCell
+Imports:
+    data.table,
+    BiocGenerics,
+    AUCell
 Enhances: doMC, doRNG, zoo
-Suggests: visNetwork,
-  DT,
-  RcisTarget.hg19.motifDatabases,
-  igraph,
-  BiocStyle,
-  knitr,
-  rmarkdown,
-  testthat
+Suggests:
+    Biobase,
+    visNetwork,
+    DT,
+    RcisTarget.hg19.motifDatabases.20k,
+    igraph,
+    BiocStyle,
+    knitr,
+    rmarkdown,
+    testthat
 License: file LICENSE
-biocViews: GeneRegulation, MotifAnnotation, Transcription
+biocViews: GeneRegulation, MotifAnnotation, Transcriptomics, Transcription
 LazyData: TRUE
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
