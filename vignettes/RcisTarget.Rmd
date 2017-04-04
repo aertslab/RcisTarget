@@ -22,7 +22,7 @@ library(RcisTarget.hg19.motifDatabases.20k)
 library(DT)
 library(data.table)
 #require(visNetwork)
-library(doMC);library(doRNG) # Loaded by the package, to avoid messages
+# library(doMC);library(doRNG) # Loaded by the package, to avoid messages. Not available in windows.
 })
 ```
 
@@ -72,7 +72,7 @@ motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, motifAnnot_direct=hg19_di
 motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable, 
                                                    geneSets=geneLists,
                                                    rankings=motifRankings, 
-                                                   nCores=4,
+                                                   nCores=1,
                                                    method="iCisTarget")
 ```
 
@@ -84,8 +84,8 @@ RcisTarget uses species-specific databases which are provided as independent R-p
   
 Species | Package
 ------- | -----
-Human (hg19) | `r Biocpkg("SCENIC.hg19.motifDatabases")`
-Mouse (mm9)  | `r Biocpkg("SCENIC.mm9.motifDatabases")`
+Human (hg19) | `r Biocpkg("SCENIC.hg19.motifDatabases.20k")`
+Mouse (mm9)  | `r Biocpkg("SCENIC.mm9.motifDatabases.20k")`
 
 
 In addition, some extra packages can be installed to run RcisTarget in parallel or run the interactive examples in this tutorial: 
@@ -190,14 +190,14 @@ motifRankings
 ```
 
 ### Motif annotations
-All the calculations performed by RcisTarget are motif-based. However, most users will be interested on TFs potentially regulating the gene-set. The association of motif to transcription factors are provided in two databases: one containing the TFs **directly** annotated to the motif (i.e. in the source motif database), and an expanded annotation based on motif **similarity**.
+All the calculations performed by RcisTarget are motif-based. However, most users will be interested on TFs potentially regulating the gene-set. The association of motif to transcription factors are provided in two databases: one containing the TFs **directly** annotated to the motif (i.e. in the source motif database), and **inferred** annotation based on motif similarity.
 
-These databases dan be provided as `motifAnnot_direct` or `motifAnnot_bySimilarity` arguments to `cisTarget()` or `addMotifAnnotation()`.
+These databases dan be provided as `motifAnnot_direct` or `motifAnnot_inferred` arguments to `cisTarget()` or `addMotifAnnotation()`.
 
 Database| Motif-TF annotation
 ------- | -----
 `hg19_direct_motifAnnotation` | Direct 
-`hg19_bySimilarity_motifAnnotation` | By similarity 
+`hg19_inferred_motifAnnotation` | Inferred by similarity 
 
 *(Change the prefix to the relevant species, i.e. mm9_500bpUpstream_motifRanking)*
 
@@ -212,7 +212,7 @@ It is also possible to run these steps as individual commands. For example, to s
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, 
          motifRankings,
          motifAnnot_direct=hg19_direct_motifAnnotation,
-         motifAnnot_bySimilarity=hg19_bySimilarity_motifAnnotation)
+         motifAnnot_inferred=hg19_inferred_motifAnnotation)
 ```
 
 ## Advanced: Execute step by step
@@ -220,7 +220,7 @@ motifEnrichmentTable_wGenes <- cisTarget(geneLists,
 The first step to estimate the over-representation of each motif on the gene-set is to calculate the Area Under the Curve (AUC) for each pair of motif-geneSet. This is calculated based on the recovery curve of the gene-set on the motif ranking (genes ranked decreasingly by the score of motif in its proximity, as provided in the motifRanking database).
 
 ```{r calcAUC, cache=TRUE}
-motifs_AUC <- calcAUC(geneLists, motifRankings, nCores=4)
+motifs_AUC <- calcAUC(geneLists, motifRankings, nCores=1)
 ```
 
 The AUC is provided as a matrix of Motifs by GeneSets. In principle, the AUC is mostly meant as input for the next step. However, it is also possible to explore the distribution of the scores, for example in a gene-set of interest: 
@@ -239,17 +239,17 @@ Furthermore, this step also allows to add the TFs annotated to the motif.
 
 ```{r addMotifAnnotation, cache=TRUE}
 data(hg19_direct_motifAnnotation)
-data(hg19_bySimilarity_motifAnnotation)
+data(hg19_inferred_motifAnnotation)
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=3, 
                      motifAnnot_direct=hg19_direct_motifAnnotation,
-                     motifAnnot_bySimilarity=hg19_bySimilarity_motifAnnotation,
+                     motifAnnot_inferred=hg19_inferred_motifAnnotation,
                      highlightTFs=list(hypoxia="HIF1A"))
 ```
 
 ```{r}
 class(motifEnrichmentTable)
 dim(motifEnrichmentTable)
-head(motifEnrichmentTable[,-"TF_bySimilarity", with=FALSE])
+head(motifEnrichmentTable[,-"TF_inferred", with=FALSE])
 ```
 
 ### 3. Identify the genes with the best enrichment for each Motif
@@ -286,9 +286,9 @@ The final output of RcisTarget is a `data.table` containing the information abou
 * motif: ID of the motif
 * NES: Normalized enrichment score of the motif in the gene-set
 * AUC: Area Under the Curve (used to calculate the NES)
-* TFinDB: Indicates whether the *highlightedTFs* are included within the direct annotation (two asterisks) or bySimilarity annotation (one asterisk).
+* TFinDB: Indicates whether the *highlightedTFs* are included within the direct annotation (two asterisks) or inferred annotation (one asterisk).
 * TF_direct: Transcription factors annotated to the motif according to 'direct annotation'.
-* TF_bySimilarity: Transcription factors annotated to the motif according to 'bySimilarity annotation'.
+* TF_inferred: Transcription factors annotated to the motif according to 'inferred annotation'.
 * enrichedGenes: Genes that are highly ranked for the given motif. 
 * nErnGenes: Number of genes highly ranked
 * rankAtMax: Ranking at the maximum enrichment, used to determine the number of enriched genes.
@@ -300,7 +300,7 @@ motifEnrichmentTable_wGenes_wLogo <- addLogo(motifEnrichmentTable_wGenes)
 resultsSubset <- motifEnrichmentTable_wGenes_wLogo[1:20,]
 
 library(DT)
-datatable(resultsSubset[,-c("enrichedGenes", "TF_bySimilarity"), with=FALSE], 
+datatable(resultsSubset[,-c("enrichedGenes", "TF_inferred"), with=FALSE], 
           escape = FALSE, # To show the logo
           filter="top", options=list(pageLength=5))
 ```

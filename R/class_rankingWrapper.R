@@ -1,4 +1,5 @@
 #' @title Class to store the motif databases for RcisTarget.
+#' @aliases getRanking
 #' @description
 #' This class is only meant for internal use. Modify at your own risk.
 #'
@@ -22,6 +23,7 @@ rankingWrapper <- setClass(
   )
 )
 
+#' @aliases rankingWrapper
 #' @export
 setMethod("show",
           signature="rankingWrapper",
@@ -37,6 +39,7 @@ setMethod("show",
 )
 
 ##### Access the rankings:
+#' @aliases rankingWrapper
 #' @export
 setGeneric(name="getRanking", def=function(object) standardGeneric("getRanking"))
 setMethod("getRanking",
@@ -47,6 +50,7 @@ setMethod("getRanking",
 )
 
 ##### Subset the object:
+#' @aliases rankingWrapper
 #' @export
 setMethod("subset",
           signature="rankingWrapper",
@@ -55,14 +59,14 @@ setMethod("subset",
             if(length(select) > 1) stop()
 
             if(grepl("col", tolower(select))) {
-             
+
               if(is.numeric(elements))
               {
                 x@rankings <- x@rankings[, unique(c(1, elements)), with=FALSE]
               }else{
                 x@rankings <- x@rankings[, unique(c("rn", elements)), with=FALSE]
               }
-              
+
             }else{
               if(grepl("row", tolower(select))) {
                 if(is.numeric(elements))
@@ -71,12 +75,28 @@ setMethod("subset",
                 }else{
                   x@rankings <- x@rankings[rn %in% elements]
                 }
-               
+
             }}
             x
           }
 )
 
 
-# Regular "matrix" methods (rownames, []...) not behave as a data.table. 
-# Get the @ranking slot manually...
+# Regular "matrix" methods (rownames, []...) not behave as a data.table.
+# Get from the @ranking slot manually...
+
+#' @export
+setMethod("nrow",
+          signature="matrixWrapper",
+          definition = function(x) {
+            nrow(x@ranking)
+          }
+)
+
+#' @export
+setMethod("ncol",
+          signature="matrixWrapper",
+          definition = function(x) {
+            ncol(x@ranking)
+          }
+)
