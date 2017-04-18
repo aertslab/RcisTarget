@@ -130,3 +130,4 @@ DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", o
 \seealso{
 See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
+

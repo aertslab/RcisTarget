@@ -26,6 +26,9 @@ library(data.table)
 })
 ```
 
+> Note for **development** version: The **database** packages are still not included in Bioconductor. They can be downloaded from http://scenic.aertslab.org
+
+
 # What is RcisTarget?
 RcisTarget is an R-package to identify transcription factor (TF) binding motifs over-represented on a gene list. 
 
@@ -225,7 +228,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings, nCores=1)
 
 The AUC is provided as a matrix of Motifs by GeneSets. In principle, the AUC is mostly meant as input for the next step. However, it is also possible to explore the distribution of the scores, for example in a gene-set of interest: 
 
-```{r AUChistogram, cache=TRUE}
+```{r AUChistogram, cache=TRUE, fig.height=5, fig.width=5}
 hist(motifs_AUC["hypoxia",], main="hypoxia", xlab="AUC histogram",
      breaks=100, col="#ff000050", border="darkred")
 nes3 <- (3*sd(motifs_AUC["hypoxia",])) + mean(motifs_AUC["hypoxia",])
@@ -267,7 +270,7 @@ dim(motifEnrichmentTable_wGenes)
 ```
 
 Plot for a few motifs:
-```{r getSignificantGenes, fig.height=7}
+```{r getSignificantGenes, fig.height=7, fig.width=7}
 geneSetName <- "hypoxia"
 selectedMotifs <- c("cisbp__M6275", sample(motifEnrichmentTable$motif, 2))
 par(mfrow=c(2,2))

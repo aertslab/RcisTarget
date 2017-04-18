@@ -96,3 +96,4 @@ Next step in the workflow: \code{\link{addMotifAnnotation}}.
 
 See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
+
