@@ -89,7 +89,7 @@ setMethod("subset",
 setMethod("nrow",
           signature="rankingWrapper",
           definition = function(x) {
-            nrow(x@ranking)
+            nrow(x@rankings)
           }
 )
 
@@ -97,6 +97,6 @@ setMethod("nrow",
 setMethod("ncol",
           signature="rankingWrapper",
           definition = function(x) {
-            ncol(x@ranking)
+            ncol(x@rankings)
           }
 )
