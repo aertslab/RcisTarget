@@ -14,7 +14,7 @@ To install this BETA version, you can run the following commands from R:
 devtools::install_github("aertslab/RcisTarget")
 
 # You might need to install these packages first:
-install.packages("devtools", "data.table", "zoo", "BiocGenerics", "AUCell")
+install.packages(c("devtools", "data.table", "zoo", "BiocGenerics", "AUCell"))
 source("https://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")
 ```
 
