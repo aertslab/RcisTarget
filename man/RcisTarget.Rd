@@ -5,7 +5,7 @@
 \title{cisTarget}
 \usage{
 cisTarget(geneSets, motifRankings, motifAnnot_direct = NULL,
-  motifAnnot_bySimilarity = NULL, highlightTFs = NULL, nesThreshold = 3,
+  motifAnnot_inferred = NULL, highlightTFs = NULL, nesThreshold = 3,
   aucMaxRank = 0.05 * nrow(motifRankings@rankings), geneErnMethod = "aprox",
   geneErnMmaxRank = 5000, nCores = 1, verbose = TRUE)
 }
@@ -22,7 +22,7 @@ See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDa
 
 \item{motifAnnot_direct}{Motif annotation database containing DIRECT annotations of the motif to transcription factors.}
 
-\item{motifAnnot_bySimilarity}{Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.}
+\item{motifAnnot_inferred}{Motif annotation database containing the expanded annotations of the motif to transcription factors based on inference by motif similarity.}
 
 \item{highlightTFs}{Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or bySimilarity annotation (one asterisk, *) of the motif. The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.}
 
@@ -130,4 +130,3 @@ DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", o
 \seealso{
 See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 }
-

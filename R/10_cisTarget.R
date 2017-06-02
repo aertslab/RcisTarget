@@ -21,7 +21,7 @@
 #' }
 #' See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDatabases)}
 #' @param motifAnnot_direct Motif annotation database containing DIRECT annotations of the motif to transcription factors.
-#' @param motifAnnot_bySimilarity Motif annotation database containing the expanded annotations of the motif to transcription factors based on motif similarity.
+#' @param motifAnnot_inferred Motif annotation database containing the expanded annotations of the motif to transcription factors based on inference by motif similarity.
 #' @param highlightTFs Character. If a list of transcription factors is provided, the column TFinDB in the otuput table will indicate whether any of those TFs are included within the direct annotation (two asterisks, **) or bySimilarity annotation (one asterisk, *) of the motif. The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.
 #' @param nesThreshold Numeric. NES threshold to calculate the motif significant (3.0 by default). The NES is calculated -for each motif- based on the AUC distribution of all the motifs for the gene-set [(x-mean)/sd]. The motifs are considered significantly enriched if they pass the the Normalized Enrichment Score (NES) threshold.
 #' @param aucMaxRank Threshold to calculate the AUC.
@@ -39,7 +39,7 @@
 #' @example inst/examples/example_cisTarget.R
 #' @export
 cisTarget <- function(geneSets, motifRankings,
-            motifAnnot_direct=NULL, motifAnnot_bySimilarity=NULL, highlightTFs=NULL,
+            motifAnnot_direct=NULL, motifAnnot_inferred=NULL, highlightTFs=NULL,
             nesThreshold=3.0, aucMaxRank=0.05*nrow(motifRankings@rankings),
             geneErnMethod="aprox", geneErnMmaxRank=5000,
             nCores=1, verbose=TRUE)
@@ -49,7 +49,10 @@ cisTarget <- function(geneSets, motifRankings,
   motifs_AUC <- calcAUC(geneSets=geneSets, rankings=motifRankings, nCores=nCores, aucMaxRank=aucMaxRank, verbose=verbose)
 
   # Select significant motifs, add TF annotation & format as table
-  motifEnrichmentTable <- addMotifAnnotation(auc=motifs_AUC, nesThreshold=nesThreshold, motifAnnot_direct=motifAnnot_direct, motifAnnot_bySimilarity=motifAnnot_bySimilarity, highlightTFs=highlightTFs)
+  motifEnrichmentTable <- addMotifAnnotation(auc=motifs_AUC, 
+                                             nesThreshold=nesThreshold, 
+                                             motifAnnot_direct=motifAnnot_direct, 
+                                             motifAnnot_inferred=motifAnnot_inferred, highlightTFs=highlightTFs)
 
   # Identify significant genes for each motif (i.e. genes from the gene set in the top of the ranking)
   motifEnrichmentTable_wGenes <- addSignificantGenes(resultsTable=motifEnrichmentTable,

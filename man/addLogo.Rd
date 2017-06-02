@@ -38,4 +38,3 @@ datatable(newMotifErnTable[,-c("enrichedGenes"), with=FALSE],
 \seealso{
 See the package vignette for more examples: \code{vignette("RcisTarget")}
 }
-

@@ -50,6 +50,14 @@ setMethod("getRanking",
 )
 
 ##### Subset the object:
+# #' @export
+# setMethod('[', signature(x="rankingWrapper"),
+#           definition=function(x, i, j, drop=FALSE){
+#             x@ranking <- x@ranking[i,j, drop=drop]
+#             x
+#           })
+
+
 #' @aliases rankingWrapper
 #' @export
 setMethod("subset",

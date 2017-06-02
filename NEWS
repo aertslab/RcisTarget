@@ -1,14 +1,10 @@
 VERSION 0.7
 ----------------------
-- Converted the ranking databases to an S4 class.
+    - Converted the ranking databases to an S4 class.
 
 VERSION 0.6
 ----------------------
-- Added function addLogo()
-- AUC is now returned as a class
+    - Added function addLogo()
+    - AUC is now returned as a class
 
 
-VERSION 1.0
-----------------------
-NEW FEATURES
-    o Package released

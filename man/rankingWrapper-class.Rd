@@ -2,11 +2,10 @@
 % Please edit documentation in R/class_rankingWrapper.R
 \docType{class}
 \name{rankingWrapper-class}
-\alias{getRanking}
-\alias{rankingWrapper}
 \alias{rankingWrapper-class}
+\alias{rankingWrapper}
+\alias{getRanking}
 \title{Class to store the motif databases for RcisTarget.}
 \description{
 This class is only meant for internal use. Modify at your own risk.
 }
-

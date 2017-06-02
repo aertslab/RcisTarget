@@ -37,7 +37,7 @@ RcisTarget is based on the methods previously implemented in
 
 If you use RcisTarget in your research, please cite: *(TO DO: Update publication)*
 ```{r citation, echo=FALSE}
-print(citation("RcisTarget"), style="textVersion")
+print(citation("RcisTarget")[1], style="textVersion")
 ```
 
 # Overview of the workflow
@@ -229,9 +229,10 @@ motifs_AUC <- calcAUC(geneLists, motifRankings, nCores=1)
 The AUC is provided as a matrix of Motifs by GeneSets. In principle, the AUC is mostly meant as input for the next step. However, it is also possible to explore the distribution of the scores, for example in a gene-set of interest: 
 
 ```{r AUChistogram, cache=TRUE, fig.height=5, fig.width=5}
-hist(motifs_AUC["hypoxia",], main="hypoxia", xlab="AUC histogram",
+auc <- AUCell::getAuc(motifs_AUC)["hypoxia",]
+hist(auc, main="hypoxia", xlab="AUC histogram",
      breaks=100, col="#ff000050", border="darkred")
-nes3 <- (3*sd(motifs_AUC["hypoxia",])) + mean(motifs_AUC["hypoxia",])
+nes3 <- (3*sd(auc)) + mean(auc)
 abline(v=nes3, col="red")
 ```
 
