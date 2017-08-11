@@ -1,33 +1,28 @@
 
 ##################################################
 # Setup & previous steps in the workflow:
-# Gene sets
+
+#### Gene sets
+# As example, the package includes an Hypoxia gene set:
 txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
                  "hypoxiaGeneSet.txt", sep="/")
 geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
-# Motif databases
-# (Select the package/database according to the organism and distance around TSS)
-library(RcisTarget.hg19.motifDatabases)
+#### Databases
+# Select the package/database according to the organism and distance around TSS
+library(RcisTarget.hg19.motifDatabases.20k)
 data(hg19_10kbpAroundTss_motifRanking)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 
-# Fake-database with 5000 random motifs (to run the example faster)
-# DO NOT use in real analyses!
-set.seed(123)
-motifRankings <- hg19_10kbpAroundTss_motifRanking[,c("rn",
-       sample(colnames(hg19_10kbpAroundTss_motifRanking), 5000)), with=FALSE]
-
-# RcisTarget
+### Run RcisTarget
 # Step 1. Calculate AUC
 motifs_AUC <- calcAUC(geneLists, motifRankings)
-
 # Step 2. Select significant motifs, add TF annotation & format as table
 data(hg19_direct_motifAnnotation)
-motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=5,
-                      motifAnnot_direct=hg19_direct_motifAnnotation)
+motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
+           motifAnnot_direct=hg19_direct_motifAnnotation)
 
-# Note: If using the fake database, the results of this analysis are meaningless
+##################################################
 
 ##################################################
 # (This step: Step 3)
@@ -40,8 +35,8 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
                                        geneSets=geneLists,
                                        rankings=motifRankings,
                                        method="aprox")
-##################################################
-# Exploring the output:
+
+#### Exploring the output:
 # Note: Using the fake-database, these results are not meaningful.
 
 # The object returned is a data.table

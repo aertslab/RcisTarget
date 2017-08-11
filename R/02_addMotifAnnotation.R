@@ -1,6 +1,7 @@
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 #' @import data.table
+#' @importFrom stats sd setNames
 #'
 #' @title Add motif annotation
 #' @description Select significant motifs and/or annotate motifs to transcription factors.
@@ -33,7 +34,7 @@
 #' @export
 addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3, motifAnnot_direct=NULL, motifAnnot_inferred=NULL, highlightTFs=NULL)
 {
-  auc <- getAuc(auc)
+  auc <- getAUC(auc)
   #### Check inputs
   if(!is.null(highlightTFs))
   {

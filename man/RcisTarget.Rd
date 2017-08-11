@@ -10,7 +10,9 @@ cisTarget(geneSets, motifRankings, motifAnnot_direct = NULL,
   geneErnMmaxRank = 5000, nCores = 1, verbose = TRUE)
 }
 \arguments{
-\item{geneSets}{List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})}
+\item{geneSets}{List of gene-sets to analyze.
+The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
+\code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).}
 
 \item{motifRankings}{Database of the appropiate organism and search-space (i.e. 10kbp around- or 500bp upstream the TSS).
 These objects are provided in separate packages:
@@ -60,49 +62,43 @@ This is the main function to run RcisTarget. It includes on the following steps:
 
 # Example for running RcisTarget using cisTarget() function (workflow wrapper)
 
-##################################################
-# Format gene sets
 
-# RcisTarget requires the gene sets to be stored in a list with this format:
-genes <- c("gene1", "gene2", "gene3")
-geneLists <- list(geneSet1=genes)
-# (The name 'geneSet1' can be changed)
-
-# In this example we will use an Hypoxia gene set included in the package:
-txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
-                 "hypoxiaGeneSet.txt", sep="/")
-geneLists <- list(hypoxia=read.table(txtFile)[,1])
-
-
-##################################################
-# Load databases
-
-# Select the package/database according to the organism and distance around TSS
-# Load the motif databases
-library(RcisTarget.hg19.motifDatabases.20k)
-data(hg19_direct_motifAnnotation)
-data(hg19_10kbpAroundTss_motifRanking)
-motifRankings <- hg19_10kbpAroundTss_motifRanking
-
-# This example is run using a fake-database with 5000 random motifs
-# (for faster execution, only to explore the workflow & interface)
-# DO NOT use in real analyses! To identify statistically significant motifs,
-# RcisTarget needs the whole motif database.
+# A quick example can be run using a (small) fake-database & gene-set:
 set.seed(123)
-motifRankings <- subset(hg19_10kbpAroundTss_motifRanking,
-     sample(2:ncol(hg19_10kbpAroundTss_motifRanking@rankings), 5000), select="col")
-motifRankings
+motifRankings <- fakeDatabase()
+geneLists <- sample(getRanking(motifRankings)$rn, 100)
 
+# This is an example of code for a real run:
 ##################################################
-# Run (R)cisTarget
+\dontrun{
+  #### Gene sets
+  # As example, the package includes an Hypoxia gene set:
+  txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
+                   "hypoxiaGeneSet.txt", sep="/")
+  geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
-motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
-                       motifAnnot_direct=hg19_direct_motifAnnotation,
-                       nesThreshold=3.5, geneErnMethod="aprox", nCores=2)
+  #### Databases
+  # Select the package according to the organism and distance around TSS
+  library(RcisTarget.hg19.motifDatabases.20k)
+  data(hg19_10kbpAroundTss_motifRanking)
+  motifRankings <- hg19_10kbpAroundTss_motifRanking
+  data(hg19_direct_motifAnnotation)
+  motifAnnotation <- hg19_direct_motifAnnotation
 
+  # Run (R)cisTarget
+  motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
+   motifAnnot_direct=hg19_direct_motifAnnotation,
+   nesThreshold=3.5, geneErnMethod="aprox", nCores=2)
+}
+
+# Load results from analysis
+load(paste(file.path(system.file('examples', package='RcisTarget')),
+           "motifEnrichmentTable_wGenes.RData", sep="/"))
 ##################################################
+
+
 # Exploring the output:
-# Note: Using the fake-database, these results are not meaningful.
+# Note: If using the fake-database, the results are not meaningful
 
 # Number of enriched motifs (Over the given NES threshold)
 nrow(motifEnrichmentTable_wGenes)
@@ -121,10 +117,10 @@ enrGenes <- as.character(motifEnrichmentTable_wGenes[1,"enrichedGenes"])
 strsplit(enrGenes, ";")
 
 
-
 # Interactive exploration
 motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
-DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top", options=list(pageLength=5))
+DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top",
+              options=list(pageLength=5))
 # Note: If using the fake database, the results of this analysis are meaningless
 }
 \seealso{

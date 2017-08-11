@@ -1,3 +1,7 @@
+VERSION 0.99.1
+----------------------
+    - Main update: New class for the AUC scores (aucScores, based on SummarizedExperiment)
+
 VERSION 0.7
 ----------------------
     - Converted the ranking databases to an S4 class.

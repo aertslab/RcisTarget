@@ -126,14 +126,17 @@
   }else
   {
     # Split rankings into 10 groups and run in parallel
-    suppressMessages(require("doMC", quietly=TRUE)); doMC::registerDoMC(nCores)
+    doParallel::registerDoParallel()
+    options(cores=nCores)
 
     colsNam <- colnames(gsRankings)
     suppressWarnings(colsNamsGroups <- split(colsNam, (1:length(colsNam)) %% nCores)) # Expected warning: Not multiple
-    rccs <- foreach(colsGr=colsNamsGroups, .combine="cbind") %do%
+
+    # rccs <- foreach(colsGr=colsNamsGroups, .combine="cbind") %do%
+    rccs <- foreach::"%do%"(foreach::foreach(colsGr=colsNamsGroups, .combine="cbind"),
     {
       sapply(gsRankings[,colsGr, with=FALSE], .calcRCC.oneRanking, maxRank)
-    }
+    })
   }
   return(rccs)
 }

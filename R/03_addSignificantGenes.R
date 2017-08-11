@@ -4,6 +4,10 @@
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 
 #' @import data.table
+#' @import GSEABase
+#' @importFrom methods new
+#' @importFrom graphics lines plot points polygon
+#' @importFrom utils installed.packages
 #'
 #' @title Add significant genes
 #' @description Identify which genes (of the gene-set) are highly ranked for each motif.
@@ -46,7 +50,54 @@
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 #' @example inst/examples/example_addSignificantGenes.R
 #' @export
-addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+#'
+#' @export
+setGeneric("addSignificantGenes", signature="geneSets",
+  function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+  {
+    standardGeneric("addSignificantGenes")
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases addSignificantGenes,list-method
+setMethod("addSignificantGenes", "list",
+  function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+  {
+    .addSignificantGenes(resultsTable=resultsTable, geneSets=geneSets, rankings=rankings, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, method=method, nMean=nMean, nCores=nCores)
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases addSignificantGenes,character-method
+setMethod("addSignificantGenes", "character",
+  function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+  {
+    geneSets <- list(geneSet=geneSets)
+
+    .addSignificantGenes(resultsTable=resultsTable, geneSets=geneSets, rankings=rankings, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, method=method, nMean=nMean, nCores=nCores)
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases addSignificantGenes,GeneSet-method
+setMethod("addSignificantGenes", "GeneSet",
+  function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+  {
+    geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
+                         GSEABase::setName(geneSets))
+
+    .addSignificantGenes(resultsTable=resultsTable, geneSets=geneSets, rankings=rankings, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, method=method, nMean=nMean, nCores=nCores)
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases addSignificantGenes,GeneSetCollection-method
+setMethod("addSignificantGenes", "GeneSetCollection",
+  function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+  {
+    geneSets <- GSEABase::geneIds(geneSets)
+
+    .addSignificantGenes(resultsTable=resultsTable, geneSets=geneSets, rankings=rankings, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, method=method, nMean=nMean, nCores=nCores)
+  })
+
+.addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
 {
   if(isS4(rankings)) rankings <- rankings@rankings
 
@@ -63,14 +114,14 @@ addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, 
   {
     enrRnkT_ByGs <- resultsTable[geneSet==gsn]
 
-    signifGenes <- getSignificantGenes(geneSet=geneSets[[unique(enrRnkT_ByGs$geneSet)]],
-                                       rankings=rankings,
-                                       signifRankingNames=unname(unlist(subset(enrRnkT_ByGs, select=rnkType))),
-                                       method=method,
-                                       maxRank=maxRank,
-                                       plotCurve=plotCurve,
-                                       genesFormat=genesFormat,
-                                       nCores=nCores, digits=3, nMean=nMean)
+    signifGenes <- .getSignificantGenes(geneSet=as.character(geneSets[[unique(enrRnkT_ByGs$geneSet)]]),
+                       rankings=rankings,
+                       signifRankingNames=unname(unlist(subset(enrRnkT_ByGs, select=rnkType))),
+                       method=method,
+                       maxRank=maxRank,
+                       plotCurve=plotCurve,
+                       genesFormat=genesFormat,
+                       nCores=nCores, digits=3, nMean=nMean)
 
     enrRnkT_ByGs <- cbind(enrRnkT_ByGs, signifGenes$enrStats)
     if("geneList" %in% genesFormat) enrRnkT_ByGs <- cbind(enrRnkT_ByGs, enrichedGenes=sapply(signifGenes$enrichedGenes, function(x) paste(unlist(x), collapse=";")))
@@ -84,7 +135,60 @@ addSignificantGenes <- function(resultsTable, geneSets, rankings, maxRank=5000, 
 #' @import data.table
 #' @rdname addSignificantGenes
 #' @export
-getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
+setGeneric("getSignificantGenes", signature="geneSet",
+  function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
+  {
+    standardGeneric("getSignificantGenes")
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases getSignificantGenes,list-method
+setMethod("getSignificantGenes", "list",
+  function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
+  {
+    if(length(geneSet)>1) stop("Provide only one gene set.")
+    geneSet <- as.character(unname(unlist(geneSet)))
+    .getSignificantGenes(geneSet=geneSet, rankings=rankings, signifRankingNames=signifRankingNames, method=method, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, nCores=nCores, digits=digits, nMean=nMean)
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases getSignificantGenes,character-method
+setMethod("getSignificantGenes", "character",
+  function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
+  {
+    .getSignificantGenes(geneSet=geneSet, rankings=rankings, signifRankingNames=signifRankingNames, method=method, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, nCores=nCores, digits=digits, nMean=nMean)
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases getSignificantGenes,factor-method
+setMethod("getSignificantGenes", "factor",
+  function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
+  {
+    geneSet <- as.character(geneSet)
+    .getSignificantGenes(geneSet=geneSet, rankings=rankings, signifRankingNames=signifRankingNames, method=method, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, nCores=nCores, digits=digits, nMean=nMean)
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases getSignificantGenes,GeneSet-method
+setMethod("getSignificantGenes", "GeneSet",
+  function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
+  {
+    geneSet <- GSEABase::geneIds(geneSet)
+
+    .getSignificantGenes(geneSet=geneSet, rankings=rankings, signifRankingNames=signifRankingNames, method=method, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, nCores=nCores, digits=digits, nMean=nMean)
+  })
+
+#' @rdname addSignificantGenes
+#' @aliases getSignificantGenes,GeneSetCollection-method
+setMethod("getSignificantGenes", "GeneSetCollection",
+  function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
+  {
+    if(length(geneSet)>1) stop("Provide only one gene set.")
+    geneSet <- unlist(GSEABase::geneIds(geneSet))
+
+    .getSignificantGenes(geneSet=geneSet, rankings=rankings, signifRankingNames=signifRankingNames, method=method, maxRank=maxRank, plotCurve=plotCurve, genesFormat=genesFormat, nCores=nCores, digits=digits, nMean=nMean)
+  })
+.getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget", maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"), nCores=1, digits=3, nMean=10)
 {
   ################################################################################
   # Argument checks & init. vars
@@ -106,7 +210,7 @@ getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, meth
     calcEnrFunct <- .calcEnr_iCisTarget
   } else {
     calcEnrFunct <- .calcEnr_Aprox
-    if(!"zoo" %in% rownames(installed.packages())) stop("Package 'zoo' is required to calculate the aproximate RCC distributions. To install it, run:\t install.packages('zoo')")
+    if(!"zoo" %in% rownames(utils::installed.packages())) stop("Package 'zoo' is required to calculate the aproximate RCC distributions. To install it, run:\t install.packages('zoo')")
   }
 
   # Remove missing genes from geneSet...
@@ -138,6 +242,6 @@ getSignificantGenes <- function(geneSet, rankings, signifRankingNames=NULL, meth
   ret <- list(enrStats=enrStats) #data.table(enrStats, keep.rownames=TRUE))
   if("geneList" %in% genesFormat) ret <- c(ret, enrichedGenes=list(enrichedGenes))
   if("incidMatrix" %in% genesFormat) ret <- c(ret, incidMatrix=list(incidMatrix))
-  if(tolower(genesFormat) != "none") return(ret)
+  if(any(tolower(genesFormat) != "none")) return(ret)
 }
 

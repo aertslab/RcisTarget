@@ -12,7 +12,9 @@
 #' \item 3. Selection of significant genes (\link{addSignificantGenes})
 #' }
 #'
-#' @param geneSets List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})
+#' @param geneSets List of gene-sets to analyze.
+#' The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
+#' \code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).
 #' @param motifRankings Database of the appropiate organism and search-space (i.e. 10kbp around- or 500bp upstream the TSS).
 #' These objects are provided in separate packages:
 #' \itemize{
@@ -49,9 +51,9 @@ cisTarget <- function(geneSets, motifRankings,
   motifs_AUC <- calcAUC(geneSets=geneSets, rankings=motifRankings, nCores=nCores, aucMaxRank=aucMaxRank, verbose=verbose)
 
   # Select significant motifs, add TF annotation & format as table
-  motifEnrichmentTable <- addMotifAnnotation(auc=motifs_AUC, 
-                                             nesThreshold=nesThreshold, 
-                                             motifAnnot_direct=motifAnnot_direct, 
+  motifEnrichmentTable <- addMotifAnnotation(auc=motifs_AUC,
+                                             nesThreshold=nesThreshold,
+                                             motifAnnot_direct=motifAnnot_direct,
                                              motifAnnot_inferred=motifAnnot_inferred, highlightTFs=highlightTFs)
 
   # Identify significant genes for each motif (i.e. genes from the gene set in the top of the ranking)

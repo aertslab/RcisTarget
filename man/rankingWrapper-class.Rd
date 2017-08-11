@@ -6,6 +6,19 @@
 \alias{rankingWrapper}
 \alias{getRanking}
 \title{Class to store the motif databases for RcisTarget.}
+\arguments{
+\item{rankings}{data.table with the rankings}
+
+\item{colType}{'motif' or whatever other feature is stored (e.g. ChipSeq)}
+
+\item{rowType}{'gene'or 'region'}
+
+\item{org}{human/mouse/fly}
+
+\item{genome}{hg19, mm9, ...}
+
+\item{description}{summary or any other information}
+}
 \description{
 This class is only meant for internal use. Modify at your own risk.
 }

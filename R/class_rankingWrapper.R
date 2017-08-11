@@ -1,11 +1,18 @@
 #' @title Class to store the motif databases for RcisTarget.
 #' @aliases getRanking
+#' @param rankings data.table with the rankings
+#' @param colType 'motif' or whatever other feature is stored (e.g. ChipSeq)
+#' @param rowType 'gene'or 'region'
+#' @param org human/mouse/fly
+#' @param genome hg19, mm9, ...
+#' @param description summary or any other information
 #' @description
 #' This class is only meant for internal use. Modify at your own risk.
 #'
 ## Methods: See examples.
-#' @import BiocGenerics
+## @import BiocGenerics
 ## @example inst/examples/example_class_rankingWrapper.R
+#' @rdname rankingWrapper-class
 #' @export rankingWrapper
 #' @exportClass rankingWrapper
 rankingWrapper <- setClass(
@@ -23,7 +30,8 @@ rankingWrapper <- setClass(
   )
 )
 
-#' @aliases rankingWrapper
+#' @rdname rankingWrapper
+#' @aliases show,rankingWrapper-method
 #' @export
 setMethod("show",
           signature="rankingWrapper",
@@ -39,7 +47,9 @@ setMethod("show",
 )
 
 ##### Access the rankings:
-#' @aliases rankingWrapper
+
+#' @rdname rankingWrapper
+#' @aliases getRanking,rankingWrapper-method
 #' @export
 setGeneric(name="getRanking", def=function(object) standardGeneric("getRanking"))
 setMethod("getRanking",
@@ -58,7 +68,8 @@ setMethod("getRanking",
 #           })
 
 
-#' @aliases rankingWrapper
+#' @rdname rankingWrapper
+#' @aliases subset,rankingWrapper-method
 #' @export
 setMethod("subset",
           signature="rankingWrapper",
@@ -93,6 +104,8 @@ setMethod("subset",
 # Regular "matrix" methods (rownames, []...) not behave as a data.table.
 # Get from the @ranking slot manually...
 
+#' @rdname rankingWrapper
+#' @aliases nrow,rankingWrapper-method
 #' @export
 setMethod("nrow",
           signature="rankingWrapper",
@@ -101,6 +114,8 @@ setMethod("nrow",
           }
 )
 
+#' @rdname rankingWrapper
+#' @aliases ncol,rankingWrapper-method
 #' @export
 setMethod("ncol",
           signature="rankingWrapper",

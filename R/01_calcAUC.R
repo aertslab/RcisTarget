@@ -2,16 +2,22 @@
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 #' @import data.table
-#' @import AUCell
-#          AUCell::matrixWrapper & its methods
+#' @import GSEABase
+# @import doParallel
+# @import foreach
+#' @importFrom methods new
+#'
 #' @title Calculate AUC
 #' @description Calculates the Area Under the Curve (AUC) of each gene-set for each motif ranking. This measure is used in the following steps to identify the DNA motifs that are significantly over-represented in the gene-set.
-#' @param geneSets List of gene-sets to analyze. The gene-sets should be provided as a 'named list' in which each element is a gene-set (i.e. \code{list(geneSet1=c("gene1", "gene2"))})
+#' @param geneSets List of gene-sets to analyze.
+#' The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
+#' \code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).
 #' @param rankings 'Motif rankings' database for the required organism and search-space (i.e. 10kbp around- or 500bp upstream the TSS).
 #' These objects are provided in separate packages:
 #' \itemize{
-#' \item \url{http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases} (Human)
-#' \item \url{http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases} (Mouse)
+#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.dm6.motifDatabases.20k_0.2.1.tar.gz}[RcisTarget.dm6.motifDatabases.20k_0.2.1.tar.gz] (Fly)
+#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
+#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
 #' }
 #' See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDatabases)}.
 #' @param nCores Number of cores to use for computation.
@@ -22,20 +28,70 @@
 #' By default it is set to 5\% of the total number of genes in the rankings. Common values range from 1 to 10\%.
 #' See \code{vignette("RcisTarget")} for examples and more details.
 #' @param verbose Should the function show progress messages? (TRUE / FALSE)
-#' @return Matrix of gene-sets (rows) by motifs (columns) with the value of AUC for each pair as content.
+#' @return \code{\link{aucScores}} of gene-sets (rows) by motifs (columns) with the value of AUC for each pair as content.
 #' WARNING: The default databases contain over 18k motifs. Therefore, the size of this matrix is usually too big to show at once. Careful when using functions such as View(), head()...
 #' @seealso Next step in the workflow: \code{\link{addMotifAnnotation}}.
 #'
 #' See the package vignette for examples and more details: \code{vignette("RcisTarget")}
 #' @example inst/examples/example_workflow.R
+#' @rdname calcAUC
 #' @export
-calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE) #, seed=123, plotHist=TRUE
+setGeneric("calcAUC", signature="geneSets",
+  function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+  {
+   standardGeneric("calcAUC")
+  })
+
+#' @rdname calcAUC
+#' @aliases calcAUC,list-method
+setMethod("calcAUC", "list",
+  function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+  {
+    .RcisTarget_calcAUC(geneSets=geneSets, rankings=rankings, nCores=nCores, aucMaxRank=aucMaxRank, verbose=verbose)
+  })
+
+#' @rdname calcAUC
+#' @aliases calcAUC,character-method
+setMethod("calcAUC", "character",
+  function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+  {
+    geneSets <- list(geneSet=geneSets)
+
+    .RcisTarget_calcAUC(geneSets=geneSets, rankings=rankings, nCores=nCores, aucMaxRank=aucMaxRank, verbose=verbose)
+  })
+
+#' @rdname calcAUC
+#' @aliases calcAUC,GeneSet-method
+setMethod("calcAUC", "GeneSet",
+  function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+  {
+    geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
+                         GSEABase::setName(geneSets))
+
+    .RcisTarget_calcAUC(geneSets=geneSets, rankings=rankings, nCores=nCores, aucMaxRank=aucMaxRank, verbose=verbose)
+  })
+
+#' @rdname calcAUC
+#' @aliases calcAUC,GeneSetCollection-method
+setMethod("calcAUC", "GeneSetCollection",
+  function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+  {
+    geneSets <- GSEABase::geneIds(geneSets)
+
+    .RcisTarget_calcAUC(geneSets=geneSets, rankings=rankings, nCores=nCores, aucMaxRank=aucMaxRank, verbose=verbose)
+  })
+
+.RcisTarget_calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
 {
   if(!is.list(geneSets)) stop("geneSets should be a named list.")
   if(is.null(names(geneSets))) stop("geneSets should be a named list.")
   if(nCores > length(geneSets)) nCores <- length(geneSets) # No point in using more...
 
-  if(isS4(rankings)) rankings <- rankings@rankings
+  rankingsInfo <- c(org="", genome="", description="")
+  if(isS4(rankings)) {
+    rankingsInfo <- c(org=rankings@org, genome=rankings@genome, description=rankings@description)
+    rankings <- rankings@rankings
+  }
   if(!is.data.table(rankings)) stop("Rankings does not have the right format.")
   # if(!key(rankings) == "rn") stop("The rankings key should be 'rn'.")
   allGenes <- unique(unlist(geneSets))
@@ -52,14 +108,18 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
   }else
   {
     # Run each geneSet in parallel
-    suppressMessages(require("doMC", quietly=TRUE))
-    doMC::registerDoMC(nCores)
-    if(verbose) message(paste("Using", getDoParWorkers(), "cores."))
+    doParallel::registerDoParallel()
+    options(cores=nCores)
 
-    aucMatrix <- foreach(gSetName=names(geneSets)) %dopar%
+    if(verbose)
+      message("Using ", foreach::getDoParWorkers(), " cores.")
+
+    # aucMatrix <- foreach(gSetName=names(geneSets)) %dopar%
+    "%dopar%"<- foreach::"%dopar%"
+    aucMatrix <- foreach::"%dopar%"(foreach::foreach(gSetName=names(geneSets)),
     {
       setNames(list(.AUC.geneSet(geneSet=geneSets[[gSetName]], rankings=rankings, aucMaxRank=aucMaxRank, gSetName=gSetName)), gSetName)
-    }
+    })
     aucMatrix <- do.call(rbind, unlist(aucMatrix, recursive = FALSE)[names(geneSets)])
   }
 
@@ -92,7 +152,12 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
 
   ######################################################################
   #### End: Return
-  matrixWrapper(matrix=aucMatrix, rowType="gene-set", colType="motif", matrixType="AUC")
+  names(dimnames(aucMatrix)) <- c("gene-set", "motif")
+  new("aucScores",
+      SummarizedExperiment::SummarizedExperiment(assays=list(AUC=aucMatrix)),
+      org = rankingsInfo["org"],
+      genome = rankingsInfo["genome"],
+      description = rankingsInfo["description"])
 }
 
 .AUC.geneSet <- function(geneSet, rankings, aucMaxRank, gSetName="")  # add?: AUCThreshold
@@ -107,17 +172,17 @@ calcAUC <- function(geneSets, rankings, nCores=1, aucMaxRank=0.05*nrow(rankings)
   gSetRanks <- subset(rankings, rn %in% geneSet)[,-"rn", with=FALSE] # gene names are no longer needed
   rm(rankings)
 
-  aucThreshold <- round(aucMaxRank)            # 5%: same as .ini, but Stein said 3%
-  maxAUC <- aucThreshold * nrow(gSetRanks)     # database.gene_count  ->  IS THIS CORRECT?
+  aucThreshold <- round(aucMaxRank)
+  maxAUC <- aucThreshold * nrow(gSetRanks)
 
   # Apply by columns (i.e. to each ranking)
-  auc <- sapply(gSetRanks, .calcAUC, aucThreshold, maxAUC)
+  auc <- sapply(gSetRanks, .auc, aucThreshold, maxAUC)
 
   c(auc, missing=missing, nGenes=nGenes)
 }
 
 # oneRanking <- gSetRanks[,3, with=FALSE]
-.calcAUC <- function(oneRanking, aucThreshold, maxAUC)
+.auc <- function(oneRanking, aucThreshold, maxAUC)
 {
   x <- unlist(oneRanking)
   x <- sort(x[x<aucThreshold])

@@ -84,11 +84,17 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
 ## Setup
 
 RcisTarget uses species-specific databases which are provided as independent R-packages. Prior to running RcisTarget, please download and install the databases for the relevant organism:
-  
+
+
 Species | Package
 ------- | -----
-Human (hg19) | `r Biocpkg("SCENIC.hg19.motifDatabases.20k")`
-Mouse (mm9)  | `r Biocpkg("SCENIC.mm9.motifDatabases.20k")`
+Human (hg19) | [SCENIC.hg19.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz)
+Mouse (mm9)  | [SCENIC.mm9.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz)
+Drosophila melanogaster (dm6)  | [SCENIC.dm6.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.dm6.motifDatabases.20k_0.2.1.tar.gz)
+
+<!-- Human (hg19) | `r Biocpkg("SCENIC.hg19.motifDatabases.20k")` -->
+<!-- Mouse (mm9)  | `r Biocpkg("SCENIC.mm9.motifDatabases.20k")` -->
+<!-- Mouse (mm9)  | `r Biocpkg("SCENIC.dm6.motifDatabases.20k")` -->
 
 
 In addition, some extra packages can be installed to run RcisTarget in parallel or run the interactive examples in this tutorial: 
@@ -163,13 +169,18 @@ Besides the gene list, RcisTarget also needs the motif databases. The databases 
 
 Species | Package
 ------- | -----
-Human (hg19) | `r Biocpkg("RcisTarget.hg19.motifDatabases.20k")`
-Mouse (mm9)  | `r Biocpkg("RcisTarget.mm9.motifDatabases.20k")`
+Human (hg19) | [SCENIC.hg19.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz)
+Mouse (mm9)  | [SCENIC.mm9.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz)
+Drosophila melanogaster (dm6)  | [SCENIC.dm6.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.dm6.motifDatabases.20k_0.2.1.tar.gz)
+
+<!-- Human (hg19) | `r Biocpkg("SCENIC.hg19.motifDatabases.20k")` -->
+<!-- Mouse (mm9)  | `r Biocpkg("SCENIC.mm9.motifDatabases.20k")` -->
+<!-- Mouse (mm9)  | `r Biocpkg("SCENIC.dm6.motifDatabases.20k")` -->
 
 For each species, the packages contain two types of databases: (1) the gene-motif rankings, which provides the rankings (~score) of all the genes for each motif (see iRegulon publication for details), and (2) the motif annotation to transcription factors. 
 
 ### Gene-motif rankings
-For each species, there are two **gene-motif rankings** available: **10kb around the TSS** or **500 bp upstream**, which determine the search space around the transcription start site (TSS). To see the names of the rankings and annotations for each species, you can type on your console: `?RcisTarget.mm9.motifDatabases.20k` or `?RcisTarget.hg9.motifDatabases.20k`. 
+For most species, there are two **gene-motif rankings** available: **10kb around the TSS** or **500 bp upstream**, which determine the search space around the transcription start site (TSS). To see the names of the rankings and annotations for each species, you can type on your console: `?RcisTarget.mm9.motifDatabases.20k` or `?RcisTarget.hg9.motifDatabases.20k`. 
 
 Database | Search space
 ------- | ---------------------
@@ -229,7 +240,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings, nCores=1)
 The AUC is provided as a matrix of Motifs by GeneSets. In principle, the AUC is mostly meant as input for the next step. However, it is also possible to explore the distribution of the scores, for example in a gene-set of interest: 
 
 ```{r AUChistogram, cache=TRUE, fig.height=5, fig.width=5}
-auc <- AUCell::getAuc(motifs_AUC)["hypoxia",]
+auc <- getAUC(motifs_AUC)["hypoxia",]
 hist(auc, main="hypoxia", xlab="AUC histogram",
      breaks=100, col="#ff000050", border="darkred")
 nes3 <- (3*sd(auc)) + mean(auc)

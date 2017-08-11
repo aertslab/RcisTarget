@@ -8,6 +8,7 @@ RcisTarget is an R-package to identify transcription factor (TF) binding motifs 
 
 
 *Note:* This is a version in development. The main version of the package will be submitted Bioconductor. 
+Current version of **SCENIC** requires [RcisTarget 0.99.0](http://scenic.aertslab.org/downloads/Rpackages/RcisTarget_0.99.0.tar.gz)
 
 To install this BETA version, you can run the following commands from R:
 ```
