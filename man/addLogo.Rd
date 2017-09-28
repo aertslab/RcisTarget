@@ -9,16 +9,19 @@ addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v8")
 \arguments{
 \item{motifEnrDT}{Results from RcisTarget (data.table)}
 
-\item{addHTML}{Whether to add the HTML tag <img> around the URL or not (boolean).}
+\item{addHTML}{Whether to add the HTML tag <img> around the URL or not
+(boolean).}
 
 \item{dbVersion}{For current databases use "v8"}
 }
 \value{
 Returns the results table with a new column: 'logo'.
-This column contains either a URL with the logo image, or the HTML code to show the logo [e.g. with datatable()].
+This column contains either a URL with the logo image, or the HTML code to
+show the logo [e.g. with datatable()].
 }
 \description{
-Adds a column containing the logo URL to RcisTarget results table. Note that Transfac-Pro logos cannot be shown.
+Adds a column containing the logo URL to RcisTarget results
+table. Note that Transfac-Pro logos cannot be shown.
 }
 \examples{
 # Run the enrichment (or load previous results)
@@ -37,5 +40,6 @@ datatable(newMotifErnTable[,-c("enrichedGenes"), with=FALSE],
 
 }
 \seealso{
-See the package vignette for more examples: \code{vignette("RcisTarget")}
+See the package vignette for more examples:
+\code{vignette("RcisTarget")}
 }

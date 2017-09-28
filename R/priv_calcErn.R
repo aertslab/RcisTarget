@@ -1,9 +1,10 @@
 
-############################################################################################
+###############################################################################
 # Calculates gene enrichment: i-CisTarget version
 # Arguments should be kept in the same order as .calcEnr_Aprox
 #' @import data.table
-.calcEnr_iCisTarget <- function(gsRankings, maxRank, signifRankingNames, plotCurve, nCores, nMean)
+.calcEnr_iCisTarget <- function(gsRankings, maxRank,
+                                signifRankingNames, plotCurve, nCores, nMean)
 {
   # nMean: ignored
 
@@ -32,11 +33,12 @@
 }
 # 50-110 secs
 
-############################################################################################
+##############################################################################
 # Calculates gene enrichment: Aproximated/faster version
 # Arguments should be kept in the same order as .calcEnr_iCisTarget
 #' @import data.table
-.calcEnr_Aprox <- function(gsRankings, maxRank, signifRankingNames, plotCurve, nCores, nMean)
+.calcEnr_Aprox <- function(gsRankings, maxRank,
+                           signifRankingNames, plotCurve, nCores, nMean)
 {
   # Calculate aproximated-RCC across all motifs at each rank position
   maxRankExtra <- maxRank+nMean
@@ -47,7 +49,7 @@
     x <- sort(x[x<maxRankExtra])
 
     if(length(x) > 0){
-      coords <- cbind(y=1:length(x), x)
+      coords <- cbind(y=seq_along(x), x)
       globalMat[coords] <- globalMat[coords]+1
     }
   }
@@ -55,7 +57,7 @@
   # Estimate mean and mean+2sd at each rank
   rccStatsRaw <- apply(globalMat, 2, function(x){
     tmp <- x
-    if(sum(x)>0) tmp <- rep(1:length(x), x)
+    if(sum(x)>0) tmp <- rep(seq_along(x), x)
     rccMean <- mean(tmp)
     rccSd <- sd(tmp)
     c(mean=rccMean, sd=rccSd)
@@ -66,10 +68,16 @@
     rccStatsRaw[nas[which(nas[,2]==1), ]] <- 0
     nas <- nas[which(nas[,2]!=1), , drop=FALSE]
   }
-  if(nrow(nas)>0) apply(nas, 1, function(x) rccStatsRaw[x[1], x[2]] <<- rccStatsRaw[x[1], x[2]-1])
+  if(nrow(nas)>0)
+    apply(nas, 1,
+          function(x) rccStatsRaw[x[1], x[2]] <<- rccStatsRaw[x[1], x[2]-1])
 
   # Reduce noise in the stats with the rolling mean
-  rccStats <- t(apply(rccStatsRaw, 1, function(x) c(x[1:5], zoo::rollmean(x, nMean, align="center", fill="extend"))))[,1:(maxRank-1)]
+  rccStats <- t(apply(rccStatsRaw, 1,
+                      function(x)
+                        c(x[1:5],
+                          zoo::rollmean(x, nMean, align="center",
+                                        fill="extend"))))[,1:(maxRank-1)]
   rccM2sd <- rccStats["mean",] + (2*rccStats["sd",])
   rccMean <- rccStats["mean",]
   rm(rccStats); rm(globalMat)
@@ -86,8 +94,10 @@
   if(plotCurve)
   {
     # Global estimation plot
-    plot(rccStatsRaw["mean",]+2*rccStatsRaw["sd",],type="l", col="lightgreen",
-         xlab="Rank", ylab="#genes recovered", main="Global mean and SD estimation")
+    plot(rccStatsRaw["mean",]+2*rccStatsRaw["sd",],
+         type="l", col="lightgreen",
+         xlab="Rank", ylab="#genes recovered",
+         main="Global mean and SD estimation")
     lines(rccStatsRaw["mean",],type="l", col="pink")
     lines(rccMean, col="red")
     lines(rccM2sd, col="darkgreen")
@@ -99,10 +109,8 @@
   }
   return(maxEnr)
 }
-# system.time(rccs1 <- funct_APROX(gSetRanks, maxRank, signifRankingNames="homer__GCACGTACCC_HIF2a"))
-# ~10s
 
-################################################################################################
+###############################################################################
 # Aux functions
 
 # Calculates RCC (of the gene-set) ONE RANKING
@@ -113,7 +121,8 @@
   x <- sort(x[x<maxRank])
 
   curranking <- c(x, maxRank)
-  unlist(mapply(rep, 0:(length(curranking)-1), c(curranking[1], diff(curranking))))[-1]
+  unlist(mapply(rep, 0:(length(curranking)-1),
+                c(curranking[1], diff(curranking))))[-1]
 }
 
 # Apply .calcRCC.oneRanking on all rankings (= each column)
@@ -130,10 +139,14 @@
     options(cores=nCores)
 
     colsNam <- colnames(gsRankings)
-    suppressWarnings(colsNamsGroups <- split(colsNam, (1:length(colsNam)) %% nCores)) # Expected warning: Not multiple
+    suppressWarnings(
+      colsNamsGroups <- split(colsNam, (seq_along(colsNam)) %% nCores)
+                     ) # Expected warning: Not multiple
 
     # rccs <- foreach(colsGr=colsNamsGroups, .combine="cbind") %do%
-    rccs <- foreach::"%do%"(foreach::foreach(colsGr=colsNamsGroups, .combine="cbind"),
+    colsGr <- NULL
+    rccs <- foreach::"%do%"(foreach::foreach(colsGr=colsNamsGroups,
+                                             .combine="cbind"),
     {
       sapply(gsRankings[,colsGr, with=FALSE], .calcRCC.oneRanking, maxRank)
     })

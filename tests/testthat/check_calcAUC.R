@@ -1,6 +1,8 @@
 
 .check_calcAUC <- function(motifRankings)
 {
+  motifRankings
+
   correctNcol <- ncol(motifRankings)-1
 
   # a) Character vector (i.e. only one gene-set)

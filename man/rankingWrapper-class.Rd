@@ -4,21 +4,65 @@
 \name{rankingWrapper-class}
 \alias{rankingWrapper-class}
 \alias{rankingWrapper}
+\alias{rankingWrapper-class,}
+\alias{rankingWrapper,}
+\alias{getRanking,}
+\alias{ncol,}
+\alias{nrow,}
+\alias{show,}
+\alias{subset}
+\alias{show,rankingWrapper-method}
 \alias{getRanking}
+\alias{getRanking,rankingWrapper-method}
+\alias{subset,rankingWrapper-method}
+\alias{nrow,rankingWrapper-method}
+\alias{ncol,rankingWrapper-method}
 \title{Class to store the motif databases for RcisTarget.}
+\usage{
+\S4method{show}{rankingWrapper}(object)
+
+getRanking(x)
+
+\S4method{subset}{rankingWrapper}(x, elements, select = x@rowType)
+
+\S4method{nrow}{rankingWrapper}(x)
+
+\S4method{ncol}{rankingWrapper}(x)
+}
 \arguments{
-\item{rankings}{data.table with the rankings}
+\item{object}{[method: show] rankingWrapper object to show}
 
-\item{colType}{'motif' or whatever other feature is stored (e.g. ChipSeq)}
+\item{x}{[several methods] rankingWrapper object to apply the method}
 
-\item{rowType}{'gene'or 'region'}
+\item{elements}{[method: subset]}
 
-\item{org}{human/mouse/fly}
-
-\item{genome}{hg19, mm9, ...}
-
-\item{description}{summary or any other information}
+\item{select}{[method: subset]}
+}
+\value{
+\itemize{
+\item show: Prints a summary of the object
+\item getRanking: Returns the data.frame containing the rankings
+\item ncol, nrow, subset: Returns the number of columns, rows
+or a subset of the ranking
+}
 }
 \description{
-This class is only meant for internal use. Modify at your own risk.
+This class is only meant as container for the motif rankings
+(for internal use). Modify content at your own risk.
+
+Slots:
+\itemize{
+\item rankings: data.table with the rankings
+\item colType: 'motif' or whatever other feature is stored (e.g. ChipSeq)
+\item rowType: 'gene'or 'region'
+\item org: human/mouse/fly
+\item genome: hg19, mm9, ...
+\item description: summary or any other information
+}
+}
+\examples{
+library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+data("hg19_500bpUpstream_motifRanking_cispbOnly")
+hg19_500bpUpstream_motifRanking_cispbOnly
+class(hg19_500bpUpstream_motifRanking_cispbOnly)
 }

@@ -66,21 +66,32 @@ getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
   nCores = 1, digits = 3, nMean = 10)
 }
 \arguments{
-\item{resultsTable}{[addSignificantGenes] Output table from \code{\link{addMotifAnnotation}}}
+\item{resultsTable}{[addSignificantGenes]
+Output table from \code{\link{addMotifAnnotation}}}
 
 \item{geneSets}{[addSignificantGenes] List of gene-sets which was analyzed.}
 
-\item{rankings}{Motif rankings used to analyze the gene list (They should be the same as used for calcAUC in this same analysis).}
+\item{rankings}{Motif rankings used to analyze the gene list
+(They should be the same as used for calcAUC in this same analysis).}
 
-\item{maxRank}{Maximum rank to take into account for the recovery curve (Default: 5000).}
+\item{maxRank}{Maximum rank to take into account for the recovery curve
+(Default: 5000).}
 
 \item{plotCurve}{Logical. Wether to plot the recovery curve (Default: FALSE).}
 
-\item{genesFormat}{"geneList" or "incidMatrix". Format to return the genes (Default: "geneList").}
+\item{genesFormat}{"geneList" or "incidMatrix". Format to return the genes
+(Default: "geneList").}
 
-\item{method}{"iCisTarget" or "aprox". There are two methods to identify the highly ranked genes: (1) equivalent to the ones used in iRegulon and i-cisTarget (method="iCisTarget", recommended if running time is not an issue), and (2) a faster implementation based on an approximate distribution using the average at each rank (method="aprox", useful to scan multiple gene sets). (Default: "aprox")}
+\item{method}{"iCisTarget" or "aprox". There are two methods to identify the
+highly ranked genes:
+ (1) equivalent to the ones used in iRegulon and i-cisTarget
+ (method="iCisTarget", recommended if running time is not an issue),
+ and (2) a faster implementation based on an approximate distribution
+ using the average at each rank (method="aprox",
+ useful to scan multiple gene sets). (Default: "aprox")}
 
-\item{nMean}{Only used for "aprox" method: Interval to calculate the running mean and sd. Default: 20 (aprox. nGenesInRanking/1000).}
+\item{nMean}{Only used for "aprox" method: Interval to calculate the running
+mean and sd. Default: 20 (aprox. nGenesInRanking/1000).}
 
 \item{nCores}{Number of cores to use for parallelization (Default: 1).}
 
@@ -88,35 +99,58 @@ getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
 
 \item{signifRankingNames}{[getSignificantGenes] Motif ranking name.}
 
-\item{digits}{[getSignificantGenes] Number of digits to include in the output.}
+\item{digits}{[getSignificantGenes]
+Number of digits to include in the output.}
 }
 \value{
-Output from \code{\link{addMotifAnnotation}} adding the folowing columns:
+Output from \code{\link{addMotifAnnotation}}
+adding the folowing columns:
 \itemize{
   \item nEnrGenes: Number of genes highly ranked
-  \item rankAtMax: Ranking at the maximum enrichment, used to determine the number of enriched genes.
-  \item enrichedGenes: Genes that are highly ranked for the given motif. If genesFormat="geneList", the gene names are collapsed into a comma separated text field (alphabetical order). If genesFormat="incidMatrix", they are formatted as an indicence matrix, i.e. indicanting with 1 the genes present, and 0 absent.
+  \item rankAtMax: Ranking at the maximum enrichment,
+  used to determine the number of enriched genes.
+  \item enrichedGenes: Genes that are highly ranked for the given motif.
+  If genesFormat="geneList", the gene names are collapsed into a comma
+  separated text field (alphabetical order). If genesFormat="incidMatrix",
+  they are formatted as an indicence matrix, i.e. indicanting with 1 the
+  genes present, and 0 absent.
 }
 
 If plotCurve=TRUE, the recovery curve is plotted.
 }
 \description{
-Identify which genes (of the gene-set) are highly ranked for each motif.
+Identify which genes (of the gene-set) are highly ranked
+for each motif.
 
 \itemize{
   \item addSignificantGenes(): adds them to the results table.
-  \item getSignificantGenes(): Calculates the significant genes for ONE gene set. It provides the plot and the gene list (it is used by addSignificantGenes).
+  \item getSignificantGenes():
+  Calculates the significant genes for ONE gene set.
+  It provides the plot and the gene list (it is used by addSignificantGenes).
 }
 }
 \details{
-The highly ranked genes are selected based on the distribution of the recovery curves of the gene set across all the motifs in the database.
-In the plot, the red line indicates the average of the recovery curves of all the motifs, the green line the average + standard deviation, and the blue line the recovery curve of the current motif.
-The point of maximum distance between the current motif and the green curve (mean+sd), is the rank selected as maximum enrichment. All the genes with lower rank will be considered enriched.
+The highly ranked genes are selected based on the distribution of the
+recovery curves of the gene set across all the motifs in the database.
+In the plot, the red line indicates the average of the recovery curves of
+all the motifs, the green line the average + standard deviation, and the
+blue line the recovery curve of the current motif.
+The point of maximum distance between the current motif and the green curve
+(mean+sd), is the rank selected as maximum enrichment.
+All the genes with lower rank will be considered enriched.
 
-Depending on whether the method is "iCisTarget" or "aprox", the mean and SD at each rank are calculated slightly different.
-"iCisTarget" method calculates the recovery curves for all the motifs, and then calculates the average and SD at each rank.
-Due to the implementation of the function in R, this method is slower than just subsetting the ranks of the genes in for each motif,
-and calculating the average of the available ones at each position with a sliding window. Since there are over 18k motifs, the chances of getting several measures at each rank are very high and highly resemble the results calculated by iCisTarget, though they are often not exactly the same (hence the name: "aprox" method).
+Depending on whether the method is "iCisTarget" or "aprox", the mean and
+SD at each rank are calculated slightly different.
+"iCisTarget" method calculates the recovery curves for all the motifs, and
+ then calculates the average and SD at each rank.
+Due to the implementation of the function in R, this method is slower than
+just subsetting the ranks of the genes in for each motif,
+and calculating the average of the available ones at each position with a
+sliding window.
+Since there are over 18k motifs, the chances of getting several measures at
+each rank are very high and highly resemble the results calculated
+by iCisTarget, though they are often not exactly the same
+(hence the name: "aprox" method).
 }
 \examples{
 
@@ -131,17 +165,31 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
 #### Databases
 # Select the package/database according to the organism and distance around TSS
-library(RcisTarget.hg19.motifDatabases.20k)
-data(hg19_10kbpAroundTss_motifRanking)
-motifRankings <- hg19_10kbpAroundTss_motifRanking
+
+# Recommended: Full database
+# library(RcisTarget.hg19.motifDatabases.20k)
+# data(hg19_10kbpAroundTss_motifRanking)
+# motifRankings <- hg19_10kbpAroundTss_motifRanking
+# data(hg19_direct_motifAnnotation)
+# motifAnnotation_direct <- hg19_direct_motifAnnotation
+# data(hg19_inferred_motifAnnotation)
+# motifAnnotation_inferred <- hg19_inferred_motifAnnotation
+
+# For the example: Subset of database
+library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+data(hg19_500bpUpstream_motifRanking_cispbOnly)
+motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
+data(hg19_direct_motifAnnotation_cisbpOnly)
+motifAnnotation_direct <- hg19_direct_motifAnnotation_cisbpOnly
+data(hg19_inferred_motifAnnotation_cisbpOnly)
+motifAnnotation_inferred <- hg19_inferred_motifAnnotation_cisbpOnly
 
 ### Run RcisTarget
 # Step 1. Calculate AUC
 motifs_AUC <- calcAUC(geneLists, motifRankings)
 # Step 2. Select significant motifs, add TF annotation & format as table
-data(hg19_direct_motifAnnotation)
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-           motifAnnot_direct=hg19_direct_motifAnnotation)
+           motifAnnot_direct=motifAnnotation_direct)
 
 ##################################################
 
@@ -202,5 +250,6 @@ onlyGenes <- getSignificantGenes(geneSet=geneLists$hypoxia,
 \seealso{
 Previous step in the workflow: \code{\link{addMotifAnnotation}}.
 
-See the package vignette for examples and more details: \code{vignette("RcisTarget")}
+See the package vignette for examples and more details:
+\code{vignette("RcisTarget")}
 }

@@ -4,13 +4,22 @@
 \alias{fakeDatabase}
 \title{Creates a small fake database to use in examples}
 \usage{
-fakeDatabase(nGenes = 1000, nMotifs = 500)
+fakeDatabase(nGenes = 1000, nMotifs = 500, incAnnotation = FALSE)
 }
 \arguments{
 \item{nGenes}{Number of genes to include in the ranking}
 
 \item{nMotifs}{Number of motifs to include in the ranking}
+
+\item{incAnnotation}{Whether to also generate a fake motif annotation}
+}
+\value{
+Returns a small fake database, with random content but the right structure,
+to run the examples.
 }
 \description{
 Creates a small fake database to use in examples
+}
+\examples{
+fakeDatabase()
 }

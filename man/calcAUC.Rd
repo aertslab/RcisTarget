@@ -29,62 +29,92 @@ calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
 The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
 \code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).}
 
-\item{rankings}{'Motif rankings' database for the required organism and search-space (i.e. 10kbp around- or 500bp upstream the TSS).
+\item{rankings}{'Motif rankings' database for the required organism and
+search-space (i.e. 10kbp around- or 500bp upstream the TSS).
 These objects are provided in separate packages:
 \itemize{
-\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.dm6.motifDatabases.20k_0.2.1.tar.gz}[RcisTarget.dm6.motifDatabases.20k_0.2.1.tar.gz] (Fly)
 \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
 \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
+\item -contact us- (Fly)
 }
-See the help files for more information: i.e. \code{help(RcisTarget.hg19.motifDatabases)}.}
+Since the normalized enrichment score (NES) of the motif
+depends on the total number of motifs in the database,
+we highly recommend to use the full version of the databases (20k motifs).
+Smaller versions of the databases,
+containing only the 4.6k motifs from cisbp,
+are available in Bioconductor:
+\itemize{
+\item RcisTarget.mm9.motifDatabases.cisbpOnly.500bp (Mouse)
+\item RcisTarget.hg19.motifDatabases.cisbpOnly.500bp (Human)
+}
+
+See the help files for more information: i.e.
+\code{help(RcisTarget.hg19.motifDatabases.20k)}.}
 
 \item{nCores}{Number of cores to use for computation.
-Note: In general, using a higher number of cores (e.g. processes) decreases overall running time. However, it also deppends on the available memory and overall system load. Setting nCores too high might also decrease performance.}
+Note: In general, using a higher number of cores (e.g. processes)
+decreases overall running time.
+However, it also deppends on the available memory and overall system load.
+Setting nCores too high might also decrease performance.}
 
 \item{aucMaxRank}{Threshold to calculate the AUC.
-In a simplified way, the AUC value represents the fraction of genes, within the top X genes in the ranking, that are included in the signature.
-The parameter 'aucMaxRank' allows to modify the number of genes (maximum ranking) that is used to perform this computation.
-By default it is set to 5\% of the total number of genes in the rankings. Common values range from 1 to 10\%.
+In a simplified way, the AUC value represents the fraction of genes,
+within the top X genes in the ranking, that are included in the signature.
+The parameter 'aucMaxRank' allows to modify the number of genes
+(maximum ranking) that is used to perform this computation.
+By default it is set to 5\% of the total number of genes in the rankings.
+Common values range from 1 to 10\%.
 See \code{vignette("RcisTarget")} for examples and more details.}
 
 \item{verbose}{Should the function show progress messages? (TRUE / FALSE)}
 }
 \value{
-\code{\link{aucScores}} of gene-sets (rows) by motifs (columns) with the value of AUC for each pair as content.
-WARNING: The default databases contain over 18k motifs. Therefore, the size of this matrix is usually too big to show at once. Careful when using functions such as View(), head()...
+\code{\link{aucScores}} of gene-sets (rows) by motifs (columns)
+with the value of AUC for each pair as content.
+WARNING: The default databases contain over 18k motifs.
+Therefore, the size of this matrix is usually too big to show at once.
+Careful when using functions such as View(), head()...
 }
 \description{
-Calculates the Area Under the Curve (AUC) of each gene-set for each motif ranking. This measure is used in the following steps to identify the DNA motifs that are significantly over-represented in the gene-set.
+Calculates the Area Under the Curve (AUC) of each gene-set
+for each motif ranking.
+This measure is used in the following steps to identify the DNA motifs
+that are significantly over-represented in the gene-set.
 }
 \examples{
 
-# RcisTarget workflow
-# (for advanced users: Running the workflow steps individually)
+# RcisTarget workflow for advanced users:
+# Running the workflow steps individually
 
 # This example is run using a (small) fake-database & gene-set:
 set.seed(123)
-motifRankings <- fakeDatabase()
+dbs <- fakeDatabase(incAnnotation=TRUE)
+motifRankings <- dbs$ranking
+motifAnnot_direct <- dbs$annotation
+
 geneLists <- list(geneSet=sample(getRanking(motifRankings)$rn, 100))
 
 # Example of code for a real run:
 ##################################################
 \dontrun{
-#### Setup gene sets
-# RcisTarget requires the gene sets to be stored in a list with this format:
-genes <- c("gene1", "gene2", "gene3")
-geneLists <- list(geneSet1=genes)
-# (The name 'geneSet1' can be changed)
+  #### Setup gene sets
+  # RcisTarget requires the gene sets to be stored in a list with this format:
+  genes <- c("gene1", "gene2", "gene3")
+  geneLists <- list(geneSet1=genes)
+  # (The name 'geneSet1' can be changed)
 
-# In this example we will use an Hypoxia gene set included in the package:
-txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
-                 "hypoxiaGeneSet.txt", sep="/")
-geneLists <- list(hypoxia=read.table(txtFile)[,1])
+  # In this example we will use an Hypoxia gene set included in the package:
+  txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
+                   "hypoxiaGeneSet.txt", sep="/")
+  geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
-#### Load databases
-# Select the package/database according to the organism and distance around TSS
-library(RcisTarget.hg19.motifDatabases.20k)
-data(hg19_10kbpAroundTss_motifRanking)
-motifRankings <- hg19_10kbpAroundTss_motifRanking
+  #### Load databases
+  # Select the package/database according to the organism and distance around TSS
+  library(RcisTarget.hg19.motifDatabases.20k)
+  data(hg19_10kbpAroundTss_motifRanking)
+  motifRankings <- hg19_10kbpAroundTss_motifRanking
+  data(hg19_direct_motifAnnotation)
+  motifAnnot_direct <- hg19_direct_motifAnnotation
 }
 ##################################################
 
@@ -95,20 +125,19 @@ motifRankings <- hg19_10kbpAroundTss_motifRanking
 motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # Step 2. Select significant motifs, add TF annotation & format as table
-library(RcisTarget.hg19.motifDatabases.20k)
-data(hg19_direct_motifAnnotation)
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                              motifAnnot_direct=hg19_direct_motifAnnotation)
+                                           motifAnnot_direct=motifAnnot_direct)
 
 # Step 3 (optional). Identify genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)
 motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
-                                                      geneSets=geneLists,
-                                                      rankings=motifRankings,
-                                                      method="aprox")
+                                                   geneSets=geneLists,
+                                                   rankings=motifRankings,
+                                                   method="aprox")
 }
 \seealso{
 Next step in the workflow: \code{\link{addMotifAnnotation}}.
 
-See the package vignette for examples and more details: \code{vignette("RcisTarget")}
+See the package vignette for examples and more details:
+\code{vignette("RcisTarget")}
 }

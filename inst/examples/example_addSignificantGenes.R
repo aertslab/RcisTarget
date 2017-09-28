@@ -10,17 +10,31 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
 #### Databases
 # Select the package/database according to the organism and distance around TSS
-library(RcisTarget.hg19.motifDatabases.20k)
-data(hg19_10kbpAroundTss_motifRanking)
-motifRankings <- hg19_10kbpAroundTss_motifRanking
+
+# Recommended: Full database
+# library(RcisTarget.hg19.motifDatabases.20k)
+# data(hg19_10kbpAroundTss_motifRanking)
+# motifRankings <- hg19_10kbpAroundTss_motifRanking
+# data(hg19_direct_motifAnnotation)
+# motifAnnotation_direct <- hg19_direct_motifAnnotation
+# data(hg19_inferred_motifAnnotation)
+# motifAnnotation_inferred <- hg19_inferred_motifAnnotation
+
+# For the example: Subset of database
+library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+data(hg19_500bpUpstream_motifRanking_cispbOnly)
+motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
+data(hg19_direct_motifAnnotation_cisbpOnly)
+motifAnnotation_direct <- hg19_direct_motifAnnotation_cisbpOnly
+data(hg19_inferred_motifAnnotation_cisbpOnly)
+motifAnnotation_inferred <- hg19_inferred_motifAnnotation_cisbpOnly
 
 ### Run RcisTarget
 # Step 1. Calculate AUC
 motifs_AUC <- calcAUC(geneLists, motifRankings)
 # Step 2. Select significant motifs, add TF annotation & format as table
-data(hg19_direct_motifAnnotation)
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-           motifAnnot_direct=hg19_direct_motifAnnotation)
+           motifAnnot_direct=motifAnnotation_direct)
 
 ##################################################
 

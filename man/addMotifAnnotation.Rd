@@ -11,34 +11,49 @@ addMotifAnnotation(auc, nesThreshold = 3, digits = 3,
 \arguments{
 \item{auc}{Output from calcAUC.}
 
-\item{nesThreshold}{Numeric. NES threshold to calculate the motif significant (3.0 by default). The NES is calculated -for each motif- based on the AUC distribution of all the motifs for the gene-set [(x-mean)/sd].}
+\item{nesThreshold}{Numeric. NES threshold to calculate the motif significant
+(3.0 by default). The NES is calculated -for each motif- based on the AUC
+distribution of all the motifs for the gene-set [(x-mean)/sd].}
 
-\item{digits}{Integer. Number of digits for the AUC and NES in the output table.}
+\item{digits}{Integer. Number of digits for the AUC and NES in the
+output table.}
 
-\item{motifAnnot_direct}{Motif annotation database containing DIRECT annotations of the motif to transcription factors. The names should match the ranking column names.}
+\item{motifAnnot_direct}{Motif annotation database containing DIRECT
+annotations of the motif to transcription factors.
+The names should match the ranking column names.}
 
-\item{motifAnnot_inferred}{Motif annotation database containing the inferred annotations of the motif to transcription factors based on motif similarity.}
+\item{motifAnnot_inferred}{Motif annotation database containing the inferred
+annotations of the motif to transcription factors based on motif similarity.}
 
-\item{highlightTFs}{Character. If a list of transcription factors is provided,
-the column TFinDB in the otuput table will indicate whether any of those TFs are included within the 'direct' annotation (two asterisks, **)
+\item{highlightTFs}{Character. If a list of transcription factors is
+provided, the column TFinDB in the otuput table will indicate whether any
+of those TFs are included within the 'direct' annotation (two asterisks, **)
 or 'inferred' annotation (one asterisk, *) of the motif.
-The vector can be named to indicate which TF to highlight for each gene-set. Otherwise, all TFs will be used for all geneSets.}
+The vector can be named to indicate which TF to highlight for each gene-set.
+Otherwise, all TFs will be used for all geneSets.}
 }
 \value{
 \code{\link[data.table]{data.table}} with the folowing columns:
 \itemize{
 \item geneSet: Name of the gene set
-\item motif: ID of the motif (colnames of the ranking, it might be other kind of feature)
+\item motif: ID of the motif
+(colnames of the ranking, it might be other kind of feature)
 \item NES: Normalized enrichment score of the motif in the gene-set
 \item AUC: Area Under the Curve (used to calculate the NES)
-\item TFinDB: Indicates whether the highlightedTFs are included within the direct annotation (two asterisks, **) or inferred annotation (one asterisk, *)
-\item TF_direct: Transcription factors annotated to the motif according to 'direct annotation'.
-\item TF_inferred: Transcription factors annotated to the motif according to 'inferred annotation'.
+\item TFinDB: Indicates whether the highlightedTFs are included within the
+direct annotation (two asterisks, **)
+or inferred annotation (one asterisk, *)
+\item TF_direct: Transcription factors annotated to the motif according to
+'direct annotation'.
+\item TF_inferred: Transcription factors annotated to the motif according to
+'inferred annotation'.
 }
 }
 \description{
-Select significant motifs and/or annotate motifs to transcription factors.
-The motifs are considered significantly enriched if they pass the the Normalized Enrichment Score (NES) threshold.
+Select significant motifs and/or annotate motifs to
+transcription factors.
+The motifs are considered significantly enriched if they pass the the
+Normalized Enrichment Score (NES) threshold.
 }
 \examples{
 
@@ -53,9 +68,23 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
 #### Databases
 # Select the package/database according to the organism and distance around TSS
-library(RcisTarget.hg19.motifDatabases.20k)
-data(hg19_10kbpAroundTss_motifRanking)
-motifRankings <- hg19_10kbpAroundTss_motifRanking
+# Recommended: Full database
+# library(RcisTarget.hg19.motifDatabases.20k)
+# data(hg19_10kbpAroundTss_motifRanking)
+# motifRankings <- hg19_10kbpAroundTss_motifRanking
+# data(hg19_direct_motifAnnotation)
+# motifAnnotation_direct <- hg19_direct_motifAnnotation
+# data(hg19_inferred_motifAnnotation)
+# motifAnnotation_inferred <- hg19_inferred_motifAnnotation
+
+# For the example: Subset of database
+library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+data(hg19_500bpUpstream_motifRanking_cispbOnly)
+  motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
+data(hg19_direct_motifAnnotation_cisbpOnly)
+  motifAnnotation_direct <- hg19_direct_motifAnnotation_cisbpOnly
+data(hg19_inferred_motifAnnotation_cisbpOnly)
+  motifAnnotation_inferred <- hg19_inferred_motifAnnotation_cisbpOnly
 
 ### Run RcisTarget
 # Step 1. Calculate AUC
@@ -65,17 +94,14 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 ### (This step: Step 2)
 # Select significant motifs, add TF annotation & format as table
-data(hg19_direct_motifAnnotation)
-
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-   motifAnnot_direct=hg19_direct_motifAnnotation)
+                                           motifAnnot_direct=motifAnnotation_direct)
 
 # Alternative: Adding indirect annotation and modifying some options
-data(hg19_inferred_motifAnnotation)
 motifEnrichment_wIndirect <- addMotifAnnotation(motifs_AUC, nesThreshold=2,
-                        motifAnnot_direct=hg19_direct_motifAnnotation,
-                        motifAnnot_inferred=hg19_inferred_motifAnnotation,
-                        highlightTFs = "HIF1A", digits=3)
+                                                motifAnnot_direct=motifAnnotation_direct,
+                                                motifAnnot_inferred=motifAnnotation_inferred,
+                                                highlightTFs = "HIF1A", digits=3)
 
 ### Exploring the output:
 # Note: Using the fake-database, these results are not meaningful.
@@ -98,10 +124,10 @@ motifEnrichmentTable[,1:6]
 ##################################################
 # Next step (step 3, optional):
 \dontrun{
-motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
-                                   geneSets=geneLists,
-                                   rankings=motifRankings,
-                                   method="aprox")
+  motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
+                                                     geneSets=geneLists,
+                                                     rankings=motifRankings,
+                                                     method="aprox")
 }
 }
 \seealso{
@@ -109,5 +135,6 @@ Next step in the workflow: \code{\link{addSignificantGenes}}.
 
 Previous step in the workflow: \code{\link{calcAUC}}.
 
-See the package vignette for examples and more details: \code{vignette("RcisTarget")}
+See the package vignette for examples and more details:
+\code{vignette("RcisTarget")}
 }

@@ -4,7 +4,9 @@
 
 # A quick example can be run using a (small) fake-database & gene-set:
 set.seed(123)
-motifRankings <- fakeDatabase()
+dbs <- fakeDatabase(incAnnotation=TRUE)
+motifRankings <- dbs$ranking
+motifAnnot_direct <- dbs$annotation
 geneLists <- sample(getRanking(motifRankings)$rn, 100)
 
 # This is an example of code for a real run:

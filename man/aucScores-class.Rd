@@ -17,6 +17,12 @@ getAUC(object)
 \arguments{
 \item{object}{Results from \code{calcAUC}.}
 }
+\value{
+\itemize{
+\item show: Prints a summary of the object
+\item getAUC: Returns the matrix containing the AUC scores
+}
+}
 \description{
 Contains the AUC scores for each gene- or region-set.
 They can be accessed through \code{getAUC()} and the regular methods
