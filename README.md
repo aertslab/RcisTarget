@@ -30,6 +30,6 @@ library(RcisTarget.mm9.motifDatabases)
 data(mm9_10kbpAroundTss_motifRanking) # Adapt database name
 
 motifRankings <- rankingWrapper(rankings=mm9_10kbpAroundTss_motifRanking, 
-          rowType="gene", colType="motif", org="mouse", genome="mm9", description="")
+          rowType="gene", colType="motif", org="mouse", genome="mm9", maxRank = 5000, description="")
 ```
 
