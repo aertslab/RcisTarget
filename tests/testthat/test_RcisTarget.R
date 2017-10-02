@@ -16,15 +16,15 @@ test_Workflow <- function()
   geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
   # Load databases
-  library(RcisTarget.hg19.motifDatabases.20k)
-  data(hg19_10kbpAroundTss_motifRanking)
-  motifRankings <- hg19_10kbpAroundTss_motifRanking
+  library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+  data(hg19_500bpUpstream_motifRanking_cispbOnly)
+  motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
 
   # Fake example with 5000 random motifs
   library(data.table)
-  set.seed(123)
-  motifRankings <- subset(motifRankings,
-                   sample(2:ncol(motifRankings@rankings), 5000), select="col")
+  # set.seed(123)
+  # motifRankings <- subset(motifRankings,
+  #                  sample(2:ncol(motifRankings@rankings), 5000), select="col")
   ##################################################
 
   ##################################################

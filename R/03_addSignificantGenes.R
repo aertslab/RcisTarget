@@ -173,7 +173,17 @@ setMethod("addSignificantGenes", "GeneSetCollection",
                          maxRank=5000, plotCurve=FALSE, genesFormat="geneList",
                          method="aprox", nMean=20, nCores=1)
 {
-  if(isS4(rankings)) rankings <- rankings@rankings
+  if(isS4(rankings)) {
+    if(getMaxRank(rankings) < Inf)
+    {
+      if(maxRank > getMaxRank(rankings))
+        stop("maxRank (", maxRank, ") should not be bigger ",
+             "than the maximum ranking available in the database (",
+             getMaxRank(rankings),")")
+    }
+
+    rankings <- rankings@rankings
+  }
 
   # suppressPackageStartupMessages(library(data.table))
   method <- tolower(method[1])
@@ -342,9 +352,20 @@ setMethod("getSignificantGenes", "GeneSetCollection",
   ################################################################################
   # Argument checks & init. vars
   # aucThreshold <- 0.05*nrow(rankings)
-  if(isS4(rankings)) rankings <- rankings@rankings
 
   maxRank <- round(maxRank)
+  if(isS4(rankings)) {
+    if(getMaxRank(rankings) < Inf)
+    {
+      if(maxRank > getMaxRank(rankings))
+        stop("maxRank (", maxRank, ") should not be bigger ",
+             "than the maximum ranking available in the database (",
+             getMaxRank(rankings),")")
+    }
+  }
+  if(isS4(rankings)) rankings <- rankings@rankings
+
+
   if(is.null(signifRankingNames)) {
     signifRankingNames <- colnames(rankings)
     warning("'signifRankingNames' has not been provided.",

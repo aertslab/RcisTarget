@@ -39,6 +39,9 @@
   testthat::expect_equal(class(motifsAUC)[1], "aucScores")
   testthat::expect_equal(SummarizedExperiment::assayNames(motifsAUC)[1], "AUC")
 
+  ### Max aucMaxRank
+  testthat::expect_error(calcAUC(geneSets, motifRankings, nCores=1, aucMaxRank = 100000))
+
   ### Multicore
   motifsAUC_multicore <- suppressWarnings(calcAUC(geneSets, motifRankings, aucMaxRank=5, nCores=2))
   testthat::expect_equal(getAUC(motifsAUC), getAUC(motifsAUC_multicore))

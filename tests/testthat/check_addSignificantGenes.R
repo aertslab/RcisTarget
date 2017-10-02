@@ -66,4 +66,18 @@
   gsOut <- getSignificantGenes(geneSet=geneSets[1], signifRankingNames=selectedMotif[1],
               genesFormat="incidMatrix", plotCurve=FALSE, rankings=motifRankings, method="aprox")
   testthat::expect_equal(names(gsOut), c("enrStats", "incidMatrix"))
+
+
+  ### Max aucMaxRank
+  testthat::expect_error(getSignificantGenes(geneLists,motifRankings,
+    signifRankingNames=selectedMotifs, plotCurve=TRUE, genesFormat="none",
+    maxRank=50000, method="iCisTarget"))
+
+  testthat::expect_error(getSignificantGenes(geneLists,motifRankings,
+    signifRankingNames=selectedMotifs, plotCurve=TRUE, genesFormat="none",
+    maxRank=50000, method="aprox"))
+
+  testthat::expect_error(addSignificantGenes(motifEnrichmentTable,
+    geneSets=geneLists, rankings=motifRankings, nCores=1,
+    maxRank=50000, method="aprox"))
 }

@@ -138,6 +138,12 @@ setMethod("calcAUC", "GeneSetCollection",
   if(nCores > length(geneSets))
     nCores <- length(geneSets) # No point in using more...
 
+  if(getMaxRank(rankings) < Inf)
+  {
+    if(aucMaxRank > getMaxRank(rankings))
+      stop("aucMaxRank (", aucMaxRank, ") should not be bigger than the maximum ranking available in the database (", getMaxRank(rankings),")")
+  }
+
   rankingsInfo <- c(org="", genome="", description="")
   if(isS4(rankings)) {
     rankingsInfo <- c(org=rankings@org,

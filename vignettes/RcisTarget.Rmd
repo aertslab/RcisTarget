@@ -83,13 +83,13 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
 
 RcisTarget uses species-specific databases which are provided as independent R-packages. Prior to running RcisTarget, please download and install the databases for the relevant organism:
 
-Species | Package
-------- | -----
-Human (hg19) - Full version (recommended) | [SCENIC.hg19.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz)
-Human (hg19) - Subset | - available soon: *RcisTarget.hg19.motifDatabases.cisbpOnly.500bp*
-Mouse (mm9)  - Full version (recommended) | [SCENIC.mm9.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz)
-Mouse (mm9)  - Subset | - available soon: *RcisTarget.mm9.motifDatabases.cisbpOnly.500bp*
-Drosophila melanogaster (dm6)  | Contact us
+Species | Genome | | Package
+------- | ----- | ----- | -----
+Human | hg19 | Full version (recommended) | [SCENIC.hg19.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz)
+Human | hg19 | Subset | - available soon: *RcisTarget.hg19.motifDatabases.cisbpOnly.500bp*
+Mouse | mm9 | Full version (recommended) | [SCENIC.mm9.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz)
+Mouse | mm9 | Subset | - available soon: *RcisTarget.mm9.motifDatabases.cisbpOnly.500bp*
+Drosophila melanogaster | dm6 | | Contact us
 
 In addition, some extra packages can be installed to run RcisTarget in parallel or run the interactive examples in this tutorial: 
 ```{r installDep, eval=FALSE}

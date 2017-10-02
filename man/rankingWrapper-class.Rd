@@ -14,6 +14,8 @@
 \alias{show,rankingWrapper-method}
 \alias{getRanking}
 \alias{getRanking,rankingWrapper-method}
+\alias{getMaxRank}
+\alias{getMaxRank,rankingWrapper-method}
 \alias{subset,rankingWrapper-method}
 \alias{nrow,rankingWrapper-method}
 \alias{ncol,rankingWrapper-method}
@@ -22,6 +24,8 @@
 \S4method{show}{rankingWrapper}(object)
 
 getRanking(x)
+
+getMaxRank(x)
 
 \S4method{subset}{rankingWrapper}(x, elements, select = x@rowType)
 

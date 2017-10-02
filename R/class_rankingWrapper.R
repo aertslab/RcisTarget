@@ -49,6 +49,7 @@ rankingWrapper <- setClass(
     rowType = "character", # gene/region
     org = "character", # human/mouse
     genome = "character", # hg19, mm9 ...
+    maxRank = "numeric", # Higher ranks are converted to Inf
     description = "character" # Other info, shown with "show"
   )
 )
@@ -62,9 +63,21 @@ setMethod("show",
     message <- paste("Rankings for RcisTarget.", "\n",
     "  Organism: ", object@org, " (", object@genome,")","\n",
     "  Number of ", toupper(object@rowType), "S: ", nrow(object@rankings),"\n",
-    "  Number of ", object@colType, "s: ", ncol(object@rankings)-1,"\n\n",
-    object@description,
-    "\n", sep="")
+    "  Number of ", object@colType, "s: ", ncol(object@rankings)-1,"\n\n", sep="")
+
+    if(getMaxRank(object) < Inf)
+    {
+      message <- paste(message,
+                      "** This database includes rankings up to ", getMaxRank(object), "\n", sep="")
+    }
+
+    if(length(object@description)>0)
+    {
+      message <- paste(message, "\n",
+                       object@description,
+                       "\n", sep="")
+    }
+
 
     cat(message)
   }
@@ -82,6 +95,29 @@ setMethod("getRanking",
   definition = function(x) {
     x@rankings
   }
+)
+
+##### Access the maxRank:
+
+#' @rdname rankingWrapper-class
+#' @aliases getMaxRank,rankingWrapper-method
+#' @export
+setGeneric(name="getMaxRank",
+           def=function(x) standardGeneric("getMaxRank"))
+setMethod("getMaxRank",
+          signature="rankingWrapper",
+          definition = function(x) {
+            # Previous versions didn't have @maxRank -> Contain all ranks
+            ret <- tryCatch(
+                  x@maxRank,
+                  error=function(e) {Inf}
+              )
+
+            if(length(ret)==0)
+              ret <- Inf
+
+            return(ret)
+          }
 )
 
 ##### Subset the object:
