@@ -23,7 +23,7 @@ A **[tutorial](http://scenic.aertslab.org/tutorials/RcisTarget.html)** (vignette
 An HTML version of the tutorial, and the **databases** required to use RcisTarget are available at http://scenic.aertslab.org.
 
 ____
-Note: From version 0.7+, RcisTarget uses a new format for the ranking databases. As temporary solution, you can convert the previous databases with the following code (adapt according to the organism/distance around TSS):
+Note: From version 0.7+, RcisTarget uses a new format for the ranking databases. Older databases can be converted with the following code (adapt according to the organism/distance around TSS):
 
 ```
 library(RcisTarget.mm9.motifDatabases)
