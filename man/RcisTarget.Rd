@@ -30,8 +30,8 @@ i.e. \code{help(RcisTarget.hg19.motifDatabases)}}
 annotations of the motif to transcription factors.}
 
 \item{motifAnnot_inferred}{Motif annotation database containing the expanded
-annotations of the motif to transcription factors based on inference by motif
-similarity.}
+annotations of the motif to transcription factors based on inference by
+motif similarity.}
 
 \item{highlightTFs}{Character.
 If a list of transcription factors is provided, the column TFinDB in the

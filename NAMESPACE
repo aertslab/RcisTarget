@@ -17,7 +17,7 @@ exportMethods(nrow)
 exportMethods(show)
 exportMethods(subset)
 
-import(GSEABase)
+#import(GSEABase)
 import(SummarizedExperiment)
 importFrom(graphics,lines)
 importFrom(graphics,plot)

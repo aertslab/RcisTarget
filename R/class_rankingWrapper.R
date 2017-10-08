@@ -63,12 +63,14 @@ setMethod("show",
     message <- paste("Rankings for RcisTarget.", "\n",
     "  Organism: ", object@org, " (", object@genome,")","\n",
     "  Number of ", toupper(object@rowType), "S: ", nrow(object@rankings),"\n",
-    "  Number of ", object@colType, "s: ", ncol(object@rankings)-1,"\n\n", sep="")
+    "  Number of ", object@colType, "s: ", ncol(object@rankings)-1,"\n\n",
+    sep="")
 
     if(getMaxRank(object) < Inf)
     {
       message <- paste(message,
-                      "** This database includes rankings up to ", getMaxRank(object), "\n", sep="")
+                      "** This database includes rankings up to ",
+                      getMaxRank(object), "\n", sep="")
     }
 
     if(length(object@description)>0)

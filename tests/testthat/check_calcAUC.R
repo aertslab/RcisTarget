@@ -22,16 +22,16 @@
   testthat::expect_equal(ncol(motifsAUC), correctNcol)
 
   # c) GeneSet object (from GSEABase)
-  geneSetOne <- GSEABase::GeneSet(fewGenes, setName="geneSetOne")
-  motifsAUC <- suppressWarnings(calcAUC(geneSetOne, motifRankings, aucMaxRank=5))
+  # geneSetOne <- GSEABase::GeneSet(fewGenes, setName="geneSetOne")
+  # motifsAUC <- suppressWarnings(calcAUC(geneSetOne, motifRankings, aucMaxRank=5))
 
   testthat::expect_equal(nrow(motifsAUC), 1)
   testthat::expect_equal(ncol(motifsAUC), correctNcol)
 
   # d) GeneSetCollection object (from GSEABase)
-  geneSetTwo <- GSEABase::GeneSet(otherGenes, setName="geneSetTwo")
-  geneSets <- GSEABase::GeneSetCollection(geneSetOne, geneSetTwo)
-  motifsAUC <- suppressWarnings(calcAUC(geneSets, motifRankings, aucMaxRank=5))
+  # geneSetTwo <- GSEABase::GeneSet(otherGenes, setName="geneSetTwo")
+  # geneSets <- GSEABase::GeneSetCollection(geneSetOne, geneSetTwo)
+  # motifsAUC <- suppressWarnings(calcAUC(geneSets, motifRankings, aucMaxRank=5))
 
   testthat::expect_equal(nrow(motifsAUC), 2)
   testthat::expect_equal(ncol(motifsAUC), correctNcol)

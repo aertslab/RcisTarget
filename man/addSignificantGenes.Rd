@@ -5,14 +5,10 @@
 \alias{addSignificantGenes}
 \alias{addSignificantGenes,list-method}
 \alias{addSignificantGenes,character-method}
-\alias{addSignificantGenes,GeneSet-method}
-\alias{addSignificantGenes,GeneSetCollection-method}
 \alias{getSignificantGenes}
 \alias{getSignificantGenes,list-method}
 \alias{getSignificantGenes,character-method}
 \alias{getSignificantGenes,factor-method}
-\alias{getSignificantGenes,GeneSet-method}
-\alias{getSignificantGenes,GeneSetCollection-method}
 \title{Add significant genes}
 \usage{
 addSignificantGenes(resultsTable, geneSets, rankings, maxRank = 5000,
@@ -25,14 +21,6 @@ addSignificantGenes(resultsTable, geneSets, rankings, maxRank = 5000,
 
 \S4method{addSignificantGenes}{character}(resultsTable, geneSets, rankings,
   maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
-  method = "aprox", nMean = 20, nCores = 1)
-
-\S4method{addSignificantGenes}{GeneSet}(resultsTable, geneSets, rankings,
-  maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
-  method = "aprox", nMean = 20, nCores = 1)
-
-\S4method{addSignificantGenes}{GeneSetCollection}(resultsTable, geneSets,
-  rankings, maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
   method = "aprox", nMean = 20, nCores = 1)
 
 getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
@@ -51,16 +39,6 @@ getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
   nCores = 1, digits = 3, nMean = 10)
 
 \S4method{getSignificantGenes}{factor}(geneSet, rankings,
-  signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
-  plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
-  nCores = 1, digits = 3, nMean = 10)
-
-\S4method{getSignificantGenes}{GeneSet}(geneSet, rankings,
-  signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
-  plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
-  nCores = 1, digits = 3, nMean = 10)
-
-\S4method{getSignificantGenes}{GeneSetCollection}(geneSet, rankings,
   signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
   plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
   nCores = 1, digits = 3, nMean = 10)

@@ -133,7 +133,7 @@ library(RcisTarget)
 geneSet1 <- c("gene1", "gene2", "gene3")
 geneLists <- list(geneSetName=geneSet1)
 # or: 
-geneLists <- GSEABase::GeneSet(geneSet1, setName="geneSetName") 
+# geneLists <- GSEABase::GeneSet(geneSet1, setName="geneSetName") 
 ```
 
 > Some extra help: 

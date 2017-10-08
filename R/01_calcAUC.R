@@ -2,7 +2,7 @@
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 #' @import data.table
-#' @import GSEABase
+##' @import GSEABase
 # @import doParallel
 # @import foreach
 #' @importFrom methods new
@@ -97,36 +97,36 @@ setMethod("calcAUC", "character",
                         verbose=verbose)
   })
 
-#' @rdname calcAUC
-#' @aliases calcAUC,GeneSet-method
-setMethod("calcAUC", "GeneSet",
-  function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
-  {
-    geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
-                         GSEABase::setName(geneSets))
+# #' @rdname calcAUC
+# #' @aliases calcAUC,GeneSet-method
+# setMethod("calcAUC", "GeneSet",
+#   function(geneSets, rankings, nCores=1,
+#            aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+#   {
+#     geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
+#                          GSEABase::setName(geneSets))
+#
+#     .RcisTarget_calcAUC(geneSets=geneSets,
+#                         rankings=rankings,
+#                         nCores=nCores,
+#                         aucMaxRank=aucMaxRank,
+#                         verbose=verbose)
+#   })
 
-    .RcisTarget_calcAUC(geneSets=geneSets,
-                        rankings=rankings,
-                        nCores=nCores,
-                        aucMaxRank=aucMaxRank,
-                        verbose=verbose)
-  })
-
-#' @rdname calcAUC
-#' @aliases calcAUC,GeneSetCollection-method
-setMethod("calcAUC", "GeneSetCollection",
-  function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
-  {
-    geneSets <- GSEABase::geneIds(geneSets)
-
-    .RcisTarget_calcAUC(geneSets=geneSets,
-                        rankings=rankings,
-                        nCores=nCores,
-                        aucMaxRank=aucMaxRank,
-                        verbose=verbose)
-  })
+# #' @rdname calcAUC
+# #' @aliases calcAUC,GeneSetCollection-method
+# setMethod("calcAUC", "GeneSetCollection",
+#   function(geneSets, rankings, nCores=1,
+#            aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+#   {
+#     geneSets <- GSEABase::geneIds(geneSets)
+#
+#     .RcisTarget_calcAUC(geneSets=geneSets,
+#                         rankings=rankings,
+#                         nCores=nCores,
+#                         aucMaxRank=aucMaxRank,
+#                         verbose=verbose)
+#   })
 
 .RcisTarget_calcAUC <- function(geneSets, rankings, nCores=1,
                                 aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
@@ -141,7 +141,9 @@ setMethod("calcAUC", "GeneSetCollection",
   if(getMaxRank(rankings) < Inf)
   {
     if(aucMaxRank > getMaxRank(rankings))
-      stop("aucMaxRank (", aucMaxRank, ") should not be bigger than the maximum ranking available in the database (", getMaxRank(rankings),")")
+      stop("aucMaxRank (", aucMaxRank,
+        ") should not be bigger than the maximum ranking available ",
+        "in the database (", getMaxRank(rankings),")")
   }
 
   rankingsInfo <- c(org="", genome="", description="")

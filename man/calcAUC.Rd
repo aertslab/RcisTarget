@@ -5,8 +5,6 @@
 \alias{calcAUC}
 \alias{calcAUC,list-method}
 \alias{calcAUC,character-method}
-\alias{calcAUC,GeneSet-method}
-\alias{calcAUC,GeneSetCollection-method}
 \title{Calculate AUC}
 \usage{
 calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
@@ -16,12 +14,6 @@ calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
   nrow(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{character}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
-
-\S4method{calcAUC}{GeneSet}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
-
-\S4method{calcAUC}{GeneSetCollection}(geneSets, rankings, nCores = 1,
   aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
 }
 \arguments{

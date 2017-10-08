@@ -31,8 +31,8 @@
 #' @param motifAnnot_direct Motif annotation database containing DIRECT
 #' annotations of the motif to transcription factors.
 #' @param motifAnnot_inferred Motif annotation database containing the expanded
-#' annotations of the motif to transcription factors based on inference by motif
-#' similarity.
+#' annotations of the motif to transcription factors based on inference by
+#' motif similarity.
 #' @param highlightTFs Character.
 #' If a list of transcription factors is provided, the column TFinDB in the
 #' otuput table will indicate whether any of those TFs are included within the
@@ -71,8 +71,9 @@
 #' @example inst/examples/example_cisTarget.R
 #' @export
 cisTarget <- function(geneSets, motifRankings,
-            motifAnnot_direct=NULL, motifAnnot_inferred=NULL, highlightTFs=NULL,
-            nesThreshold=3.0, aucMaxRank=0.05*nrow(motifRankings@rankings),
+            motifAnnot_direct=NULL, motifAnnot_inferred=NULL,
+            highlightTFs=NULL, nesThreshold=3.0,
+            aucMaxRank=0.05*nrow(motifRankings@rankings),
             geneErnMethod="aprox", geneErnMmaxRank=5000,
             nCores=1, verbose=TRUE)
 {
