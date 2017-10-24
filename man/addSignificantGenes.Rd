@@ -5,10 +5,14 @@
 \alias{addSignificantGenes}
 \alias{addSignificantGenes,list-method}
 \alias{addSignificantGenes,character-method}
+\alias{addSignificantGenes,GeneSet-method}
+\alias{addSignificantGenes,GeneSetCollection-method}
 \alias{getSignificantGenes}
 \alias{getSignificantGenes,list-method}
 \alias{getSignificantGenes,character-method}
 \alias{getSignificantGenes,factor-method}
+\alias{getSignificantGenes,GeneSet-method}
+\alias{getSignificantGenes,GeneSetCollection-method}
 \title{Add significant genes}
 \usage{
 addSignificantGenes(resultsTable, geneSets, rankings, maxRank = 5000,
@@ -21,6 +25,14 @@ addSignificantGenes(resultsTable, geneSets, rankings, maxRank = 5000,
 
 \S4method{addSignificantGenes}{character}(resultsTable, geneSets, rankings,
   maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
+  method = "aprox", nMean = 20, nCores = 1)
+
+\S4method{addSignificantGenes}{GeneSet}(resultsTable, geneSets, rankings,
+  maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
+  method = "aprox", nMean = 20, nCores = 1)
+
+\S4method{addSignificantGenes}{GeneSetCollection}(resultsTable, geneSets,
+  rankings, maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
   method = "aprox", nMean = 20, nCores = 1)
 
 getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
@@ -39,6 +51,16 @@ getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
   nCores = 1, digits = 3, nMean = 10)
 
 \S4method{getSignificantGenes}{factor}(geneSet, rankings,
+  signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
+  plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
+  nCores = 1, digits = 3, nMean = 10)
+
+\S4method{getSignificantGenes}{GeneSet}(geneSet, rankings,
+  signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
+  plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
+  nCores = 1, digits = 3, nMean = 10)
+
+\S4method{getSignificantGenes}{GeneSetCollection}(geneSet, rankings,
   signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
   plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
   nCores = 1, digits = 3, nMean = 10)
@@ -145,7 +167,7 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 # Select the package/database according to the organism and distance around TSS
 
 # Recommended: Full database
-# library(RcisTarget.hg19.motifDatabases.20k)
+# library(RcisTarget.hg19.motifDBs.20k)
 # data(hg19_10kbpAroundTss_motifRanking)
 # motifRankings <- hg19_10kbpAroundTss_motifRanking
 # data(hg19_direct_motifAnnotation)
@@ -154,7 +176,7 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 # motifAnnotation_inferred <- hg19_inferred_motifAnnotation
 
 # For the example: Subset of database
-library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 data(hg19_500bpUpstream_motifRanking_cispbOnly)
 motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
 data(hg19_direct_motifAnnotation_cisbpOnly)

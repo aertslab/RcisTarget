@@ -2,7 +2,8 @@
 title: "RcisTarget: Transcription factor binding motif enrichment"
 package: "`r pkg_ver('RcisTarget')`"
 abstract: >
-  This tutorial shows how to use **RcisTarget** to obtain the transcription factor binding motifs enriched on a gene list. 
+  This tutorial shows how to use **RcisTarget** to obtain  
+  transcription factor binding motifs enriched on a gene list. 
 vignette: >
   %\VignetteIndexEntry{RcisTarget: Transcription factor binding motif enrichment}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,11 +19,10 @@ output:
 ```{r libraries, echo=FALSE, message=FALSE, warning=FALSE}
 suppressPackageStartupMessages({
 library(RcisTarget)
-library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp) 
+library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp) 
 library(DT)
 library(data.table)
 #require(visNetwork)
-# library(doMC);library(doRNG) # Loaded by the package, to avoid messages. Not available in windows.
 })
 ```
 
@@ -49,7 +49,7 @@ geneLists <- list(geneListName=geneList1)
 # geneLists <- GSEABase::GeneSet(genes, setName="geneListName") # alternative
 
 # Select motif database to use (i.e. organism and distance around TSS)
-library(RcisTarget.hg19.motifDatabases.20k)
+library(RcisTarget.hg19.motifDBs.20k)
 data(hg19_10kbpAroundTss_motifRanking)
 data(hg19_direct_motifAnnotation)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
@@ -66,9 +66,11 @@ Running `cisTarget()` is equivalent to running this code:
 motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # 2. Select significant motifs, add TF annotation & format as table
-motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, motifAnnot_direct=hg19_direct_motifAnnotation)
+motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, 
+                          motifAnnot_direct=hg19_direct_motifAnnotation)
 
-# 3. Identify significant genes for each motif (i.e. genes from the gene set in the top of the ranking)
+# 3. Identify significant genes for each motif
+# (i.e. genes from the gene set in the top of the ranking)
 # Note: Method 'iCisTarget' is more accurate, but slower
 motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable, 
                                                    geneSets=geneLists,
@@ -85,10 +87,10 @@ RcisTarget uses species-specific databases which are provided as independent R-p
 
 Species | Genome | | Package
 ------- | ----- | ----- | -----
-Human | hg19 | Full version (recommended) | [SCENIC.hg19.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz)
-Human | hg19 | Subset | - available soon: *RcisTarget.hg19.motifDatabases.cisbpOnly.500bp*
-Mouse | mm9 | Full version (recommended) | [SCENIC.mm9.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz)
-Mouse | mm9 | Subset | - available soon: *RcisTarget.mm9.motifDatabases.cisbpOnly.500bp*
+Human | hg19 | Full version (recommended) | [SCENIC.hg19.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz)
+Human | hg19 | Subset | - available soon: *RcisTarget.hg19.motifDBs.cisbpOnly.500bp*
+Mouse | mm9 | Full version (recommended) | [SCENIC.mm9.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz)
+Mouse | mm9 | Subset | - available soon: *RcisTarget.mm9.motifDBs.cisbpOnly.500bp*
 Drosophila melanogaster | dm6 | | Contact us
 
 In addition, some extra packages can be installed to run RcisTarget in parallel or run the interactive examples in this tutorial: 
@@ -116,7 +118,8 @@ vignette("RcisTarget") # open
 ### Reports
 To generate an HTML report with your own data and comments, you can use the `.Rmd file` of this tutorial as template  (i.e. copy the .Rmd file, and edit it as [R notebook](http://rmarkdown.rstudio.com/r_notebooks.html) in RStudio).
 ```{r editRmd, eval=FALSE}
-vignetteFile <- paste(file.path(system.file('doc', package='RcisTarget')), "RcisTarget.Rmd", sep="/")
+vignetteFile <- paste(file.path(system.file('doc', package='RcisTarget')), 
+                      "RcisTarget.Rmd", sep="/")
 # Copy to edit as markdown
 file.copy(vignetteFile, ".")
 # Alternative: extract R code
@@ -152,7 +155,8 @@ In this example we will be using a list of genes up-regulated in MCF7 cells unde
 > The original work highlighted the role of hypoxia-inducible factor (HIF1-alpha or HIF1A) pathways under hypoxia. This gene list is also used for the turorials in iRegulon (http://iregulon.aertslab.org/tutorial.html).
 
 ```{r sampleGeneSet}
-txtFile <- paste(file.path(system.file('examples', package='RcisTarget')), "hypoxiaGeneSet.txt", sep="/")
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
+                 "hypoxiaGeneSet.txt", sep="/")
 geneLists <- list(hypoxia=read.table(txtFile)[,1])
 head(geneLists$hypoxia)
 ```
@@ -164,8 +168,8 @@ Besides the gene list, RcisTarget also needs the motif databases. The databases 
 
 Species | Package
 ------- | -----
-Human (hg19) - Full version (recommended) | [SCENIC.hg19.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz)
-Mouse (mm9)  - Full version (recommended) | [SCENIC.mm9.motifDatabases.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz)
+Human (hg19) - Full version (recommended) | [SCENIC.hg19.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz)
+Mouse (mm9)  - Full version (recommended) | [SCENIC.mm9.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz)
 Drosophila melanogaster (dm6)  | Contact us
 
 For each species, the packages contain two types of databases: (1) the gene-motif rankings, which provides the rankings (~score) of all the genes for each motif (see iRegulon publication for details), and (2) the motif annotation to transcription factors. 
@@ -174,12 +178,12 @@ In addition to the full versions of the databases (20k motifs), we also provide 
 
 Species | Package
 ------- | -----
-Human (hg19) - Subset | - available soon: *RcisTarget.hg19.motifDatabases.cisbpOnly.500bp*
-Mouse (mm9)  - Subset | - available soon: *RcisTarget.mm9.motifDatabases.cisbpOnly.500bp*
+Human (hg19) - Subset | - available soon: *RcisTarget.hg19.motifDBs.cisbpOnly.500bp*
+Mouse (mm9)  - Subset | - available soon: *RcisTarget.mm9.motifDBs.cisbpOnly.500bp*
 
 
 ### Gene-motif rankings
-For most species, there are two **gene-motif rankings** available: **10kb around the TSS** or **500 bp upstream**, which determine the search space around the transcription start site (TSS). To see the names of the rankings and annotations for each species, you can type on your console: `?RcisTarget.mm9.motifDatabases.20k` or `?RcisTarget.hg9.motifDatabases.20k`. 
+For most species, there are two **gene-motif rankings** available: **10kb around the TSS** or **500 bp upstream**, which determine the search space around the transcription start site (TSS). To see the names of the rankings and annotations for each species, you can type on your console: `?RcisTarget.mm9.motifDBs.20k` or `?RcisTarget.hg9.motifDBs.20k`. 
 
 Database | Search space
 ------- | ---------------------
@@ -191,24 +195,24 @@ Database | Search space
 ```{r installDatabases, eval=FALSE}
 # To download the rankings:
 source("http://bioconductor.org/biocLite.R")
-biocLite("RcisTarget.hg19.motifDatabases.20k")
+biocLite("RcisTarget.hg19.motifDBs.cisbpOnly.500bp")
 ```
 
 Example for loading the databases: 
 ```{r loadDatabases, eval=FALSE}
 # Full version (20k motifs) for human
-library(RcisTarget.hg19.motifDatabases.20k)
+library(RcisTarget.hg19.motifDBs.20k)
 # Search space: 10k bp around TSS
 data(hg19_10kbpAroundTss_motifRanking)
 
-# The db can be saved as a variable for easy substitution in the following steps:
+# (For easy substitution in the following steps):
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 motifRankings
 ```
 
 For this example (demonstration purposes), we will use the subset of the database:
 ```{r loadDatabasesCisbpOnly}
-library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 data(hg19_500bpUpstream_motifRanking_cispbOnly)
 motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
 motifRankings
@@ -273,9 +277,9 @@ data(hg19_direct_motifAnnotation_cisbpOnly)
 data(hg19_inferred_motifAnnotation_cisbpOnly)
 
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=3, 
-                     motifAnnot_direct=hg19_direct_motifAnnotation_cisbpOnly,
-                     motifAnnot_inferred=hg19_inferred_motifAnnotation_cisbpOnly,
-                     highlightTFs=list(hypoxia="HIF1A"))
+     motifAnnot_direct=hg19_direct_motifAnnotation_cisbpOnly,
+     motifAnnot_inferred=hg19_inferred_motifAnnotation_cisbpOnly,
+     highlightTFs=list(hypoxia="HIF1A"))
 ```
 
 ```{r}
@@ -344,7 +348,8 @@ datatable(resultsSubset[,-c("enrichedGenes", "TF_inferred"), with=FALSE],
 Note that the TFs are provided based on the motif annotation. They can be used as a guide to select relevant motifs or to prioritize some TFs, but the motif annotation does not imply that all the TFs appearing in the table regulate the gene list.
 
 ```{r anotatedTfs, cache=TRUE}
-anotatedTfs <- lapply(split(motifEnrichmentTable_wGenes$TF_direct, motifEnrichmentTable$geneSet),
+anotatedTfs <- lapply(split(motifEnrichmentTable_wGenes$TF_direct,
+                            motifEnrichmentTable$geneSet),
                       function(x) unique(unlist(strsplit(x, "; "))))
 anotatedTfs$hypoxia
 ```
@@ -373,10 +378,10 @@ library(visNetwork)
 motifs <- unique(as.character(edges[,1]))
 genes <- unique(as.character(edges[,2]))
 nodes <- data.frame(id=c(motifs, genes),   
-          label=c(motifs, genes),    
-          title=c(motifs, genes), # tooltip 
-          shape=c(rep("diamond", length(motifs)), rep("elypse", length(genes))),
-          color=c(rep("purple", length(motifs)), rep("skyblue", length(genes))))
+      label=c(motifs, genes),    
+      title=c(motifs, genes), # tooltip 
+      shape=c(rep("diamond", length(motifs)), rep("elypse", length(genes))),
+      color=c(rep("purple", length(motifs)), rep("skyblue", length(genes))))
 visNetwork(nodes, edges) %>% visOptions(highlightNearest = TRUE, 
                                         nodesIdSelection = TRUE)
 ```

@@ -7,7 +7,7 @@ set.seed(123)
 dbs <- fakeDatabase(incAnnotation=TRUE)
 motifRankings <- dbs$ranking
 motifAnnot_direct <- dbs$annotation
-geneLists <- sample(getRanking(motifRankings)$rn, 100)
+geneLists <- sample(rownames(motifRankings), 100)
 
 # This is an example of code for a real run:
 ##################################################
@@ -20,7 +20,7 @@ geneLists <- sample(getRanking(motifRankings)$rn, 100)
 
   #### Databases
   # Select the package according to the organism and distance around TSS
-  library(RcisTarget.hg19.motifDatabases.20k)
+  library(RcisTarget.hg19.motifDBs.20k)
   data(hg19_10kbpAroundTss_motifRanking)
   motifRankings <- hg19_10kbpAroundTss_motifRanking
   data(hg19_direct_motifAnnotation)

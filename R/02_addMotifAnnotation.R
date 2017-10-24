@@ -1,6 +1,6 @@
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
-#' @import data.table
+
 #' @importFrom stats sd setNames
 #'
 #' @title Add motif annotation
@@ -79,7 +79,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
                             motifAnnot_direct=motifAnnot_direct,
                             motifAnnot_inferred=motifAnnot_inferred,
                             highlightTFs=tfs)
-        aucTable <- data.table(geneSet=geneSet, aucTable)
+        aucTable <- data.table::data.table(geneSet=geneSet, aucTable)
       }else{
         aucTable <- NULL
       }
@@ -104,24 +104,23 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
   sdAUC <- sd(AUC)
 
   # NES = (AUC-mean)/sd
-  NES <- sapply(AUC, function(x) (x-meanAUC)/sdAUC)
+  NES <- vapply(AUC, function(x) (x-meanAUC)/sdAUC,
+                FUN.VALUE=numeric(1))
   return(NES)
 }
 
-#' @import data.table
 .auc.asTable <- function(auc, nesThreshold=3.0, digits=3)
 {
   nes <- .calcNES(auc)
   nes <- sort(nes, decreasing=TRUE)
 
   signifRankings <- names(nes)[which(nes >= nesThreshold)]
-  aucTable <- data.table(motif=signifRankings,
+  aucTable <- data.table::data.table(motif=signifRankings,
                          NES=signif(nes[signifRankings], digits=digits),
                          AUC=signif(auc[signifRankings],digits=digits))
   aucTable
 }
 
-#' @import data.table
 .addTfs <- function(aucTable,
                     motifAnnot_direct=NULL,
                     motifAnnot_inferred=NULL,
@@ -129,7 +128,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 {
   if(!is.null(highlightTFs))
   {
-    aucTable <- data.table(aucTable,
+    aucTable <- data.table::data.table(aucTable,
                            highlightedTFs=paste(highlightTFs, collapse=", ") ,
                            TFinDB="")
     tmp <- .tfInAnnot(aucTable$motif,
@@ -149,18 +148,18 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 
   if(!is.null(motifAnnot_direct))
   {
-    TF_direct <- sapply(aucTable$motif, function(x) {
+    TF_direct <- vapply(aucTable$motif, function(x) {
       paste(motifAnnot_direct[[x]][,1], collapse="; ")
-    })
-    aucTable <- data.table(aucTable, TF_direct=TF_direct)
+    }, FUN.VALUE="")
+    aucTable <- data.table::data.table(aucTable, TF_direct=TF_direct)
   }
 
   if(!is.null(motifAnnot_inferred))
   {
-    TF_inferred <- sapply(aucTable$motif, function(x) {
+    TF_inferred <- vapply(aucTable$motif, function(x) {
       paste(motifAnnot_inferred[[x]][,1], collapse="; ")
-    })
-    aucTable <- data.table(aucTable, TF_inferred=TF_inferred)
+    }, FUN.VALUE="")
+    aucTable <- data.table::data.table(aucTable, TF_inferred=TF_inferred)
   }
   aucTable
 }
@@ -168,7 +167,6 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 
 # Not exclusive!
 # TO DO: Optimize??
-#' @import data.table
 .tfInAnnot <- function(motifList, inputTFs,
                        motifAnnot_direct=NULL,
                        motifAnnot_inferred=NULL)
@@ -180,16 +178,16 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
   if(!is.null(motifAnnot_direct))
   {
     motifs_00 <- motifList[which(motifList %in% names(motifAnnot_direct))]
-    in000 <- sapply(motifAnnot_direct[motifs_00],
-                    function(x) any(inputTFs %in% x[,1]))
+    in000 <- vapply(motifAnnot_direct[motifs_00],
+                    function(x) any(inputTFs %in% x[,1]), FUN.VALUE=logical(1))
     if(length(in000)==0)
       in000 <- setNames(rep(FALSE, length(motifList)), motifList)
   }
   if(!is.null(motifAnnot_inferred))
   {
     motifs_001 <- motifList[which(motifList %in% names(motifAnnot_inferred))]
-    in001 <- sapply(motifAnnot_inferred[motifs_001],
-                    function(x) any(inputTFs %in% x[,1]))
+    in001 <- vapply(motifAnnot_inferred[motifs_001],
+                    function(x) any(inputTFs %in% x[,1]), FUN.VALUE=logical(1))
     if(length(in001)==0)
       in001 <- setNames(rep(FALSE, length(motifList)), motifList)
   }

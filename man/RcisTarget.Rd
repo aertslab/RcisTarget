@@ -18,10 +18,9 @@ The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
 (i.e. 10kbp around- or 500bp upstream the TSS).
 These objects are provided in separate packages:
 \itemize{
-\item \url{http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases}
-(Human)
-\item \url{http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases}
-(Mouse)
+\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
+\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
+\item -contact us- (Fly)
 }
 See the help files for more information:
 i.e. \code{help(RcisTarget.hg19.motifDatabases)}}
@@ -97,7 +96,7 @@ set.seed(123)
 dbs <- fakeDatabase(incAnnotation=TRUE)
 motifRankings <- dbs$ranking
 motifAnnot_direct <- dbs$annotation
-geneLists <- sample(getRanking(motifRankings)$rn, 100)
+geneLists <- sample(rownames(motifRankings), 100)
 
 # This is an example of code for a real run:
 ##################################################
@@ -110,7 +109,7 @@ geneLists <- sample(getRanking(motifRankings)$rn, 100)
 
   #### Databases
   # Select the package according to the organism and distance around TSS
-  library(RcisTarget.hg19.motifDatabases.20k)
+  library(RcisTarget.hg19.motifDBs.20k)
   data(hg19_10kbpAroundTss_motifRanking)
   motifRankings <- hg19_10kbpAroundTss_motifRanking
   data(hg19_direct_motifAnnotation)

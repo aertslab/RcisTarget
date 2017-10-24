@@ -15,7 +15,6 @@
 #' @method show aucScores
 #' @method getAUC aucScores
 #' @example inst/examples/example_aucScores_class.R
-#' @import data.table
 #' @import SummarizedExperiment
 #' @importFrom utils head
 # @importFrom R.utils capitalize

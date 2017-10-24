@@ -1,8 +1,8 @@
 
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
-#' @import data.table
-##' @import GSEABase
+
+#' @import GSEABase
 # @import doParallel
 # @import foreach
 #' @importFrom methods new
@@ -19,8 +19,8 @@
 #' search-space (i.e. 10kbp around- or 500bp upstream the TSS).
 #' These objects are provided in separate packages:
 #' \itemize{
-#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
-#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
+#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
+#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
 #' \item -contact us- (Fly)
 #' }
 #' Since the normalized enrichment score (NES) of the motif
@@ -30,12 +30,12 @@
 #' containing only the 4.6k motifs from cisbp,
 #' are available in Bioconductor:
 #' \itemize{
-#' \item RcisTarget.mm9.motifDatabases.cisbpOnly.500bp (Mouse)
-#' \item RcisTarget.hg19.motifDatabases.cisbpOnly.500bp (Human)
+#' \item RcisTarget.mm9.motifDBs.cisbpOnly.500bp (Mouse)
+#' \item RcisTarget.hg19.motifDBs.cisbpOnly.500bp (Human)
 #' }
 #'
 #' See the help files for more information: i.e.
-#' \code{help(RcisTarget.hg19.motifDatabases.20k)}.
+#' \code{help(RcisTarget.hg19.motifDBs.20k)}.
 #' @param nCores Number of cores to use for computation.
 #' Note: In general, using a higher number of cores (e.g. processes)
 #' decreases overall running time.
@@ -97,36 +97,36 @@ setMethod("calcAUC", "character",
                         verbose=verbose)
   })
 
-# #' @rdname calcAUC
-# #' @aliases calcAUC,GeneSet-method
-# setMethod("calcAUC", "GeneSet",
-#   function(geneSets, rankings, nCores=1,
-#            aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
-#   {
-#     geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
-#                          GSEABase::setName(geneSets))
-#
-#     .RcisTarget_calcAUC(geneSets=geneSets,
-#                         rankings=rankings,
-#                         nCores=nCores,
-#                         aucMaxRank=aucMaxRank,
-#                         verbose=verbose)
-#   })
+#' @rdname calcAUC
+#' @aliases calcAUC,GeneSet-method
+setMethod("calcAUC", "GeneSet",
+  function(geneSets, rankings, nCores=1,
+           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+  {
+    geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
+                         GSEABase::setName(geneSets))
 
-# #' @rdname calcAUC
-# #' @aliases calcAUC,GeneSetCollection-method
-# setMethod("calcAUC", "GeneSetCollection",
-#   function(geneSets, rankings, nCores=1,
-#            aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
-#   {
-#     geneSets <- GSEABase::geneIds(geneSets)
-#
-#     .RcisTarget_calcAUC(geneSets=geneSets,
-#                         rankings=rankings,
-#                         nCores=nCores,
-#                         aucMaxRank=aucMaxRank,
-#                         verbose=verbose)
-#   })
+    .RcisTarget_calcAUC(geneSets=geneSets,
+                        rankings=rankings,
+                        nCores=nCores,
+                        aucMaxRank=aucMaxRank,
+                        verbose=verbose)
+  })
+
+#' @rdname calcAUC
+#' @aliases calcAUC,GeneSetCollection-method
+setMethod("calcAUC", "GeneSetCollection",
+  function(geneSets, rankings, nCores=1,
+           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+  {
+    geneSets <- GSEABase::geneIds(geneSets)
+
+    .RcisTarget_calcAUC(geneSets=geneSets,
+                        rankings=rankings,
+                        nCores=nCores,
+                        aucMaxRank=aucMaxRank,
+                        verbose=verbose)
+  })
 
 .RcisTarget_calcAUC <- function(geneSets, rankings, nCores=1,
                                 aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
@@ -151,13 +151,13 @@ setMethod("calcAUC", "character",
     rankingsInfo <- c(org=rankings@org,
                       genome=rankings@genome,
                       description=rankings@description)
-    rankings <- rankings@rankings
+    rankings <- getRanking(rankings)
   }
-  if(!is.data.table(rankings))
+  if(!is.matrix(rankings))
     stop("Rankings does not have the right format.")
 
   allGenes <- unique(unlist(geneSets))
-  if(sum(allGenes %in% rankings$rn)/length(allGenes) < .80)
+  if(sum(allGenes %in% rownames(rankings))/length(allGenes) < .80)
     stop("Fewer than 80% of the genes in the gene sets ",
          "are included in the rankings.",
          "Check wether the gene IDs in the 'rankings' and 'geneSets' match.")
@@ -168,11 +168,12 @@ setMethod("calcAUC", "character",
   if(nCores==1)
   {
     gSetName <- NULL
-    aucMatrix <- sapply(names(geneSets), function(gSetName)
+    aucMatrix <- vapply(names(geneSets), function(gSetName)
       .AUC.geneSet(geneSet=geneSets[[gSetName]],
                    rankings=rankings,
                    aucMaxRank=aucMaxRank,
-                   gSetName=gSetName))
+                   gSetName=gSetName),
+      FUN.VALUE=numeric(ncol(rankings)+2))
     aucMatrix <- t(aucMatrix)
   }else
   {
@@ -222,11 +223,12 @@ setMethod("calcAUC", "character",
   if(sum(missingGenes[,"missing"])>0)
   {
     msg1 <- "Genes in the gene sets NOT available in the dataset: \n"
-    msg2 <-  sapply(rownames(missingGenes)[which(missingGenes[,"missing"]>0)],
+    msg2 <-  vapply(rownames(missingGenes)[which(missingGenes[,"missing"]>0)],
               function(gSetName)
                 paste("\t", gSetName, ": \t", missingGenes[gSetName,"missing"],
                 " (",round(missingPercent[gSetName]*100),"% of ",
-                missingGenes[gSetName,"nGenes"],")",sep=""))
+                missingGenes[gSetName,"nGenes"],")",sep=""),
+              FUN.NAME="")
     if(verbose)
       message(paste(msg1, paste(msg2, collapse="\n"), sep=""))
   }
@@ -244,23 +246,44 @@ setMethod("calcAUC", "character",
       description = rankingsInfo["description"])
 }
 
-# add?: AUCThreshold
+# # add?: AUCThreshold
+# .AUC.geneSet_dataTable <- function(geneSet, rankings, aucMaxRank, gSetName="")
+# {
+#   geneSet <- unique(geneSet)
+#   nGenes <- length(geneSet)
+#   geneSet <- geneSet[which(geneSet %in% rankings$rn)]
+#   missing <- nGenes-length(geneSet)
+#
+#   # gene names are no longer needed
+#   gSetRanks <- subset(rankings, rankings$rn %in% geneSet)[,-"rn", with=FALSE]
+#   rm(rankings)
+#
+#   aucThreshold <- round(aucMaxRank)
+#   maxAUC <- aucThreshold * nrow(gSetRanks)
+#
+#   # Apply by columns (i.e. to each ranking)
+#   auc <- vapply(gSetRanks, .auc, FUN.VALUE=numeric(1), aucThreshold, maxAUC)
+#
+#   c(auc, missing=missing, nGenes=nGenes)
+# }
+
 .AUC.geneSet <- function(geneSet, rankings, aucMaxRank, gSetName="")
 {
   geneSet <- unique(geneSet)
   nGenes <- length(geneSet)
-  geneSet <- geneSet[which(geneSet %in% rankings$rn)]
+  geneSet <- geneSet[which(geneSet %in% rownames(rankings))]
   missing <- nGenes-length(geneSet)
 
   # gene names are no longer needed
-  gSetRanks <- subset(rankings, rankings$rn %in% geneSet)[,-"rn", with=FALSE]
+  gSetRanks <- rankings[geneSet,]
   rm(rankings)
 
   aucThreshold <- round(aucMaxRank)
   maxAUC <- aucThreshold * nrow(gSetRanks)
 
-  # Apply by columns (i.e. to each ranking)
-  auc <- sapply(gSetRanks, .auc, aucThreshold, maxAUC)
+  # auc <- setNames(rep(NA, ncol(gSetRanks)), colnames(gSetRanks))
+  # for(i in 1:ncol(gSetRanks)) auc[i] <- .auc(gSetRanks[,i], aucThreshold, maxAUC)
+  auc <- apply(gSetRanks, 2, .auc, aucThreshold, maxAUC)
 
   c(auc, missing=missing, nGenes=nGenes)
 }
@@ -268,7 +291,7 @@ setMethod("calcAUC", "character",
 # oneRanking <- gSetRanks[,3, with=FALSE]
 .auc <- function(oneRanking, aucThreshold, maxAUC)
 {
-  x <- unlist(oneRanking)
+  x <- oneRanking
   x <- sort(x[x<aucThreshold])
 
   y <- seq_along(x)

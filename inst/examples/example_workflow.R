@@ -8,7 +8,7 @@ dbs <- fakeDatabase(incAnnotation=TRUE)
 motifRankings <- dbs$ranking
 motifAnnot_direct <- dbs$annotation
 
-geneLists <- list(geneSet=sample(getRanking(motifRankings)$rn, 100))
+geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
 
 # Example of code for a real run:
 ##################################################
@@ -26,7 +26,7 @@ geneLists <- list(geneSet=sample(getRanking(motifRankings)$rn, 100))
 
   #### Load databases
   # Select the package/database according to the organism and distance around TSS
-  library(RcisTarget.hg19.motifDatabases.20k)
+  library(RcisTarget.hg19.motifDBs.20k)
   data(hg19_10kbpAroundTss_motifRanking)
   motifRankings <- hg19_10kbpAroundTss_motifRanking
   data(hg19_direct_motifAnnotation)
@@ -42,7 +42,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # Step 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                                           motifAnnot_direct=motifAnnot_direct)
+                         motifAnnot_direct=motifAnnot_direct)
 
 # Step 3 (optional). Identify genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)

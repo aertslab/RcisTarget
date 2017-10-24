@@ -1,6 +1,6 @@
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
-#' @import data.table
+
 #' @title cisTarget
 #' @rdname RcisTarget
 #' @description Identifies DNA motifs significantly over-represented in a
@@ -21,10 +21,9 @@
 #' (i.e. 10kbp around- or 500bp upstream the TSS).
 #' These objects are provided in separate packages:
 #' \itemize{
-#' \item \url{http://bioconductor.org/packages/RcisTarget.hg19.motifDatabases}
-#' (Human)
-#' \item \url{http://bioconductor.org/packages/RcisTarget.mm9.motifDatabases}
-#' (Mouse)
+#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
+#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
+#' \item -contact us- (Fly)
 #' }
 #' See the help files for more information:
 #' i.e. \code{help(RcisTarget.hg19.motifDatabases)}
@@ -77,7 +76,6 @@ cisTarget <- function(geneSets, motifRankings,
             geneErnMethod="aprox", geneErnMmaxRank=5000,
             nCores=1, verbose=TRUE)
 {
-  # suppressPackageStartupMessages(library(data.table))
   # Calculate AUC
   motifs_AUC <- calcAUC(geneSets=geneSets,
                         rankings=motifRankings,

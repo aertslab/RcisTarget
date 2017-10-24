@@ -34,7 +34,7 @@ set.seed(123)
 motifRankings <- fakeDatabase()
 motifRankings
 
-geneLists <- list(geneSet=sample(getRanking(motifRankings)$rn, 100))
+geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
 
 motifs_AUC <- calcAUC(geneLists, motifRankings)
 ##############################################

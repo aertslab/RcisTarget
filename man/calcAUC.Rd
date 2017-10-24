@@ -5,6 +5,8 @@
 \alias{calcAUC}
 \alias{calcAUC,list-method}
 \alias{calcAUC,character-method}
+\alias{calcAUC,GeneSet-method}
+\alias{calcAUC,GeneSetCollection-method}
 \title{Calculate AUC}
 \usage{
 calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
@@ -14,6 +16,12 @@ calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
   nrow(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{character}(geneSets, rankings, nCores = 1,
+  aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
+
+\S4method{calcAUC}{GeneSet}(geneSets, rankings, nCores = 1,
+  aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
+
+\S4method{calcAUC}{GeneSetCollection}(geneSets, rankings, nCores = 1,
   aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
 }
 \arguments{
@@ -25,8 +33,8 @@ The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
 search-space (i.e. 10kbp around- or 500bp upstream the TSS).
 These objects are provided in separate packages:
 \itemize{
-\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
-\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
+\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
+\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
 \item -contact us- (Fly)
 }
 Since the normalized enrichment score (NES) of the motif
@@ -36,12 +44,12 @@ Smaller versions of the databases,
 containing only the 4.6k motifs from cisbp,
 are available in Bioconductor:
 \itemize{
-\item RcisTarget.mm9.motifDatabases.cisbpOnly.500bp (Mouse)
-\item RcisTarget.hg19.motifDatabases.cisbpOnly.500bp (Human)
+\item RcisTarget.mm9.motifDBs.cisbpOnly.500bp (Mouse)
+\item RcisTarget.hg19.motifDBs.cisbpOnly.500bp (Human)
 }
 
 See the help files for more information: i.e.
-\code{help(RcisTarget.hg19.motifDatabases.20k)}.}
+\code{help(RcisTarget.hg19.motifDBs.20k)}.}
 
 \item{nCores}{Number of cores to use for computation.
 Note: In general, using a higher number of cores (e.g. processes)
@@ -84,7 +92,7 @@ dbs <- fakeDatabase(incAnnotation=TRUE)
 motifRankings <- dbs$ranking
 motifAnnot_direct <- dbs$annotation
 
-geneLists <- list(geneSet=sample(getRanking(motifRankings)$rn, 100))
+geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
 
 # Example of code for a real run:
 ##################################################
@@ -102,7 +110,7 @@ geneLists <- list(geneSet=sample(getRanking(motifRankings)$rn, 100))
 
   #### Load databases
   # Select the package/database according to the organism and distance around TSS
-  library(RcisTarget.hg19.motifDatabases.20k)
+  library(RcisTarget.hg19.motifDBs.20k)
   data(hg19_10kbpAroundTss_motifRanking)
   motifRankings <- hg19_10kbpAroundTss_motifRanking
   data(hg19_direct_motifAnnotation)
@@ -118,7 +126,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # Step 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                                           motifAnnot_direct=motifAnnot_direct)
+                         motifAnnot_direct=motifAnnot_direct)
 
 # Step 3 (optional). Identify genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)

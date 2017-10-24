@@ -1,8 +1,6 @@
 # Help files will be automatically generated from the coments starting with #'
 # (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
 
-#' @import data.table
-#'
 #' @title Add motif logo to RcisTarget results table
 #' @description Adds a column containing the logo URL to RcisTarget results
 #' table. Note that Transfac-Pro logos cannot be shown.
@@ -27,5 +25,5 @@ addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v8")
                    '") height="52" alt="',
                    motifEnrDT$motif, '"></img>', sep="")
 
-  data.table(logo=logos, motifEnrDT)
+  data.table::data.table(logo=logos, motifEnrDT)
 }

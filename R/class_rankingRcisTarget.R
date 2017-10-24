@@ -1,10 +1,8 @@
 #' @title Class to store the motif databases for RcisTarget.
-#' @aliases rankingWrapper-class, rankingWrapper, getRanking,
+#' @aliases rankingRcisTarget-class, rankingRcisTarget, getRanking,
 #' ncol, nrow, show, subset
-#' @param x [several methods] rankingWrapper object to apply the method
-#' @param object [method: show] rankingWrapper object to show
-#' @param elements [method: subset]
-#' @param select [method: subset]
+#' @param x [several methods] rankingRcisTarget object to apply the method
+#' @param object [method: show] rankingRcisTarget object to show
 #'
 #' @description
 #' This class is only meant as container for the motif rankings
@@ -22,7 +20,12 @@
 #'
 ## Methods: See examples.
 ## @import BiocGenerics
-## @example inst/examples/example_class_rankingWrapper.R
+#'
+#' @importClassesFrom data.table data.table
+#' @importFrom data.table setkey is.data.table rbindlist .SD
+#   importMethodsFrom
+#'
+## @example inst/examples/example_class_rcos.R
 #' @return
 #' \itemize{
 #' \item show: Prints a summary of the object
@@ -31,20 +34,21 @@
 #' or a subset of the ranking
 #' }
 #' @examples
-#' library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+#' library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 #' data("hg19_500bpUpstream_motifRanking_cispbOnly")
 #' hg19_500bpUpstream_motifRanking_cispbOnly
 #' class(hg19_500bpUpstream_motifRanking_cispbOnly)
-#' @rdname rankingWrapper-class
-#' @export rankingWrapper
-#' @exportClass rankingWrapper
-rankingWrapper <- setClass(
-  # Set the name for the class
-  Class="rankingWrapper",
 
-  # Define the slots
-  slots = c(
-    rankings = "data.table",
+#' @rdname rankingRcisTarget-class
+#' @export rankingRcisTarget
+#' @exportClass rankingRcisTarget
+rankingRcisTarget <- setClass(
+  # Set the name for the class
+  Class="rankingRcisTarget",
+
+  contains="SummarizedExperiment",
+  representation=representation(
+    # rankings = "data.table",
     colType = "character", # motif or whatever feature is stored (e.g. ChipSeq)
     rowType = "character", # gene/region
     org = "character", # human/mouse
@@ -54,16 +58,19 @@ rankingWrapper <- setClass(
   )
 )
 
-#' @rdname rankingWrapper-class
-#' @aliases show,rankingWrapper-method
+
+
+
+#' @rdname rankingRcisTarget-class
+#' @aliases show,rankingRcisTarget-method
 #' @export
 setMethod("show",
-  signature="rankingWrapper",
+  signature="rankingRcisTarget",
   definition = function(object) {
     message <- paste("Rankings for RcisTarget.", "\n",
     "  Organism: ", object@org, " (", object@genome,")","\n",
-    "  Number of ", toupper(object@rowType), "S: ", nrow(object@rankings),"\n",
-    "  Number of ", object@colType, "s: ", ncol(object@rankings)-1,"\n\n",
+    "  Number of ", toupper(object@rowType), "S: ", nrow(getRanking(object)),"\n",
+    "  Number of ", object@colType, "s: ", ncol(getRanking(object)),"\n\n",
     sep="")
 
     if(getMaxRank(object) < Inf)
@@ -87,27 +94,31 @@ setMethod("show",
 
 ##### Access the rankings:
 
-#' @rdname rankingWrapper-class
-#' @aliases getRanking,rankingWrapper-method
+#' @rdname rankingRcisTarget-class
+#' @aliases getRanking,rankingRcisTarget-method
 #' @export
 setGeneric(name="getRanking",
            def=function(x) standardGeneric("getRanking"))
 setMethod("getRanking",
-  signature="rankingWrapper",
+  signature="rankingRcisTarget",
   definition = function(x) {
-    x@rankings
+    if("rankings" %in% assayNames(x)) {
+      x@assays[["rankings"]] # assays() takes over 1 second...
+    }else{
+      stop("This object does not contain rankings.")
+    }
   }
 )
 
 ##### Access the maxRank:
 
-#' @rdname rankingWrapper-class
-#' @aliases getMaxRank,rankingWrapper-method
+#' @rdname rankingRcisTarget-class
+#' @aliases getMaxRank,rankingRcisTarget-method
 #' @export
 setGeneric(name="getMaxRank",
            def=function(x) standardGeneric("getMaxRank"))
 setMethod("getMaxRank",
-          signature="rankingWrapper",
+          signature="rankingRcisTarget",
           definition = function(x) {
             # Previous versions didn't have @maxRank -> Contain all ranks
             ret <- tryCatch(
@@ -120,69 +131,4 @@ setMethod("getMaxRank",
 
             return(ret)
           }
-)
-
-##### Subset the object:
-# #' @export
-# setMethod('[', signature(x="rankingWrapper"),
-#           definition=function(x, i, j, drop=FALSE){
-#             x@ranking <- x@ranking[i,j, drop=drop]
-#             x
-#           })
-
-
-#' @rdname rankingWrapper-class
-#' @aliases subset,rankingWrapper-method
-#' @export
-setMethod("subset",
-  signature="rankingWrapper",
-  definition = function(x, elements, select=x@rowType) {
-
-    if(length(select) > 1) stop()
-
-    if(grepl("col", tolower(select))) {
-
-      if(is.numeric(elements))
-      {
-        x@rankings <- x@rankings[, unique(c(1, elements)), with=FALSE]
-      }else{
-        x@rankings <- x@rankings[, unique(c("rn", elements)), with=FALSE]
-      }
-
-    }else{
-      if(grepl("row", tolower(select))) {
-        if(is.numeric(elements))
-        {
-          x@rankings <- x@rankings[elements,]
-        }else{
-          x@rankings <- x@rankings[x@rankings$rn %in% elements]
-        }
-
-    }}
-    x
-  }
-)
-
-
-# Regular "matrix" methods (rownames, []...) not behave as a data.table.
-# Get from the @ranking slot manually...
-
-#' @rdname rankingWrapper-class
-#' @aliases nrow,rankingWrapper-method
-#' @export
-setMethod("nrow",
-  signature="rankingWrapper",
-  definition = function(x) {
-    nrow(x@rankings)
-  }
-)
-
-#' @rdname rankingWrapper-class
-#' @aliases ncol,rankingWrapper-method
-#' @export
-setMethod("ncol",
-  signature="rankingWrapper",
-  definition = function(x) {
-    ncol(x@rankings)
-  }
 )

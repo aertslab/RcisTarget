@@ -2,7 +2,6 @@
 ###############################################################################
 # Calculates gene enrichment: i-CisTarget version
 # Arguments should be kept in the same order as .calcEnr_Aprox
-#' @import data.table
 .calcEnr_iCisTarget <- function(gsRankings, maxRank,
                                 signifRankingNames, plotCurve, nCores, nMean)
 {
@@ -36,16 +35,15 @@
 ##############################################################################
 # Calculates gene enrichment: Aproximated/faster version
 # Arguments should be kept in the same order as .calcEnr_iCisTarget
-#' @import data.table
 .calcEnr_Aprox <- function(gsRankings, maxRank,
                            signifRankingNames, plotCurve, nCores, nMean)
 {
   # Calculate aproximated-RCC across all motifs at each rank position
   maxRankExtra <- maxRank+nMean
   globalMat <- matrix(0, nrow=nrow(gsRankings), ncol=maxRankExtra)
-  for(x in gsRankings) # (TO DO: Paralellize?)
+  for(i in 1:ncol(gsRankings)) # (TO DO: Paralellize?)
   {
-    x <- unlist(x)
+    x <- unlist(gsRankings[,i])
     x <- sort(x[x<maxRankExtra])
 
     if(length(x) > 0){
@@ -75,7 +73,7 @@
   # Reduce noise in the stats with the rolling mean
   rccStats <- t(apply(rccStatsRaw, 1,
                       function(x)
-                        c(x[1:5],
+                        c(x[1:5],   # Correct??
                           zoo::rollmean(x, nMean, align="center",
                                         fill="extend"))))[,1:(maxRank-1)]
   rccM2sd <- rccStats["mean",] + (2*rccStats["sd",])
@@ -84,7 +82,7 @@
 
 
   # Calculate real RCC & max enrichment for selected rankings
-  rccs <- .calcRCC(gsRankings[,signifRankingNames,with=FALSE], maxRank, nCores)
+  rccs <- .calcRCC(gsRankings[,signifRankingNames,drop=FALSE], maxRank, nCores)
   maxEnr <- sapply(signifRankingNames, function(sr) {
     x <- min(which.max(rccs[,sr]-rccM2sd))
     c(x=x, y=unname(rccs[x,sr]))
@@ -114,24 +112,22 @@
 # Aux functions
 
 # Calculates RCC (of the gene-set) ONE RANKING
-#' @import data.table
 .calcRCC.oneRanking <- function(x, maxRank)
 {
   x <- unlist(x)
   x <- sort(x[x<maxRank])
 
   curranking <- c(x, maxRank)
-  unlist(mapply(rep, 0:(length(curranking)-1),
+  unlist(mapply(rep, seq_along(curranking)-1,
                 c(curranking[1], diff(curranking))))[-1]
 }
 
 # Apply .calcRCC.oneRanking on all rankings (= each column)
-#' @import data.table
 .calcRCC <- function(gsRankings, maxRank, nCores)
 {
   if(nCores==1)
   {
-    rccs <- sapply(gsRankings, .calcRCC.oneRanking, maxRank)
+    rccs <- apply(gsRankings, 2, .calcRCC.oneRanking, maxRank)
   }else
   {
     # Split rankings into 10 groups and run in parallel
@@ -148,7 +144,7 @@
     rccs <- foreach::"%do%"(foreach::foreach(colsGr=colsNamsGroups,
                                              .combine="cbind"),
     {
-      sapply(gsRankings[,colsGr, with=FALSE], .calcRCC.oneRanking, maxRank)
+      apply(gsRankings[,colsGr, drop=FALSE],2, .calcRCC.oneRanking, maxRank)
     })
   }
   return(rccs)

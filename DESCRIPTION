@@ -2,8 +2,8 @@ Package: RcisTarget
 Type: Package
 Title: RcisTarget: Identify transcription factor binding motifs enriched on a
     gene list
-Version: 0.99.1
-Date: 2017-10-08
+Version: 0.99.2
+Date: 2017-10-24
 Author: Sara Aibar, Stein Aerts. Laboratory of Computational Biology. 
     VIB-KU Leuven Center for Brain & Disease Research. Leuven, Belgium
 Maintainer: Sara Aibar <sara.aibar@kuleuven.vib.be>
@@ -19,9 +19,11 @@ Description: RcisTarget identifies transcription factor binding
     RcisTarget predicts the candidate target genes 
     (i.e. genes in the gene-set that are ranked above the leading edge).
 URL: http://scenic.aertslab.org
+Depends: R (>= 3.4)
 Imports:
     data.table,
     SummarizedExperiment,
+    GSEABase,
     methods,
     R.utils,
     graphics,
@@ -38,9 +40,10 @@ Suggests:
     rmarkdown,
     doParallel,
     foreach,
-    RcisTarget.hg19.motifDatabases.cisbpOnly.500bp, 
+    RcisTarget.hg19.motifDBs.cisbpOnly.500bp, 
     testthat
 License: GPL-3
+BugReports: https://github.com/aertslab/RcisTarget/issues
 biocViews: GeneRegulation, MotifAnnotation, Transcriptomics, Transcription,
     GeneSetEnrichment, GeneTarget
 LazyData: TRUE

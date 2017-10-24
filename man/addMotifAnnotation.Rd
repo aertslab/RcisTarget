@@ -69,7 +69,7 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 #### Databases
 # Select the package/database according to the organism and distance around TSS
 # Recommended: Full database
-# library(RcisTarget.hg19.motifDatabases.20k)
+# library(RcisTarget.hg19.motifDBs.20k)
 # data(hg19_10kbpAroundTss_motifRanking)
 # motifRankings <- hg19_10kbpAroundTss_motifRanking
 # data(hg19_direct_motifAnnotation)
@@ -78,7 +78,7 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 # motifAnnotation_inferred <- hg19_inferred_motifAnnotation
 
 # For the example: Subset of database
-library(RcisTarget.hg19.motifDatabases.cisbpOnly.500bp)
+library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 data(hg19_500bpUpstream_motifRanking_cispbOnly)
   motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
 data(hg19_direct_motifAnnotation_cisbpOnly)
