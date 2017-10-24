@@ -16,8 +16,8 @@
 #' @method getAUC aucScores
 #' @example inst/examples/example_aucScores_class.R
 #' @import SummarizedExperiment
+#' @importFrom R.utils capitalize
 #' @importFrom utils head
-# @importFrom R.utils capitalize
 #' @rdname aucScores-class
 #' @export aucScores
 aucScores <- setClass("aucScores",
