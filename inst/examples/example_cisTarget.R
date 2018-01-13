@@ -1,12 +1,10 @@
 
 # Example for running RcisTarget using cisTarget() function (workflow wrapper)
 
-
 # A quick example can be run using a (small) fake-database & gene-set:
-set.seed(123)
-dbs <- fakeDatabase(incAnnotation=TRUE)
-motifRankings <- dbs$ranking
-motifAnnot_direct <- dbs$annotation
+load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
+motifRankings <- fakeDb$ranking
+motifAnnot_direct <- fakeDb$annotation
 geneLists <- sample(rownames(motifRankings), 100)
 
 # This is an example of code for a real run:
@@ -63,3 +61,4 @@ motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
 DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top",
               options=list(pageLength=5))
 # Note: If using the fake database, the results of this analysis are meaningless
+

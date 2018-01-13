@@ -1,6 +1,6 @@
 ############# Fake run of RcisTarget ########
-set.seed(123)
-motifRankings <- fakeDatabase()
+load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
+motifRankings <- fakeDb$ranking
 motifRankings
 
 geneLists <- list(geneSet=sample(rownames(motifRankings), 100))

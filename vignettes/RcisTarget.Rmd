@@ -7,7 +7,6 @@ abstract: >
 vignette: >
   %\VignetteIndexEntry{RcisTarget: Transcription factor binding motif enrichment}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 output: 
   BiocStyle::html_document:
     number_sections: false
@@ -51,12 +50,12 @@ geneLists <- list(geneListName=geneList1)
 # Select motif database to use (i.e. organism and distance around TSS)
 library(RcisTarget.hg19.motifDBs.20k)
 data(hg19_10kbpAroundTss_motifRanking)
-data(hg19_direct_motifAnnotation)
+data(hg19_motifAnnotation)
 motifRankings <- hg19_10kbpAroundTss_motifRanking
 
 # Motif enrichment analysis:
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
-                               motifAnnot_direct=hg19_direct_motifAnnotation)
+                               motifAnnot=hg19_motifAnnotation)
 ```
 
 **Advanced use**: The `cisTarget()` function is enough for most simple analyses. However, for further flexibility (e.g. removing unnecessary steps on bigger analyses), RcisTarget also provides the possibility to run the inner functions individually. 
@@ -67,7 +66,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, 
-                          motifAnnot_direct=hg19_direct_motifAnnotation)
+                          motifAnnot=hg19_motifAnnotation)
 
 # 3. Identify significant genes for each motif
 # (i.e. genes from the gene set in the top of the ranking)
@@ -83,15 +82,7 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
 # Before starting
 ## Setup
 
-RcisTarget uses species-specific databases which are provided as independent R-packages. Prior to running RcisTarget, please download and install the databases for the relevant organism:
-
-Species | Genome | | Package
-------- | ----- | ----- | -----
-Human | hg19 | Full version (recommended) | [SCENIC.hg19.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz)
-Human | hg19 | Subset | - available soon: *RcisTarget.hg19.motifDBs.cisbpOnly.500bp*
-Mouse | mm9 | Full version (recommended) | [SCENIC.mm9.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz)
-Mouse | mm9 | Subset | - available soon: *RcisTarget.mm9.motifDBs.cisbpOnly.500bp*
-Drosophila melanogaster | dm6 | | Contact us
+RcisTarget uses species-specific databases which are provided as independent R-packages. Prior to running RcisTarget, you will need to download and install the databases for the relevant organism (more details in the "Motif databases" section).
 
 In addition, some extra packages can be installed to run RcisTarget in parallel or run the interactive examples in this tutorial: 
 ```{r installDep, eval=FALSE}
@@ -157,7 +148,7 @@ In this example we will be using a list of genes up-regulated in MCF7 cells unde
 ```{r sampleGeneSet}
 txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
                  "hypoxiaGeneSet.txt", sep="/")
-geneLists <- list(hypoxia=read.table(txtFile)[,1])
+geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 head(geneLists$hypoxia)
 ```
 
@@ -166,37 +157,42 @@ head(geneLists$hypoxia)
 
 Besides the gene list, RcisTarget also needs the motif databases. The databases are species-specific, so they are provided in independent packages:
 
-Species | Package
-------- | -----
-Human (hg19) - Full version (recommended) | [SCENIC.hg19.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz)
-Mouse (mm9)  - Full version (recommended) | [SCENIC.mm9.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz)
-Drosophila melanogaster (dm6)  | Contact us
+Species | Genome | | Package
+------- | ----- | ----- | -----
+Human | hg19 | Full version (recommended) | [RcisTarget.hg19.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz)
+Mouse | mm9 | Full version (recommended) | [RcisTarget.mm9.motifDBs.20k](http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz) 
+Drosophila melanogaster | dm6 | | Contact us
+
 
 For each species, the packages contain two types of databases: (1) the gene-motif rankings, which provides the rankings (~score) of all the genes for each motif (see iRegulon publication for details), and (2) the motif annotation to transcription factors. 
 
 In addition to the full versions of the databases (20k motifs), we also provide a subset containing only the 4.6k motifs from cisbp. These subsets are available in Bioconductor for demonstration purposes. They will provide the same AUC score for the existing motifs. However, we highly recommend to use the full version (20k) for more accurate results, since the normalized enrichment score (NES) of the motif depends on the total number of motifs in the database.
 
-Species | Package
-------- | -----
-Human (hg19) - Subset | - available soon: *RcisTarget.hg19.motifDBs.cisbpOnly.500bp*
-Mouse (mm9)  - Subset | - available soon: *RcisTarget.mm9.motifDBs.cisbpOnly.500bp*
+Species | Genome | | Package
+------- | ----- | ----- | -----
+Human | hg19 | Subset | - available soon: *RcisTarget.hg19.motifDBs.cisbpOnly.500bp*
+Mouse | mm9 | Subset | - available soon: *RcisTarget.mm9.motifDBs.cisbpOnly.500bp*
 
+
+Example to download & install the packages:
+```{r installDatabases, eval=FALSE}
+# From Bioconductor
+source("http://bioconductor.org/biocLite.R")
+biocLite("RcisTarget.hg19.motifDBs.cisbpOnly.500bp")
+
+# From our servers:
+install.packages("http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz", repos=NULL)
+```
 
 ### Gene-motif rankings
 For most species, there are two **gene-motif rankings** available: **10kb around the TSS** or **500 bp upstream**, which determine the search space around the transcription start site (TSS). To see the names of the rankings and annotations for each species, you can type on your console: `?RcisTarget.mm9.motifDBs.20k` or `?RcisTarget.hg9.motifDBs.20k`. 
 
-Database | Search space
+Gene-motif ranking | Search space
 ------- | ---------------------
 `hg19_500bpUpstream_motifRanking` | 500 bp uptream TSS 
 `hg19_10kbpAroundTss_motifRanking` | 10kbp upstream and 10kbp downstream of the TSS 
 
 *(Change the prefix to the relevant species, i.e. mm9_500bpUpstream_motifRanking)*
-
-```{r installDatabases, eval=FALSE}
-# To download the rankings:
-source("http://bioconductor.org/biocLite.R")
-biocLite("RcisTarget.hg19.motifDBs.cisbpOnly.500bp")
-```
 
 Example for loading the databases: 
 ```{r loadDatabases, eval=FALSE}
@@ -219,16 +215,23 @@ motifRankings
 ```
 
 ### Motif annotations
-All the calculations performed by RcisTarget are motif-based. However, most users will be interested on TFs potentially regulating the gene-set. The association of motif to transcription factors are provided in two databases: one containing the TFs **directly** annotated to the motif (i.e. in the source motif database), and **inferred** annotation based on motif similarity.
+All the calculations performed by RcisTarget are motif-based. However, most users will be interested on TFs potentially regulating the gene-set. The association of motif to transcription factors are provided in two databases: one containing the TFs annotated to each motif. In addition to the motifs annotated by the source datatabse (i.e. **direct** annotation), we have also **inferred** some further annotations based on motif similarity and gene ortology (e.g. similarity to other genes annotated to the motif).
 
-These databases dan be provided as `motifAnnot_direct` or `motifAnnot_inferred` arguments to `cisTarget()` or `addMotifAnnotation()`.
+These annotations are separate objects within each database package (typically containing "motifAnnotation" in their name), and are typically used with the functions `cisTarget()` or `addMotifAnnotation()`. For example:
+```{r motifAnnotExample}
+library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
+data(hg19_motifAnnotation_cisbpOnly) 
+# motifEnrichTable <- addMotifAnnotation(.. ,motifAnnot=hg19_motifAnnotation)
+hg19_motifAnnotation_cisbpOnly[199:202,]
+```
 
-Database| Motif-TF annotation
-------- | -----
-`hg19_direct_motifAnnotation` | Direct 
-`hg19_inferred_motifAnnotation` | Inferred by similarity 
+These annotations can be easily queried to obtain further information about specific motifs or TFs:
+```{r motifAnnotQuery}
+hg19_motifAnnotation_cisbpOnly[(directAnnotation==TRUE) 
+                               & 
+                               (TF %in% c("TP53", "HIF1A")), ]
+```
 
-*(Change the prefix to the relevant species, i.e. `mm9_500bpUpstream_motifRanking` or add the sufix `_cisbpOnly` if appropiate)*
 
 ## Running the analysis 
 
@@ -240,8 +243,7 @@ It is also possible to run these steps as individual commands. For example, to s
 ```{r eval=FALSE}
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, 
          motifRankings,
-         motifAnnot_direct=hg19_direct_motifAnnotation,
-         motifAnnot_inferred=hg19_inferred_motifAnnotation)
+         motifAnnot=hg19_motifAnnotation)
 ```
 
 ## Advanced: Execute step by step
@@ -269,24 +271,23 @@ Furthermore, this step also allows to add the TFs annotated to the motif.
 
 ```{r addMotifAnnotation, cache=TRUE}
 # Recommended: 
-# data(hg19_direct_motifAnnotation) 
-# data(hg19_inferred_motifAnnotation)
+# data(hg19_motifAnnotation) 
 
 # For this example:
-data(hg19_direct_motifAnnotation_cisbpOnly) 
-data(hg19_inferred_motifAnnotation_cisbpOnly)
+data(hg19_motifAnnotation_cisbpOnly) 
 
-motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=3, 
-     motifAnnot_direct=hg19_direct_motifAnnotation_cisbpOnly,
-     motifAnnot_inferred=hg19_inferred_motifAnnotation_cisbpOnly,
+motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=3,
+     motifAnnot=hg19_motifAnnotation_cisbpOnly,
      highlightTFs=list(hypoxia="HIF1A"))
 ```
 
 ```{r}
 class(motifEnrichmentTable)
 dim(motifEnrichmentTable)
-head(motifEnrichmentTable[,-"TF_inferred", with=FALSE])
+head(motifEnrichmentTable[,-"TF_lowConf", with=FALSE])
 ```
+
+The cathegories considered high/low confidence can me modified with the arguments `motifAnnot_highConfCat` and `motifAnnot_lowConfCat`.
 
 ### 3. Identify the genes with the best enrichment for each Motif
 Since RcisTarget searches for enrichment of a motif within a gene list, finding a motif 'enriched' does not imply that *all* the genes in the gene-list have a high score for the motif. In this way, the third step of the workflow is to identify which genes (of the gene-set) are highly ranked for each of the significant motifs.
@@ -322,9 +323,9 @@ The final output of RcisTarget is a `data.table` containing the information abou
 * motif: ID of the motif
 * NES: Normalized enrichment score of the motif in the gene-set
 * AUC: Area Under the Curve (used to calculate the NES)
-* TFinDB: Indicates whether the *highlightedTFs* are included within the direct annotation (two asterisks) or inferred annotation (one asterisk).
-* TF_direct: Transcription factors annotated to the motif according to 'direct annotation'.
-* TF_inferred: Transcription factors annotated to the motif according to 'inferred annotation'.
+* TFinDB: Indicates whether the *highlightedTFs* are included within the high confidence annotation (two asterisks) or low confidence annotation (one asterisk).
+* TF_highConf: Transcription factors annotated to the motif according to 'motifAnnot_highConfCat'.
+* TF_lowConf: Transcription factors annotated to the motif according to 'motifAnnot_lowConfCat'.
 * enrichedGenes: Genes that are highly ranked for the given motif. 
 * nErnGenes: Number of genes highly ranked
 * rankAtMax: Ranking at the maximum enrichment, used to determine the number of enriched genes.
@@ -333,10 +334,10 @@ The final output of RcisTarget is a `data.table` containing the information abou
 ```{r output}
 motifEnrichmentTable_wGenes_wLogo <- addLogo(motifEnrichmentTable_wGenes)
 
-resultsSubset <- motifEnrichmentTable_wGenes_wLogo[1:20,]
+resultsSubset <- motifEnrichmentTable_wGenes_wLogo[1:10,]
 
 library(DT)
-datatable(resultsSubset[,-c("enrichedGenes", "TF_inferred"), with=FALSE], 
+datatable(resultsSubset[,-c("enrichedGenes", "TF_lowConf"), with=FALSE], 
           escape = FALSE, # To show the logo
           filter="top", options=list(pageLength=5))
 ```
@@ -348,9 +349,14 @@ datatable(resultsSubset[,-c("enrichedGenes", "TF_inferred"), with=FALSE],
 Note that the TFs are provided based on the motif annotation. They can be used as a guide to select relevant motifs or to prioritize some TFs, but the motif annotation does not imply that all the TFs appearing in the table regulate the gene list.
 
 ```{r anotatedTfs, cache=TRUE}
-anotatedTfs <- lapply(split(motifEnrichmentTable_wGenes$TF_direct,
+anotatedTfs <- lapply(split(motifEnrichmentTable_wGenes$TF_highConf,
                             motifEnrichmentTable$geneSet),
-                      function(x) unique(unlist(strsplit(x, "; "))))
+                      function(x) {
+                        genes <- gsub(" \\(.*\\). ", "; ", x, fixed=FALSE)
+                        genesSplit <- unique(unlist(strsplit(genes, "; ")))
+                        return(genesSplit)
+                        })
+                      
 anotatedTfs$hypoxia
 ```
 

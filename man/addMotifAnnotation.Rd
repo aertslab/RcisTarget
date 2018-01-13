@@ -4,9 +4,10 @@
 \alias{addMotifAnnotation}
 \title{Add motif annotation}
 \usage{
-addMotifAnnotation(auc, nesThreshold = 3, digits = 3,
-  motifAnnot_direct = NULL, motifAnnot_inferred = NULL,
-  highlightTFs = NULL)
+addMotifAnnotation(auc, nesThreshold = 3, digits = 3, motifAnnot = NULL,
+  motifAnnot_highConfCat = c("directAnnotation", "inferredBy_Orthology"),
+  motifAnnot_lowConfCat = c("inferredBy_MotifSimilarity",
+  "inferredBy_MotifSimilarity_n_Orthology"), highlightTFs = NULL)
 }
 \arguments{
 \item{auc}{Output from calcAUC.}
@@ -18,17 +19,26 @@ distribution of all the motifs for the gene-set [(x-mean)/sd].}
 \item{digits}{Integer. Number of digits for the AUC and NES in the
 output table.}
 
-\item{motifAnnot_direct}{Motif annotation database containing DIRECT
+\item{motifAnnot}{Motif annotation database containing the 
 annotations of the motif to transcription factors.
 The names should match the ranking column names.}
 
-\item{motifAnnot_inferred}{Motif annotation database containing the inferred
-annotations of the motif to transcription factors based on motif similarity.}
+\item{motifAnnot_highConfCat}{Categories considered as source for 
+'high confidence' annotations. By default, 
+"directAnnotation" (annotated in the source database), and 
+"inferredBy_Orthology" (the motif is annotated to an homologous/ortologous 
+gene).}
+
+\item{motifAnnot_lowConfCat}{Categories considered 
+'lower confidence' source for annotations. By default, the annotations 
+inferred based on motif similarity ("inferredBy_MotifSimilarity", 
+"inferredBy_MotifSimilarity_n_Orthology").}
 
 \item{highlightTFs}{Character. If a list of transcription factors is
 provided, the column TFinDB in the otuput table will indicate whether any
-of those TFs are included within the 'direct' annotation (two asterisks, **)
-or 'inferred' annotation (one asterisk, *) of the motif.
+of those TFs are included within the 'high-confidence' annotation 
+(two asterisks, **)
+or 'low-confidence' annotation (one asterisk, *) of the motif.
 The vector can be named to indicate which TF to highlight for each gene-set.
 Otherwise, all TFs will be used for all geneSets.}
 }
@@ -41,12 +51,12 @@ Otherwise, all TFs will be used for all geneSets.}
 \item NES: Normalized enrichment score of the motif in the gene-set
 \item AUC: Area Under the Curve (used to calculate the NES)
 \item TFinDB: Indicates whether the highlightedTFs are included within the
-direct annotation (two asterisks, **)
-or inferred annotation (one asterisk, *)
-\item TF_direct: Transcription factors annotated to the motif according to
-'direct annotation'.
-\item TF_inferred: Transcription factors annotated to the motif according to
-'inferred annotation'.
+high-confidence annotation (two asterisks, **)
+or lower-confidence annotation (one asterisk, *)
+\item TF_highConf: Transcription factors annotated to the motif 
+based on high-confidence annotations.
+\item TF_lowConf: Transcription factors annotated to the motif according to
+based on lower-confidence annotations.
 }
 }
 \description{
@@ -64,7 +74,7 @@ Normalized Enrichment Score (NES) threshold.
 # As example, the package includes an Hypoxia gene set:
 txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
                  "hypoxiaGeneSet.txt", sep="/")
-geneLists <- list(hypoxia=read.table(txtFile)[,1])
+geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 
 #### Databases
 # Select the package/database according to the organism and distance around TSS
@@ -72,19 +82,15 @@ geneLists <- list(hypoxia=read.table(txtFile)[,1])
 # library(RcisTarget.hg19.motifDBs.20k)
 # data(hg19_10kbpAroundTss_motifRanking)
 # motifRankings <- hg19_10kbpAroundTss_motifRanking
-# data(hg19_direct_motifAnnotation)
-# motifAnnotation_direct <- hg19_direct_motifAnnotation
-# data(hg19_inferred_motifAnnotation)
-# motifAnnotation_inferred <- hg19_inferred_motifAnnotation
+# data(hg19_motifAnnotation)
+# motifAnnotation <- hg19_motifAnnotation
 
 # For the example: Subset of database
 library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 data(hg19_500bpUpstream_motifRanking_cispbOnly)
   motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
-data(hg19_direct_motifAnnotation_cisbpOnly)
-  motifAnnotation_direct <- hg19_direct_motifAnnotation_cisbpOnly
-data(hg19_inferred_motifAnnotation_cisbpOnly)
-  motifAnnotation_inferred <- hg19_inferred_motifAnnotation_cisbpOnly
+data(hg19_motifAnnotation_cisbpOnly)
+  motifAnnotation <- hg19_motifAnnotation_cisbpOnly
 
 ### Run RcisTarget
 # Step 1. Calculate AUC
@@ -95,17 +101,19 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 ### (This step: Step 2)
 # Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                                           motifAnnot_direct=motifAnnotation_direct)
+                                           motifAnnot=motifAnnotation)
 
-# Alternative: Adding indirect annotation and modifying some options
-motifEnrichment_wIndirect <- addMotifAnnotation(motifs_AUC, nesThreshold=2,
-                                                motifAnnot_direct=motifAnnotation_direct,
-                                                motifAnnot_inferred=motifAnnotation_inferred,
-                                                highlightTFs = "HIF1A", digits=3)
+# Alternative: Modifying some options
+motifEnrichment_wIndirect <- addMotifAnnotation(motifs_AUC, nesThreshold=2, 
+        motifAnnot=motifAnnotation,
+        highlightTFs = "HIF1A", 
+        motifAnnot_highConfCat=c("directAnnotation"), 
+        motifAnnot_lowConfCat=c("inferredBy_MotifSimilarity",
+                                "inferredBy_MotifSimilarity_n_Orthology",
+                                "inferredBy_Orthology"),
+        digits=3)
 
 ### Exploring the output:
-# Note: Using the fake-database, these results are not meaningful.
-
 # Number of enriched motifs (Over the given NES threshold)
 nrow(motifEnrichmentTable)
 

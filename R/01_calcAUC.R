@@ -64,9 +64,9 @@
 #' @export
 setGeneric("calcAUC", signature="geneSets",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+      aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
   {
-   standardGeneric("calcAUC")
+    standardGeneric("calcAUC")
   })
 
 #' @rdname calcAUC
@@ -281,8 +281,6 @@ setMethod("calcAUC", "GeneSetCollection",
   aucThreshold <- round(aucMaxRank)
   maxAUC <- aucThreshold * nrow(gSetRanks)
 
-  # auc <- setNames(rep(NA, ncol(gSetRanks)), colnames(gSetRanks))
-  # for(i in 1:ncol(gSetRanks)) auc[i] <- .auc(gSetRanks[,i], aucThreshold, maxAUC)
   auc <- apply(gSetRanks, 2, .auc, aucThreshold, maxAUC)
 
   c(auc, missing=missing, nGenes=nGenes)

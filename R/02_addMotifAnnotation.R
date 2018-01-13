@@ -14,17 +14,26 @@
 #' distribution of all the motifs for the gene-set [(x-mean)/sd].
 #' @param digits Integer. Number of digits for the AUC and NES in the
 #' output table.
-#' @param motifAnnot_direct Motif annotation database containing DIRECT
+#' @param motifAnnot Motif annotation database containing the 
 #' annotations of the motif to transcription factors.
 #' The names should match the ranking column names.
-#' @param motifAnnot_inferred Motif annotation database containing the inferred
-#' annotations of the motif to transcription factors based on motif similarity.
+#' @param motifAnnot_highConfCat Categories considered as source for 
+#' 'high confidence' annotations. By default, 
+#' "directAnnotation" (annotated in the source database), and 
+#' "inferredBy_Orthology" (the motif is annotated to an homologous/ortologous 
+#' gene).
+#' @param motifAnnot_lowConfCat Categories considered 
+#' 'lower confidence' source for annotations. By default, the annotations 
+#' inferred based on motif similarity ("inferredBy_MotifSimilarity", 
+#' "inferredBy_MotifSimilarity_n_Orthology").
 #' @param highlightTFs Character. If a list of transcription factors is
 #' provided, the column TFinDB in the otuput table will indicate whether any
-#' of those TFs are included within the 'direct' annotation (two asterisks, **)
-#' or 'inferred' annotation (one asterisk, *) of the motif.
+#' of those TFs are included within the 'high-confidence' annotation 
+#' (two asterisks, **)
+#' or 'low-confidence' annotation (one asterisk, *) of the motif.
 #' The vector can be named to indicate which TF to highlight for each gene-set.
 #' Otherwise, all TFs will be used for all geneSets.
+#' 
 #' @return \code{\link[data.table]{data.table}} with the folowing columns:
 #' \itemize{
 #' \item geneSet: Name of the gene set
@@ -33,12 +42,12 @@
 #' \item NES: Normalized enrichment score of the motif in the gene-set
 #' \item AUC: Area Under the Curve (used to calculate the NES)
 #' \item TFinDB: Indicates whether the highlightedTFs are included within the
-#' direct annotation (two asterisks, **)
-#' or inferred annotation (one asterisk, *)
-#' \item TF_direct: Transcription factors annotated to the motif according to
-#' 'direct annotation'.
-#' \item TF_inferred: Transcription factors annotated to the motif according to
-#' 'inferred annotation'.
+#' high-confidence annotation (two asterisks, **)
+#' or lower-confidence annotation (one asterisk, *)
+#' \item TF_highConf: Transcription factors annotated to the motif 
+#' based on high-confidence annotations.
+#' \item TF_lowConf: Transcription factors annotated to the motif according to
+#' based on lower-confidence annotations.
 #' }
 #' @seealso Next step in the workflow: \code{\link{addSignificantGenes}}.
 #'
@@ -49,16 +58,20 @@
 #' @example inst/examples/example_addMotifAnnotation.R
 #' @export
 addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
-    motifAnnot_direct=NULL, motifAnnot_inferred=NULL, highlightTFs=NULL)
+    motifAnnot=NULL, 
+    motifAnnot_highConfCat=c("directAnnotation", "inferredBy_Orthology"), 
+    motifAnnot_lowConfCat=c("inferredBy_MotifSimilarity", 
+                            "inferredBy_MotifSimilarity_n_Orthology"), 
+    highlightTFs=NULL)
 {
   auc <- getAUC(auc)
   #### Check inputs
   if(!is.null(highlightTFs))
   {
-    if(is.null(motifAnnot_direct) && is.null(motifAnnot_inferred))
+    if(is.null(motifAnnot))
       stop("To hightlight TFs, please provide a motif-TF annotation.")
     if(is.null(names(highlightTFs))) {
-      warning("The input TFs are not named,",
+      warning("The input TFs are not named, ",
               "all TFs will be used with all Gene Sets.")
       highlightTFs <- setNames(rep(list(highlightTFs), nrow(auc)),
                                rownames(auc))
@@ -67,6 +80,27 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
     if(!all(names(highlightTFs) %in% rownames(auc))) warning("TFs 1")
     if(!all(rownames(auc) %in% names(highlightTFs))) warning("TFs 2")
   }
+  
+  if(!is.null(motifAnnot))
+  {
+    if(!is.data.table(motifAnnot))
+      stop("motifAnnot should be a data.table")
+    if(!is.null(motifAnnot_highConfCat) && 
+       any(!motifAnnot_highConfCat %in% levels(motifAnnot$annotationSource)))
+      stop("'motifAnnot_highConfCat' 
+           should be a value in the column 'annotationSource'.") 
+    
+    if(!is.null(motifAnnot_lowConfCat) && 
+       any(!motifAnnot_lowConfCat %in% levels(motifAnnot$annotationSource)))
+      stop("'motifAnnot_lowConfCat' 
+           should be a value in the column 'annotationSource'.") 
+    
+    commonCat <- intersect(motifAnnot_highConfCat, motifAnnot_lowConfCat)
+    if(length(commonCat)>0)
+      warning("The following annotation types are both in", 
+          "'motifAnnot_highConfCat' and 'motifAnnot_lowConfCat': ", commonCat)
+  }
+  
 
   #### Runs "auc.asTable" on each AUC columns i.e. signatures/cells
   ret <- lapply(rownames(auc), function(geneSet) {
@@ -76,9 +110,10 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
       if(nrow(aucTable)>0)
       {
         aucTable <- .addTfs(aucTable,
-                            motifAnnot_direct=motifAnnot_direct,
-                            motifAnnot_inferred=motifAnnot_inferred,
-                            highlightTFs=tfs)
+                            motifAnnot=motifAnnot,
+                            TFs=tfs, 
+                            motifAnnot_highConfCat=motifAnnot_highConfCat,
+                            motifAnnot_lowConfCat=motifAnnot_lowConfCat)
         aucTable <- data.table::data.table(geneSet=geneSet, aucTable)
       }else{
         aucTable <- NULL
@@ -122,76 +157,85 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 }
 
 .addTfs <- function(aucTable,
-                    motifAnnot_direct=NULL,
-                    motifAnnot_inferred=NULL,
-                    highlightTFs=NULL)
+                    motifAnnot=NULL,
+                    TFs=NULL,
+                    motifAnnot_highConfCat=NULL,
+                    motifAnnot_lowConfCat=NULL)
 {
-  if(!is.null(highlightTFs))
+  if(!is.null(TFs))
   {
     aucTable <- data.table::data.table(aucTable,
-                           highlightedTFs=paste(highlightTFs, collapse=", ") ,
+                           highlightedTFs=paste(TFs, collapse=", ") ,
                            TFinDB="")
-    tmp <- .tfInAnnot(aucTable$motif,
-                      inputTFs=highlightTFs,
-                      motifAnnot_direct=motifAnnot_direct,
-                      motifAnnot_inferred=motifAnnot_inferred)
-    if(!is.null(motifAnnot_inferred)){
-      wMotifs <- names(tmp$inferredAnnot)[which(tmp$inferredAnnot)]
-      aucTable[which(aucTable$motif %in% wMotifs),"TFinDB"] <- "*"
-    }
-    if(!is.null(motifAnnot_direct)) {
-      wMotifs <- names(tmp$directAnnot)[which(tmp$directAnnot)]
-      # (Overrides inferred)
-      aucTable[which(aucTable$motif %in% wMotifs),"TFinDB"] <- "**"
+
+    if(!is.null(motifAnnot)) {
+      motifAnnot_subset <- motifAnnot[(motifAnnot$motif %in% aucTable$motif) 
+                                      & (motifAnnot$TF %in% TFs), 
+                                      c("motif", "TF", "annotationSource")]
+      motifAnnot_subset <- split(motifAnnot_subset, motifAnnot_subset$motif)
+      for(motifName in names(motifAnnot_subset))
+      {
+        if(any(as.character(motifAnnot_subset[[motifName]]$annotationSource) 
+               %in% motifAnnot_lowConfCat))
+          aucTable[aucTable$motif==motifName,"TFinDB"] <- "*"
+        
+        # overrides lowConf
+        if(any(as.character(motifAnnot_subset[[motifName]]$annotationSource) 
+               %in% motifAnnot_highConfCat))
+          aucTable[aucTable$motif==motifName,"TFinDB"] <- "**"
+      }
     }
   }
 
-  if(!is.null(motifAnnot_direct))
+  if(!is.null(motifAnnot))
   {
-    TF_direct <- vapply(aucTable$motif, function(x) {
-      paste(motifAnnot_direct[[x]][,1], collapse="; ")
-    }, FUN.VALUE="")
-    aucTable <- data.table::data.table(aucTable, TF_direct=TF_direct)
+    if(!is.null(motifAnnot_highConfCat))
+    {
+      TF_highConf <- .formatTfs(aucTable=aucTable, 
+                              motifAnnot=motifAnnot,
+                              annotCats=motifAnnot_highConfCat)
+      
+      aucTable <- data.table::data.table(aucTable, TF_highConf=TF_highConf)
+    }
+    
+    if(!is.null(motifAnnot_lowConfCat))
+    {
+      TF_lowConf <- .formatTfs(aucTable=aucTable, 
+                              motifAnnot=motifAnnot,
+                              annotCats=motifAnnot_lowConfCat)
+      
+      aucTable <- data.table::data.table(aucTable, TF_lowConf=TF_lowConf)
+    }
   }
-
-  if(!is.null(motifAnnot_inferred))
-  {
-    TF_inferred <- vapply(aucTable$motif, function(x) {
-      paste(motifAnnot_inferred[[x]][,1], collapse="; ")
-    }, FUN.VALUE="")
-    aucTable <- data.table::data.table(aucTable, TF_inferred=TF_inferred)
-  }
+  
   aucTable
 }
 
 
-# Not exclusive!
-# TO DO: Optimize??
-.tfInAnnot <- function(motifList, inputTFs,
-                       motifAnnot_direct=NULL,
-                       motifAnnot_inferred=NULL)
+
+.formatTfs <- function(aucTable, motifAnnot, annotCats)
 {
-  in000 <- NULL
-  in001 <- NULL
-  # if(is.null(motifAnnot_direct) && is.null(motifAnnot_direct))
-  #    stop("Please provide the annotation.")
-  if(!is.null(motifAnnot_direct))
-  {
-    motifs_00 <- motifList[which(motifList %in% names(motifAnnot_direct))]
-    in000 <- vapply(motifAnnot_direct[motifs_00],
-                    function(x) any(inputTFs %in% x[,1]), FUN.VALUE=logical(1))
-    if(length(in000)==0)
-      in000 <- setNames(rep(FALSE, length(motifList)), motifList)
-  }
-  if(!is.null(motifAnnot_inferred))
-  {
-    motifs_001 <- motifList[which(motifList %in% names(motifAnnot_inferred))]
-    in001 <- vapply(motifAnnot_inferred[motifs_001],
-                    function(x) any(inputTFs %in% x[,1]), FUN.VALUE=logical(1))
-    if(length(in001)==0)
-      in001 <- setNames(rep(FALSE, length(motifList)), motifList)
-  }
-  list(directAnnot=in000, inferredAnnot=in001)
+  vapply(aucTable$motif, function(mot) {
+    motifAnnot_selected <- motifAnnot[motifAnnot$motif==mot & 
+                                  motifAnnot$annotationSource %in% annotCats, ]
+    motifAnnot_selected <- split(motifAnnot_selected$TF, 
+                                 motifAnnot_selected$annotationSource)
+    motifAnnot_selected <- motifAnnot_selected[
+      which(lengths(motifAnnot_selected)>0)]
+    
+    if(length(motifAnnot_selected) > 0){
+      tfsByCat <- vapply(names(motifAnnot_selected), 
+             function(x) paste(paste(unlist(motifAnnot_selected[[x]]), 
+                                     collapse="; "), 
+                                           " (",x,"). ",
+                                           sep=""), "")
+      paste(tfsByCat, collapse="")
+    }else
+    {
+      ""
+    }
+  }, FUN.VALUE="")
 }
+
 
 

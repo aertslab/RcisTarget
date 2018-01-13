@@ -48,7 +48,6 @@ rankingRcisTarget <- setClass(
 
   contains="SummarizedExperiment",
   representation=representation(
-    # rankings = "data.table",
     colType = "character", # motif or whatever feature is stored (e.g. ChipSeq)
     rowType = "character", # gene/region
     org = "character", # human/mouse
@@ -69,7 +68,7 @@ setMethod("show",
   definition = function(object) {
     message <- paste("Rankings for RcisTarget.", "\n",
     "  Organism: ", object@org, " (", object@genome,")","\n",
-    "  Number of ", toupper(object@rowType), "S: ", nrow(getRanking(object)),"\n",
+    "  Number of ", toupper(object@rowType),"S: ",nrow(getRanking(object)),"\n",
     "  Number of ", object@colType, "s: ", ncol(getRanking(object)),"\n\n",
     sep="")
 

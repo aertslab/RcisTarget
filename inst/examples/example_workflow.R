@@ -3,10 +3,9 @@
 # Running the workflow steps individually
 
 # This example is run using a (small) fake-database & gene-set:
-set.seed(123)
-dbs <- fakeDatabase(incAnnotation=TRUE)
-motifRankings <- dbs$ranking
-motifAnnot_direct <- dbs$annotation
+load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
+motifRankings <- fakeDb$ranking
+motifAnnot <- fakeDb$annotation
 
 geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
 
@@ -29,8 +28,8 @@ geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
   library(RcisTarget.hg19.motifDBs.20k)
   data(hg19_10kbpAroundTss_motifRanking)
   motifRankings <- hg19_10kbpAroundTss_motifRanking
-  data(hg19_direct_motifAnnotation)
-  motifAnnot_direct <- hg19_direct_motifAnnotation
+  data(hg19_motifAnnotation)
+  motifAnnot <- hg19_motifAnnotation
 }
 ##################################################
 
@@ -42,7 +41,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # Step 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                         motifAnnot_direct=motifAnnot_direct)
+                         motifAnnot=motifAnnot)
 
 # Step 3 (optional). Identify genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)

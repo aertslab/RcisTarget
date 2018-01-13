@@ -27,18 +27,25 @@
 #' }
 #' See the help files for more information:
 #' i.e. \code{help(RcisTarget.hg19.motifDatabases)}
-#' @param motifAnnot_direct Motif annotation database containing DIRECT
+#' @param motifAnnot Motif annotation database containing the
 #' annotations of the motif to transcription factors.
-#' @param motifAnnot_inferred Motif annotation database containing the expanded
-#' annotations of the motif to transcription factors based on inference by
-#' motif similarity.
-#' @param highlightTFs Character.
-#' If a list of transcription factors is provided, the column TFinDB in the
-#' otuput table will indicate whether any of those TFs are included within the
-#' direct annotation (two asterisks, **) or bySimilarity annotation
-#' (one asterisk, *) of the motif. The vector can be named to indicate which
-#' TF to highlight for each gene-set. Otherwise, all TFs will be used for all
-#' geneSets.
+#' @param motifAnnot_highConfCat Categories considered as source for 
+#' 'high confidence' annotations. By default, 
+#' "directAnnotation" (annotated in the source database), and 
+#' "inferredBy_Orthology" (the motif is annotated to an homologous/ortologous 
+#' gene).
+#' @param motifAnnot_lowConfCat Categories considered 
+#' 'lower confidence' source for annotations. By default, the annotations 
+#' inferred based on motif similarity ("inferredBy_MotifSimilarity", 
+#' "inferredBy_MotifSimilarity_n_Orthology").
+#' @param highlightTFs Character. 
+#' If a list of transcription factors is
+#' provided, the column TFinDB in the otuput table will indicate whether any
+#' of those TFs are included within the 'high-confidence' annotation 
+#' (two asterisks, **)
+#' or 'low-confidence' annotation (one asterisk, *) of the motif.
+#' The vector can be named to indicate which TF to highlight for each gene-set.
+#' Otherwise, all TFs will be used for all geneSets.
 #' @param nesThreshold Numeric.
 #' NES threshold to calculate the motif significant (3.0 by default).
 #' The NES is calculated -for each motif- based on the AUC distribution of
@@ -70,11 +77,14 @@
 #' @example inst/examples/example_cisTarget.R
 #' @export
 cisTarget <- function(geneSets, motifRankings,
-            motifAnnot_direct=NULL, motifAnnot_inferred=NULL,
-            highlightTFs=NULL, nesThreshold=3.0,
-            aucMaxRank=0.05*nrow(motifRankings@rankings),
-            geneErnMethod="aprox", geneErnMmaxRank=5000,
-            nCores=1, verbose=TRUE)
+          motifAnnot=NULL,
+          motifAnnot_highConfCat=c("directAnnotation", "inferredBy_Orthology"), 
+          motifAnnot_lowConfCat=c("inferredBy_MotifSimilarity", 
+                                  "inferredBy_MotifSimilarity_n_Orthology"), 
+          highlightTFs=NULL, nesThreshold=3.0,
+          aucMaxRank=0.05*nrow(motifRankings),
+          geneErnMethod="aprox", geneErnMmaxRank=5000,
+          nCores=1, verbose=TRUE)
 {
   # Calculate AUC
   motifs_AUC <- calcAUC(geneSets=geneSets,
@@ -86,9 +96,11 @@ cisTarget <- function(geneSets, motifRankings,
   # Select significant motifs, add TF annotation & format as table
   motifEnrichmentTable <- addMotifAnnotation(auc=motifs_AUC,
      nesThreshold=nesThreshold,
-     motifAnnot_direct=motifAnnot_direct,
-     motifAnnot_inferred=motifAnnot_inferred, highlightTFs=highlightTFs)
-
+     motifAnnot=motifAnnot,
+     motifAnnot_highConfCat=motifAnnot_highConfCat,
+     motifAnnot_lowConfCat=motifAnnot_lowConfCat,
+     highlightTFs=highlightTFs)
+  
   # Identify significant genes for each motif
   # (i.e. genes from the gene set in the top of the ranking)
   motifEnrichmentTable_wGenes <- addSignificantGenes(

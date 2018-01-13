@@ -4,10 +4,13 @@
 \alias{cisTarget}
 \title{cisTarget}
 \usage{
-cisTarget(geneSets, motifRankings, motifAnnot_direct = NULL,
-  motifAnnot_inferred = NULL, highlightTFs = NULL, nesThreshold = 3,
-  aucMaxRank = 0.05 * nrow(motifRankings@rankings), geneErnMethod = "aprox",
-  geneErnMmaxRank = 5000, nCores = 1, verbose = TRUE)
+cisTarget(geneSets, motifRankings, motifAnnot = NULL,
+  motifAnnot_highConfCat = c("directAnnotation", "inferredBy_Orthology"),
+  motifAnnot_lowConfCat = c("inferredBy_MotifSimilarity",
+  "inferredBy_MotifSimilarity_n_Orthology"), highlightTFs = NULL,
+  nesThreshold = 3, aucMaxRank = 0.05 * nrow(motifRankings),
+  geneErnMethod = "aprox", geneErnMmaxRank = 5000, nCores = 1,
+  verbose = TRUE)
 }
 \arguments{
 \item{geneSets}{List of gene-sets to analyze.
@@ -25,20 +28,28 @@ These objects are provided in separate packages:
 See the help files for more information:
 i.e. \code{help(RcisTarget.hg19.motifDatabases)}}
 
-\item{motifAnnot_direct}{Motif annotation database containing DIRECT
+\item{motifAnnot}{Motif annotation database containing the
 annotations of the motif to transcription factors.}
 
-\item{motifAnnot_inferred}{Motif annotation database containing the expanded
-annotations of the motif to transcription factors based on inference by
-motif similarity.}
+\item{motifAnnot_highConfCat}{Categories considered as source for 
+'high confidence' annotations. By default, 
+"directAnnotation" (annotated in the source database), and 
+"inferredBy_Orthology" (the motif is annotated to an homologous/ortologous 
+gene).}
 
-\item{highlightTFs}{Character.
-If a list of transcription factors is provided, the column TFinDB in the
-otuput table will indicate whether any of those TFs are included within the
-direct annotation (two asterisks, **) or bySimilarity annotation
-(one asterisk, *) of the motif. The vector can be named to indicate which
-TF to highlight for each gene-set. Otherwise, all TFs will be used for all
-geneSets.}
+\item{motifAnnot_lowConfCat}{Categories considered 
+'lower confidence' source for annotations. By default, the annotations 
+inferred based on motif similarity ("inferredBy_MotifSimilarity", 
+"inferredBy_MotifSimilarity_n_Orthology").}
+
+\item{highlightTFs}{Character. 
+If a list of transcription factors is
+provided, the column TFinDB in the otuput table will indicate whether any
+of those TFs are included within the 'high-confidence' annotation 
+(two asterisks, **)
+or 'low-confidence' annotation (one asterisk, *) of the motif.
+The vector can be named to indicate which TF to highlight for each gene-set.
+Otherwise, all TFs will be used for all geneSets.}
 
 \item{nesThreshold}{Numeric.
 NES threshold to calculate the motif significant (3.0 by default).
@@ -90,12 +101,10 @@ It includes on the following steps:
 
 # Example for running RcisTarget using cisTarget() function (workflow wrapper)
 
-
 # A quick example can be run using a (small) fake-database & gene-set:
-set.seed(123)
-dbs <- fakeDatabase(incAnnotation=TRUE)
-motifRankings <- dbs$ranking
-motifAnnot_direct <- dbs$annotation
+load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
+motifRankings <- fakeDb$ranking
+motifAnnot_direct <- fakeDb$annotation
 geneLists <- sample(rownames(motifRankings), 100)
 
 # This is an example of code for a real run:
@@ -152,6 +161,7 @@ motifEnrichmentTable_wGenes <- addLogo(motifEnrichmentTable_wGenes)
 DT::datatable(motifEnrichmentTable_wGenes[,1:9], escape = FALSE, filter="top",
               options=list(pageLength=5))
 # Note: If using the fake database, the results of this analysis are meaningless
+
 }
 \seealso{
 See the package vignette for examples and more details:
