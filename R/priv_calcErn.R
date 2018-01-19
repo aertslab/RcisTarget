@@ -66,9 +66,14 @@
     rccStatsRaw[nas[which(nas[,2]==1), ]] <- 0
     nas <- nas[which(nas[,2]!=1), , drop=FALSE]
   }
-  if(nrow(nas)>0)
-    apply(nas, 1,
-          function(x) rccStatsRaw[x[1], x[2]] <<- rccStatsRaw[x[1], x[2]-1])
+  if(nrow(nas)>0){
+    for(i in seq_len(nrow(nas)))
+    {
+      x <- nas[i,]
+      rccStatsRaw[x[1], x[2]] <- rccStatsRaw[x[1], x[2]-1]
+    }
+  }
+    
 
   # Reduce noise in the stats with the rolling mean
   rccStats <- t(apply(rccStatsRaw, 1,

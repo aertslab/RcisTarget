@@ -399,7 +399,7 @@ setMethod("getSignificantGenes", "GeneSetCollection",
 
   #############################################################################
   # Calculate enrichment
-  enrStats <- t(calcEnrFunct(gSetRanks,
+  enrStats <- t(calcEnrFunct(gsRankings=gSetRanks,
                              maxRank,
                              signifRankingNames,
                              plotCurve,
