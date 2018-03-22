@@ -29,15 +29,34 @@ They can be accessed through \code{getAUC()} and the regular methods
 (i.e. nrow, rownames... ) available for SummarizedExperiment objects.
 }
 \examples{
-############# Fake run of RcisTarget ########
-load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
-motifRankings <- fakeDb$ranking
-motifRankings
+##################################################
+# Setup & previous steps in the workflow:
 
-geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
+#### Gene sets
+# As example, the package includes an Hypoxia gene set:
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
+                 "hypoxiaGeneSet.txt", sep="/")
+geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 
+#### Databases
+## Motif rankings: Select according to organism and distance around TSS
+## (See the vignette for URLs to download)
+# motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+
+## For this example we will use a SUBSET of the ranking/motif databases:
+library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
+data(hg19_500bpUpstream_motifRanking_cispbOnly)
+motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
+
+## Motif - TF annotation:
+data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc
+
+### Run RcisTarget
+# Step 1. Calculate AUC
 motifs_AUC <- calcAUC(geneLists, motifRankings)
-##############################################
+
+##################################################
 
 #Exploring the output:
 motifs_AUC

@@ -1,10 +1,17 @@
+VERSION 0.99.7
+----------------------
+    - Main update: Re-formatted ranking databases. 
+    They are now loaded from .feather files (and therefore, they are transposed: 
+    motifs are stored as rows, and genes/regions as columns, 
+    which allows to load only specific genes/regions)
+    
 VERSION 0.99.6
 ----------------------
     - Main update: Re-formatted annotation database. For easier subsetting.
     
 VERSION 0.99.1
 ----------------------
-    - Main update: New class for the Rankings (rankingRcisTarget, based on SummarizedExperiment)
+    - Main update: New class for the Rankings (rankingRcisTarget)
 
 VERSION 0.7
 ----------------------

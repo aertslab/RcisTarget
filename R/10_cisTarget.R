@@ -1,6 +1,3 @@
-# Help files will be automatically generated from the coments starting with #'
-# (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
-
 #' @title cisTarget
 #' @rdname RcisTarget
 #' @description Identifies DNA motifs significantly over-represented in a
@@ -19,14 +16,16 @@
 #' \code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).
 #' @param motifRankings Database of the appropiate organism and search-space
 #' (i.e. 10kbp around- or 500bp upstream the TSS).
-#' These objects are provided in separate packages:
+#' These objects are provided in separate files, 
+#' which can be imported with \code{importRankings()}:
 #' \itemize{
-#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
-#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
-#' \item -contact us- (Fly)
+#' \item \url{http://pyscenic.aertslab.org/databases/mm9-500bp-upstream-7species.mc9nr.feather}[mm9-500bp-upstream-7species.mc9nr] (Mouse, 500bp)
+#' \item \url{http://pyscenic.aertslab.org/databases/mm9-tss-centered-10kb-7species.mc9nr.feather}[mm9-tss-centered-10kb-7species.mc9nr] (Mouse, 10kbp)
+#' \item \url{http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-7species.mc9nr.feather}[hg19-500bp-upstream-7species.mc9nr] (Human, 500bp)
+#' \item \url{http://pyscenic.aertslab.org/databases/hg19-tss-centered-10kb-7species.mc9nr.feather}[hg19-tss-centered-10kb-7species.mc9nr] (Human, 10kbp)
+#' \item -Coming soon- (Fly)
 #' }
-#' See the help files for more information:
-#' i.e. \code{help(RcisTarget.hg19.motifDatabases)}
+#' See \code{vignette("RcisTarget")} for an exhaustive list of databases.
 #' @param motifAnnot Motif annotation database containing the
 #' annotations of the motif to transcription factors.
 #' @param motifAnnot_highConfCat Categories considered as source for 
@@ -82,7 +81,7 @@ cisTarget <- function(geneSets, motifRankings,
           motifAnnot_lowConfCat=c("inferredBy_MotifSimilarity", 
                                   "inferredBy_MotifSimilarity_n_Orthology"), 
           highlightTFs=NULL, nesThreshold=3.0,
-          aucMaxRank=0.05*nrow(motifRankings),
+          aucMaxRank=0.05*ncol(motifRankings),
           geneErnMethod="aprox", geneErnMmaxRank=5000,
           nCores=1, verbose=TRUE)
 {

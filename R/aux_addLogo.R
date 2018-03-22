@@ -15,7 +15,7 @@
 #' \code{vignette("RcisTarget")}
 #' @example inst/examples/example_addLogo.R
 #' @export
-addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v8")
+addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9")
 {
   logos <- paste("http://motifcollections.aertslab.org/",
                  dbVersion,"/logos/",

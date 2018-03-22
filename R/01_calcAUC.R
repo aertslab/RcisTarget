@@ -1,10 +1,4 @@
-
-# Help files will be automatically generated from the coments starting with #'
-# (https://cran.r-project.org/web/packages/roxygen2/vignettes/rd.html)
-
 #' @import GSEABase
-# @import doParallel
-# @import foreach
 #' @importFrom methods new
 #'
 #' @title Calculate AUC
@@ -17,25 +11,26 @@
 #' \code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).
 #' @param rankings 'Motif rankings' database for the required organism and
 #' search-space (i.e. 10kbp around- or 500bp upstream the TSS).
-#' These objects are provided in separate packages:
+#' These objects are provided in separate files, 
+#' which can be imported with \code{importRankings()}:
 #' \itemize{
-#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
-#' \item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
-#' \item -contact us- (Fly)
+#' \item \url{http://pyscenic.aertslab.org/databases/mm9-500bp-upstream-7species.mc9nr.feather}[mm9-500bp-upstream-7species.mc9nr] (Mouse, 500bp)
+#' \item \url{http://pyscenic.aertslab.org/databases/mm9-tss-centered-10kb-7species.mc9nr.feather}[mm9-tss-centered-10kb-7species.mc9nr] (Mouse, 10kbp)
+#' \item \url{http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-7species.mc9nr.feather}[hg19-500bp-upstream-7species.mc9nr] (Human, 500bp)
+#' \item \url{http://pyscenic.aertslab.org/databases/hg19-tss-centered-10kb-7species.mc9nr.feather}[hg19-tss-centered-10kb-7species.mc9nr] (Human, 10kbp)
+#' \item -Coming soon- (Fly)
 #' }
+#' See \code{vignette("RcisTarget")} for an exhaustive list of databases.
+#' 
 #' Since the normalized enrichment score (NES) of the motif
 #' depends on the total number of motifs in the database,
 #' we highly recommend to use the full version of the databases (20k motifs).
-#' Smaller versions of the databases,
+#' A smaller version of the human databases,
 #' containing only the 4.6k motifs from cisbp,
 #' are available in Bioconductor:
 #' \itemize{
-#' \item RcisTarget.mm9.motifDBs.cisbpOnly.500bp (Mouse)
 #' \item RcisTarget.hg19.motifDBs.cisbpOnly.500bp (Human)
 #' }
-#'
-#' See the help files for more information: i.e.
-#' \code{help(RcisTarget.hg19.motifDBs.20k)}.
 #' @param nCores Number of cores to use for computation.
 #' Note: In general, using a higher number of cores (e.g. processes)
 #' decreases overall running time.
@@ -50,11 +45,8 @@
 #' Common values range from 1 to 10\%.
 #' See \code{vignette("RcisTarget")} for examples and more details.
 #' @param verbose Should the function show progress messages? (TRUE / FALSE)
-#' @return \code{\link{aucScores}} of gene-sets (rows) by motifs (columns)
+#' @return \code{\link{aucScores}} of gene-sets (columns) by motifs (rows)
 #' with the value of AUC for each pair as content.
-#' WARNING: The default databases contain over 18k motifs.
-#' Therefore, the size of this matrix is usually too big to show at once.
-#' Careful when using functions such as View(), head()...
 #' @seealso Next step in the workflow: \code{\link{addMotifAnnotation}}.
 #'
 #' See the package vignette for examples and more details:
@@ -64,7 +56,7 @@
 #' @export
 setGeneric("calcAUC", signature="geneSets",
   function(geneSets, rankings, nCores=1,
-      aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+      aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
   {
     standardGeneric("calcAUC")
   })
@@ -73,7 +65,7 @@ setGeneric("calcAUC", signature="geneSets",
 #' @aliases calcAUC,list-method
 setMethod("calcAUC", "list",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
   {
     .RcisTarget_calcAUC(geneSets=geneSets,
                         rankings=rankings,
@@ -86,7 +78,7 @@ setMethod("calcAUC", "list",
 #' @aliases calcAUC,character-method
 setMethod("calcAUC", "character",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
   {
     geneSets <- list(geneSet=geneSets)
 
@@ -101,7 +93,7 @@ setMethod("calcAUC", "character",
 #' @aliases calcAUC,GeneSet-method
 setMethod("calcAUC", "GeneSet",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
   {
     geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
                          GSEABase::setName(geneSets))
@@ -117,7 +109,7 @@ setMethod("calcAUC", "GeneSet",
 #' @aliases calcAUC,GeneSetCollection-method
 setMethod("calcAUC", "GeneSetCollection",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
   {
     geneSets <- GSEABase::geneIds(geneSets)
 
@@ -129,15 +121,20 @@ setMethod("calcAUC", "GeneSetCollection",
   })
 
 .RcisTarget_calcAUC <- function(geneSets, rankings, nCores=1,
-                                aucMaxRank=0.05*nrow(rankings), verbose=TRUE)
+                                aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
 {
+  # Check the gene sets
   if(!is.list(geneSets))
     stop("geneSets should be a named list.")
   if(is.null(names(geneSets)))
     stop("geneSets should be a named list.")
   if(nCores > length(geneSets))
     nCores <- length(geneSets) # No point in using more...
-
+  
+  # Check the rankings
+  if(! "rankingRcisTarget" %in% class(rankings))
+    stop("The rankings should be of class rankingRcisTarget.")
+  
   if(getMaxRank(rankings) < Inf)
   {
     if(aucMaxRank > getMaxRank(rankings))
@@ -152,15 +149,20 @@ setMethod("calcAUC", "GeneSetCollection",
                       genome=rankings@genome,
                       description=rankings@description)
     rankings <- getRanking(rankings)
+    
+    # could be added as argument...
+    if(!"features" %in% colnames(rankings)) 
+      stop("No feature names in the ranking (column 'features')")
   }
-  if(!is.matrix(rankings))
+  if(!is.data.frame(rankings))
     stop("Rankings does not have the right format.")
 
+  # Check if the genes are included in the rankings
   allGenes <- unique(unlist(geneSets))
-  if(sum(allGenes %in% rownames(rankings))/length(allGenes) < .80)
-    stop("Fewer than 80% of the genes in the gene sets ",
-         "are included in the rankings.",
-         "Check wether the gene IDs in the 'rankings' and 'geneSets' match.")
+  if(sum(allGenes %in% colnames(rankings))/length(allGenes) < .80)
+    stop("Fewer than 80% of the genes/features in the gene-sets ",
+     "are included in the rankings.",
+     "Check wether the IDs in the 'rankings' (columns) and 'geneSets' match.")
 
 
   ######################################################################
@@ -170,11 +172,12 @@ setMethod("calcAUC", "GeneSetCollection",
     gSetName <- NULL
     aucMatrix <- vapply(names(geneSets), function(gSetName)
       .AUC.geneSet(geneSet=geneSets[[gSetName]],
-                   rankings=rankings,
+                   rankings=rankings[,-1], # featureName
                    aucMaxRank=aucMaxRank,
                    gSetName=gSetName),
-      FUN.VALUE=numeric(ncol(rankings)+2))
+      FUN.VALUE=numeric(nrow(rankings)+2))
     aucMatrix <- t(aucMatrix)
+    colnames(aucMatrix)[1:(ncol(aucMatrix)-2)]<-as.character(rankings$features)
   }else
   {
     # Run each geneSet in parallel
@@ -190,12 +193,13 @@ setMethod("calcAUC", "GeneSetCollection",
     aucMatrix <- foreach::"%dopar%"(foreach::foreach(gSetName=names(geneSets)),
     {
       setNames(list(.AUC.geneSet(geneSet=geneSets[[gSetName]],
-                                 rankings=rankings,
+                                 rankings=rankings[,-1],  # featureName
                                  aucMaxRank=aucMaxRank,
                                  gSetName=gSetName)), gSetName)
     })
     aucMatrix <- do.call(rbind,
-                         unlist(aucMatrix, recursive = FALSE)[names(geneSets)])
+            unlist(aucMatrix, recursive = FALSE)[names(geneSets)])
+    colnames(aucMatrix)[1:(ncol(aucMatrix)-2)]<-as.character(rankings$features)
   }
 
   ######################################################################
@@ -228,7 +232,7 @@ setMethod("calcAUC", "GeneSetCollection",
                 paste("\t", gSetName, ": \t", missingGenes[gSetName,"missing"],
                 " (",round(missingPercent[gSetName]*100),"% of ",
                 missingGenes[gSetName,"nGenes"],")",sep=""),
-              FUN.NAME="")
+              FUN.VALUE="")
     if(verbose)
       message(paste(msg1, paste(msg2, collapse="\n"), sep=""))
   }
@@ -246,42 +250,21 @@ setMethod("calcAUC", "GeneSetCollection",
       description = rankingsInfo["description"])
 }
 
-# # add?: AUCThreshold
-# .AUC.geneSet_dataTable <- function(geneSet, rankings, aucMaxRank, gSetName="")
-# {
-#   geneSet <- unique(geneSet)
-#   nGenes <- length(geneSet)
-#   geneSet <- geneSet[which(geneSet %in% rankings$rn)]
-#   missing <- nGenes-length(geneSet)
-#
-#   # gene names are no longer needed
-#   gSetRanks <- subset(rankings, rankings$rn %in% geneSet)[,-"rn", with=FALSE]
-#   rm(rankings)
-#
-#   aucThreshold <- round(aucMaxRank)
-#   maxAUC <- aucThreshold * nrow(gSetRanks)
-#
-#   # Apply by columns (i.e. to each ranking)
-#   auc <- vapply(gSetRanks, .auc, FUN.VALUE=numeric(1), aucThreshold, maxAUC)
-#
-#   c(auc, missing=missing, nGenes=nGenes)
-# }
-
 .AUC.geneSet <- function(geneSet, rankings, aucMaxRank, gSetName="")
 {
   geneSet <- unique(geneSet)
   nGenes <- length(geneSet)
-  geneSet <- geneSet[which(geneSet %in% rownames(rankings))]
+  geneSet <- geneSet[which(geneSet %in% colnames(rankings))]
   missing <- nGenes-length(geneSet)
 
   # gene names are no longer needed
-  gSetRanks <- rankings[geneSet,]
+  gSetRanks <- rankings[,geneSet]
   rm(rankings)
 
   aucThreshold <- round(aucMaxRank)
-  maxAUC <- aucThreshold * nrow(gSetRanks)
+  maxAUC <- aucThreshold * ncol(gSetRanks)  # TODOgenes
 
-  auc <- apply(gSetRanks, 2, .auc, aucThreshold, maxAUC)
+  auc <- apply(gSetRanks, 1, .auc, aucThreshold, maxAUC)
 
   c(auc, missing=missing, nGenes=nGenes)
 }
@@ -289,7 +272,7 @@ setMethod("calcAUC", "GeneSetCollection",
 # oneRanking <- gSetRanks[,3, with=FALSE]
 .auc <- function(oneRanking, aucThreshold, maxAUC)
 {
-  x <- oneRanking
+  x <- as.numeric(oneRanking)
   x <- sort(x[x<aucThreshold])
 
   y <- seq_along(x)

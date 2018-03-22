@@ -9,20 +9,20 @@
 \alias{calcAUC,GeneSetCollection-method}
 \title{Calculate AUC}
 \usage{
-calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * nrow(rankings),
+calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * ncol(rankings),
   verbose = TRUE)
 
 \S4method{calcAUC}{list}(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 *
-  nrow(rankings), verbose = TRUE)
+  ncol(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{character}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
+  aucMaxRank = 0.05 * ncol(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{GeneSet}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
+  aucMaxRank = 0.05 * ncol(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{GeneSetCollection}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * nrow(rankings), verbose = TRUE)
+  aucMaxRank = 0.05 * ncol(rankings), verbose = TRUE)
 }
 \arguments{
 \item{geneSets}{List of gene-sets to analyze.
@@ -31,25 +31,26 @@ The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
 
 \item{rankings}{'Motif rankings' database for the required organism and
 search-space (i.e. 10kbp around- or 500bp upstream the TSS).
-These objects are provided in separate packages:
+These objects are provided in separate files, 
+which can be imported with \code{importRankings()}:
 \itemize{
-\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
-\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
-\item -contact us- (Fly)
+\item \url{http://pyscenic.aertslab.org/databases/mm9-500bp-upstream-7species.mc9nr.feather}[mm9-500bp-upstream-7species.mc9nr] (Mouse, 500bp)
+\item \url{http://pyscenic.aertslab.org/databases/mm9-tss-centered-10kb-7species.mc9nr.feather}[mm9-tss-centered-10kb-7species.mc9nr] (Mouse, 10kbp)
+\item \url{http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-7species.mc9nr.feather}[hg19-500bp-upstream-7species.mc9nr] (Human, 500bp)
+\item \url{http://pyscenic.aertslab.org/databases/hg19-tss-centered-10kb-7species.mc9nr.feather}[hg19-tss-centered-10kb-7species.mc9nr] (Human, 10kbp)
+\item -Coming soon- (Fly)
 }
+See \code{vignette("RcisTarget")} for an exhaustive list of databases.
+
 Since the normalized enrichment score (NES) of the motif
 depends on the total number of motifs in the database,
 we highly recommend to use the full version of the databases (20k motifs).
-Smaller versions of the databases,
+A smaller version of the human databases,
 containing only the 4.6k motifs from cisbp,
 are available in Bioconductor:
 \itemize{
-\item RcisTarget.mm9.motifDBs.cisbpOnly.500bp (Mouse)
 \item RcisTarget.hg19.motifDBs.cisbpOnly.500bp (Human)
-}
-
-See the help files for more information: i.e.
-\code{help(RcisTarget.hg19.motifDBs.20k)}.}
+}}
 
 \item{nCores}{Number of cores to use for computation.
 Note: In general, using a higher number of cores (e.g. processes)
@@ -69,11 +70,8 @@ See \code{vignette("RcisTarget")} for examples and more details.}
 \item{verbose}{Should the function show progress messages? (TRUE / FALSE)}
 }
 \value{
-\code{\link{aucScores}} of gene-sets (rows) by motifs (columns)
+\code{\link{aucScores}} of gene-sets (columns) by motifs (rows)
 with the value of AUC for each pair as content.
-WARNING: The default databases contain over 18k motifs.
-Therefore, the size of this matrix is usually too big to show at once.
-Careful when using functions such as View(), head()...
 }
 \description{
 Calculates the Area Under the Curve (AUC) of each gene-set
@@ -82,41 +80,27 @@ This measure is used in the following steps to identify the DNA motifs
 that are significantly over-represented in the gene-set.
 }
 \examples{
-
 # RcisTarget workflow for advanced users:
 # Running the workflow steps individually
 
-# This example is run using a (small) fake-database & gene-set:
-load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
-motifRankings <- fakeDb$ranking
-motifAnnot <- fakeDb$annotation
-
-geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
-
-# Example of code for a real run:
-##################################################
 \dontrun{
-  #### Setup gene sets
-  # RcisTarget requires the gene sets to be stored in a list with this format:
-  genes <- c("gene1", "gene2", "gene3")
-  geneLists <- list(geneSet1=genes)
-  # (The name 'geneSet1' can be changed)
-
-  # In this example we will use an Hypoxia gene set included in the package:
-  txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
-                   "hypoxiaGeneSet.txt", sep="/")
-  geneLists <- list(hypoxia=read.table(txtFile)[,1])
-
-  #### Load databases
-  # Select the package/database according to the organism and distance around TSS
-  library(RcisTarget.hg19.motifDBs.20k)
-  data(hg19_10kbpAroundTss_motifRanking)
-  motifRankings <- hg19_10kbpAroundTss_motifRanking
-  data(hg19_motifAnnotation)
-  motifAnnot <- hg19_motifAnnotation
-}
+  
 ##################################################
+#### Load your gene sets
+# As example, the package includes an Hypoxia gene set:
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
+               "hypoxiaGeneSet.txt", sep="/")
+geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
+  
+#### Load databases
+## Motif rankings: Select according to organism and distance around TSS
+## (See the vignette for URLs to download)
+motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
 
+## Motif - TF annotation:
+data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc
+##################################################
 
 #### Run RcisTarget
 
@@ -125,7 +109,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # Step 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                         motifAnnot=motifAnnot)
+                         motifAnnot=motifAnnotation)
 
 # Step 3 (optional). Identify genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)
@@ -133,6 +117,8 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
                                                    geneSets=geneLists,
                                                    rankings=motifRankings,
                                                    method="aprox")
+
+}
 }
 \seealso{
 Next step in the workflow: \code{\link{addMotifAnnotation}}.

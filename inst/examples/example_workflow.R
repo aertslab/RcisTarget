@@ -1,38 +1,24 @@
-
 # RcisTarget workflow for advanced users:
 # Running the workflow steps individually
 
-# This example is run using a (small) fake-database & gene-set:
-load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
-motifRankings <- fakeDb$ranking
-motifAnnot <- fakeDb$annotation
-
-geneLists <- list(geneSet=sample(rownames(motifRankings), 100))
-
-# Example of code for a real run:
-##################################################
 \dontrun{
-  #### Setup gene sets
-  # RcisTarget requires the gene sets to be stored in a list with this format:
-  genes <- c("gene1", "gene2", "gene3")
-  geneLists <- list(geneSet1=genes)
-  # (The name 'geneSet1' can be changed)
-
-  # In this example we will use an Hypoxia gene set included in the package:
-  txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
-                   "hypoxiaGeneSet.txt", sep="/")
-  geneLists <- list(hypoxia=read.table(txtFile)[,1])
-
-  #### Load databases
-  # Select the package/database according to the organism and distance around TSS
-  library(RcisTarget.hg19.motifDBs.20k)
-  data(hg19_10kbpAroundTss_motifRanking)
-  motifRankings <- hg19_10kbpAroundTss_motifRanking
-  data(hg19_motifAnnotation)
-  motifAnnot <- hg19_motifAnnotation
-}
+  
 ##################################################
+#### Load your gene sets
+# As example, the package includes an Hypoxia gene set:
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
+               "hypoxiaGeneSet.txt", sep="/")
+geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
+  
+#### Load databases
+## Motif rankings: Select according to organism and distance around TSS
+## (See the vignette for URLs to download)
+motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
 
+## Motif - TF annotation:
+data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc
+##################################################
 
 #### Run RcisTarget
 
@@ -41,7 +27,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # Step 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                         motifAnnot=motifAnnot)
+                         motifAnnot=motifAnnotation)
 
 # Step 3 (optional). Identify genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)
@@ -49,3 +35,5 @@ motifEnrichmentTable_wGenes <- addSignificantGenes(motifEnrichmentTable,
                                                    geneSets=geneLists,
                                                    rankings=motifRankings,
                                                    method="aprox")
+
+}

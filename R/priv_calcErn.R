@@ -1,5 +1,5 @@
 
-###############################################################################
+# #############################################################################
 # Calculates gene enrichment: i-CisTarget version
 # Arguments should be kept in the same order as .calcEnr_Aprox
 .calcEnr_iCisTarget <- function(gsRankings, maxRank,
@@ -41,9 +41,9 @@
   # Calculate aproximated-RCC across all motifs at each rank position
   maxRankExtra <- maxRank+nMean
   globalMat <- matrix(0, nrow=nrow(gsRankings), ncol=maxRankExtra)
-  for(i in 1:ncol(gsRankings)) # (TO DO: Paralellize?)
+  for(i in 1:nrow(gsRankings)) # (TO DO: Paralellize?)
   {
-    x <- unlist(gsRankings[,i])
+    x <- as.numeric(unlist(gsRankings[i,]))
     x <- sort(x[x<maxRankExtra])
 
     if(length(x) > 0){
@@ -73,7 +73,7 @@
       rccStatsRaw[x[1], x[2]] <- rccStatsRaw[x[1], x[2]-1]
     }
   }
-    
+
 
   # Reduce noise in the stats with the rolling mean
   rccStats <- t(apply(rccStatsRaw, 1,
@@ -87,7 +87,7 @@
 
 
   # Calculate real RCC & max enrichment for selected rankings
-  rccs <- .calcRCC(gsRankings[,signifRankingNames,drop=FALSE], maxRank, nCores)
+  rccs <- .calcRCC(gsRankings[signifRankingNames,,drop=FALSE], maxRank, nCores)
   maxEnr <- sapply(signifRankingNames, function(sr) {
     x <- min(which.max(rccs[,sr]-rccM2sd))
     c(x=x, y=unname(rccs[x,sr]))
@@ -100,7 +100,8 @@
     plot(rccStatsRaw["mean",]+2*rccStatsRaw["sd",],
          type="l", col="lightgreen",
          xlab="Rank", ylab="#genes recovered",
-         main="Global mean and SD estimation")
+         main="Global mean and SD estimation", 
+         xlim=c(0,maxRank))
     lines(rccStatsRaw["mean",],type="l", col="pink")
     lines(rccMean, col="red")
     lines(rccM2sd, col="darkgreen")
@@ -132,24 +133,24 @@
 {
   if(nCores==1)
   {
-    rccs <- apply(gsRankings, 2, .calcRCC.oneRanking, maxRank)
+    rccs <- apply(gsRankings, 1, .calcRCC.oneRanking, maxRank)
   }else
   {
     # Split rankings into 10 groups and run in parallel
     doParallel::registerDoParallel()
     options(cores=nCores)
 
-    colsNam <- colnames(gsRankings)
+    rowsNam <- rownames(gsRankings)
     suppressWarnings(
-      colsNamsGroups <- split(colsNam, (seq_along(colsNam)) %% nCores)
-                     ) # Expected warning: Not multiple
-
+      rowNamsGroups <- split(rowsNam, (seq_along(rowsNam)) %% nCores)) 
+        # Expected warning: Not multiple
+    
     # rccs <- foreach(colsGr=colsNamsGroups, .combine="cbind") %do%
-    colsGr <- NULL
-    rccs <- foreach::"%do%"(foreach::foreach(colsGr=colsNamsGroups,
+    rowsGr <- NULL
+    rccs <- foreach::"%do%"(foreach::foreach(rowsGr=rowNamsGroups,
                                              .combine="cbind"),
     {
-      apply(gsRankings[,colsGr, drop=FALSE],2, .calcRCC.oneRanking, maxRank)
+      apply(gsRankings[rowsGr,, drop=FALSE],1, .calcRCC.oneRanking, maxRank)
     })
   }
   return(rccs)

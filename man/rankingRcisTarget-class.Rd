@@ -4,16 +4,13 @@
 \name{rankingRcisTarget-class}
 \alias{rankingRcisTarget-class}
 \alias{rankingRcisTarget}
-\alias{rankingRcisTarget-class,}
-\alias{rankingRcisTarget,}
-\alias{getRanking,}
-\alias{ncol,}
-\alias{nrow,}
-\alias{show,}
-\alias{subset}
 \alias{show,rankingRcisTarget-method}
 \alias{getRanking}
 \alias{getRanking,rankingRcisTarget-method}
+\alias{nrow}
+\alias{nrow,rankingRcisTarget-method}
+\alias{ncol}
+\alias{ncol,rankingRcisTarget-method}
 \alias{getMaxRank}
 \alias{getMaxRank,rankingRcisTarget-method}
 \title{Class to store the motif databases for RcisTarget.}
@@ -21,6 +18,10 @@
 \S4method{show}{rankingRcisTarget}(object)
 
 getRanking(x)
+
+nrow(x)
+
+ncol(x)
 
 getMaxRank(x)
 }
@@ -32,26 +33,43 @@ getMaxRank(x)
 \value{
 \itemize{
 \item show: Prints a summary of the object
-\item getRanking: Returns the data.frame containing the rankings
-\item ncol, nrow, subset: Returns the number of columns, rows
-or a subset of the ranking
+\item getRanking: Returns the rankings
+\item ncol, nrow: Returns the number of columns or rows of the ranking
 }
 }
 \description{
-This class is only meant as container for the motif rankings
-(for internal use). Modify content at your own risk.
+This class contains the rankings used by RcisTarget. 
 
-Slots:
+They are typically loaded from a .feather file with \code{importRankings()}.
+
+If the associated .descr file is available, 
+it will also load the description of the database.
+
+Class slots:
+
 \itemize{
-\item rankings: data.table with the rankings
-\item colType: 'motif' or whatever other feature is stored (e.g. ChipSeq)
-\item rowType: 'gene'or 'region'
+\item rankings: data.frame containing the rankings
+\item colType: 'gene'or 'region'
+\item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 \item org: human/mouse/fly
 \item genome: hg19, mm9, ...
-\item description: summary or any other information
+\item description: global description, summary, or any other information
+\item maxRank: Maximum ranking included in the database, 
+higher values are converted to Inf.
 }
+
+Note that the main slot is \code{@rankings}, 
+which is the one used by RcisTarget 
+(it can accessed with \code{getRanking()}).
+The 'description' slots are mostly for user convenience.
 }
 \examples{
+## Loading from a .feather file:
+# dbFile <- "hg19_500bpUpstream_motifRanking_cispbOnly.feather"
+# motifRankings <- importRankings_summExp(dbFile)
+# motifRankings
+
+## Loading a built object:
 library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 data("hg19_500bpUpstream_motifRanking_cispbOnly")
 hg19_500bpUpstream_motifRanking_cispbOnly

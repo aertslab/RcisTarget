@@ -8,7 +8,7 @@ cisTarget(geneSets, motifRankings, motifAnnot = NULL,
   motifAnnot_highConfCat = c("directAnnotation", "inferredBy_Orthology"),
   motifAnnot_lowConfCat = c("inferredBy_MotifSimilarity",
   "inferredBy_MotifSimilarity_n_Orthology"), highlightTFs = NULL,
-  nesThreshold = 3, aucMaxRank = 0.05 * nrow(motifRankings),
+  nesThreshold = 3, aucMaxRank = 0.05 * ncol(motifRankings),
   geneErnMethod = "aprox", geneErnMmaxRank = 5000, nCores = 1,
   verbose = TRUE)
 }
@@ -19,14 +19,16 @@ The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
 
 \item{motifRankings}{Database of the appropiate organism and search-space
 (i.e. 10kbp around- or 500bp upstream the TSS).
-These objects are provided in separate packages:
+These objects are provided in separate files, 
+which can be imported with \code{importRankings()}:
 \itemize{
-\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.mm9.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.mm9.motifDatabases.20k_0.1.1.tar.gz] (Mouse)
-\item \url{http://scenic.aertslab.org/downloads/databases/RcisTarget.hg19.motifDBs.20k_0.2.0.tar.gz}[RcisTarget.hg19.motifDatabases.20k_0.1.1.tar.gz] (Human)
-\item -contact us- (Fly)
+\item \url{http://pyscenic.aertslab.org/databases/mm9-500bp-upstream-7species.mc9nr.feather}[mm9-500bp-upstream-7species.mc9nr] (Mouse, 500bp)
+\item \url{http://pyscenic.aertslab.org/databases/mm9-tss-centered-10kb-7species.mc9nr.feather}[mm9-tss-centered-10kb-7species.mc9nr] (Mouse, 10kbp)
+\item \url{http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-7species.mc9nr.feather}[hg19-500bp-upstream-7species.mc9nr] (Human, 500bp)
+\item \url{http://pyscenic.aertslab.org/databases/hg19-tss-centered-10kb-7species.mc9nr.feather}[hg19-tss-centered-10kb-7species.mc9nr] (Human, 10kbp)
+\item -Coming soon- (Fly)
 }
-See the help files for more information:
-i.e. \code{help(RcisTarget.hg19.motifDatabases)}}
+See \code{vignette("RcisTarget")} for an exhaustive list of databases.}
 
 \item{motifAnnot}{Motif annotation database containing the
 annotations of the motif to transcription factors.}
@@ -99,44 +101,41 @@ It includes on the following steps:
 }
 \examples{
 
+
 # Example for running RcisTarget using cisTarget() function (workflow wrapper)
 
-# A quick example can be run using a (small) fake-database & gene-set:
-load(system.file("examples", "fakeDb.RData", package="RcisTarget"))
-motifRankings <- fakeDb$ranking
-motifAnnot_direct <- fakeDb$annotation
-geneLists <- sample(rownames(motifRankings), 100)
-
-# This is an example of code for a real run:
-##################################################
 \dontrun{
-  #### Gene sets
-  # As example, the package includes an Hypoxia gene set:
-  txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
-                   "hypoxiaGeneSet.txt", sep="/")
-  geneLists <- list(hypoxia=read.table(txtFile)[,1])
 
-  #### Databases
-  # Select the package according to the organism and distance around TSS
-  library(RcisTarget.hg19.motifDBs.20k)
-  data(hg19_10kbpAroundTss_motifRanking)
-  motifRankings <- hg19_10kbpAroundTss_motifRanking
-  data(hg19_direct_motifAnnotation)
-  motifAnnotation <- hg19_direct_motifAnnotation
+##################################################
+### Load your gene sets
+# As example, the package includes an Hypoxia gene set:
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
+                 "hypoxiaGeneSet.txt", sep="/")
+geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 
-  # Run (R)cisTarget
-  motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
-   motifAnnot_direct=hg19_direct_motifAnnotation,
-   nesThreshold=3.5, geneErnMethod="aprox", nCores=2)
+### Load databases
+# Motif rankings: Select according to organism and distance around TSS
+# (See the vignette for URLs to download)
+motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+
+# Motif - TF annotation:
+data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc
+##################################################
+
+# Run (R)cisTarget
+motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
+  motifAnnot_direct=hg19_direct_motifAnnotation,
+  nesThreshold=3.5, geneErnMethod="aprox", nCores=2)
+
 }
 
 # Load results from analysis
 load(paste(file.path(system.file('examples', package='RcisTarget')),
            "motifEnrichmentTable_wGenes.RData", sep="/"))
-##################################################
 
 
-# Exploring the output:
+### Exploring the output:
 # Note: If using the fake-database, the results are not meaningful
 
 # Number of enriched motifs (Over the given NES threshold)

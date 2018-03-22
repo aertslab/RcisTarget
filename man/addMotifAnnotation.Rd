@@ -77,20 +77,18 @@ txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
 geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 
 #### Databases
-# Select the package/database according to the organism and distance around TSS
-# Recommended: Full database
-# library(RcisTarget.hg19.motifDBs.20k)
-# data(hg19_10kbpAroundTss_motifRanking)
-# motifRankings <- hg19_10kbpAroundTss_motifRanking
-# data(hg19_motifAnnotation)
-# motifAnnotation <- hg19_motifAnnotation
+## Motif rankings: Select according to organism and distance around TSS
+## (See the vignette for URLs to download)
+# motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
 
-# For the example: Subset of database
+## For this example we will use a SUBSET of the ranking/motif databases:
 library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 data(hg19_500bpUpstream_motifRanking_cispbOnly)
-  motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
-data(hg19_motifAnnotation_cisbpOnly)
-  motifAnnotation <- hg19_motifAnnotation_cisbpOnly
+motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
+
+## Motif - TF annotation:
+data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc
 
 ### Run RcisTarget
 # Step 1. Calculate AUC

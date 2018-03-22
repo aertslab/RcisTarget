@@ -8,30 +8,30 @@
 {
   motifRankings
   
-  correctNcol <- ncol(motifRankings)
+  correctNmotifs <- nrow(motifRankings)
   
   # a) Character vector (i.e. only one gene-set)
-  fewGenes <- sample(rownames(getRanking(motifRankings)), 10)
+  fewGenes <- sample(colnames(getRanking(motifRankings)), 10)
   motifsAUC <- suppressWarnings(calcAUC(fewGenes, motifRankings, aucMaxRank=5))
   
   testthat::expect_equal(nrow(motifsAUC), 1)
-  testthat::expect_equal(ncol(motifsAUC), correctNcol)
+  testthat::expect_equal(ncol(motifsAUC), correctNmotifs)
   
   # b) List
-  otherGenes <- sample(rownames(getRanking(motifRankings)), 5)
+  otherGenes <- sample(colnames(getRanking(motifRankings)), 5)
   geneSets <- list(geneSet1=fewGenes,
                    geneSet2=otherGenes)
   motifsAUC <- suppressWarnings(calcAUC(geneSets, motifRankings, aucMaxRank=5))
   
   testthat::expect_equal(nrow(motifsAUC), 2)
-  testthat::expect_equal(ncol(motifsAUC), correctNcol)
+  testthat::expect_equal(ncol(motifsAUC), correctNmotifs)
   
   # c) GeneSet object (from GSEABase)
   geneSetOne <- GSEABase::GeneSet(fewGenes, setName="geneSetOne")
   motifsAUC <- suppressWarnings(calcAUC(geneSetOne, motifRankings, aucMaxRank=5))
   
   testthat::expect_equal(nrow(motifsAUC), 1)
-  testthat::expect_equal(ncol(motifsAUC), correctNcol)
+  testthat::expect_equal(ncol(motifsAUC), correctNmotifs)
   
   # d) GeneSetCollection object (from GSEABase)
   geneSetTwo <- GSEABase::GeneSet(otherGenes, setName="geneSetTwo")
@@ -39,7 +39,7 @@
   motifsAUC <- suppressWarnings(calcAUC(geneSets, motifRankings, aucMaxRank=5))
   
   testthat::expect_equal(nrow(motifsAUC), 2)
-  testthat::expect_equal(ncol(motifsAUC), correctNcol)
+  testthat::expect_equal(ncol(motifsAUC), correctNmotifs)
   
   testthat::expect_equal(class(motifsAUC)[1], "aucScores")
   testthat::expect_equal(SummarizedExperiment::assayNames(motifsAUC)[1], "AUC")
@@ -82,31 +82,32 @@
                                    signifRankingNames=selectedMotif,
                                    genesFormat="incidMatrix",
                                    plotCurve=FALSE,
+                                   maxRank=4500,
                                    rankings=motifRankings,
                                    method="aprox")
   
   
   ### Diferent input formats (geneSet)
   # a) Character vector (i.e. only one gene-set)
-  fewGenes <- sample(rownames(motifRankings), 10)
-  gsOut <- getSignificantGenes(geneSet=fewGenes, signifRankingNames=selectedMotif[1],
+  fewGenes <- sample(colnames(getRanking(motifRankings)), 10)
+  gsOut <- getSignificantGenes(geneSet=fewGenes, signifRankingNames=selectedMotif[1], maxRank=4500,
                                genesFormat="incidMatrix", plotCurve=FALSE, rankings=motifRankings, method="aprox")
   
   testthat::expect_equal(names(gsOut), c("enrStats", "incidMatrix"))
   
   # b) List
-  otherGenes <- sample(rownames(motifRankings), 5)
+  otherGenes <- sample(colnames(getRanking(motifRankings)), 5)
   geneSets <- list(geneSet1=fewGenes,
                    geneSet2=otherGenes)
-  expect_error(getSignificantGenes(geneSet=geneSets, signifRankingNames=selectedMotif[1],
+  expect_error(getSignificantGenes(geneSet=geneSets, signifRankingNames=selectedMotif[1], maxRank=4500,
                                    genesFormat="incidMatrix", plotCurve=FALSE, rankings=motifRankings, method="aprox"))
-  gsOut <- getSignificantGenes(geneSet=geneSets[1], signifRankingNames=selectedMotif[1],
+  gsOut <- getSignificantGenes(geneSet=geneSets[1], signifRankingNames=selectedMotif[1], maxRank=4500,
                                genesFormat="incidMatrix", plotCurve=FALSE, rankings=motifRankings, method="aprox")
   testthat::expect_equal(names(gsOut), c("enrStats", "incidMatrix"))
   
   # c) GeneSet object (from GSEABase)
   geneSetOne <- GSEABase::GeneSet(fewGenes, setName="geneSetOne")
-  gsOut <- getSignificantGenes(geneSet=geneSetOne, signifRankingNames=selectedMotif[1],
+  gsOut <- getSignificantGenes(geneSet=geneSetOne, signifRankingNames=selectedMotif[1], maxRank=4500,
                                genesFormat="incidMatrix", plotCurve=FALSE, rankings=motifRankings, method="aprox")
   
   testthat::expect_equal(names(gsOut), c("enrStats", "incidMatrix"))
@@ -231,7 +232,7 @@ test_Workflow <- function()
   ##### Example setup ##############################
   txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),
                    "hypoxiaGeneSet.txt", sep="/")
-  geneLists <- list(hypoxia=read.table(txtFile)[,1])
+  geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors = FALSE)[,1])
 
   # Load databases
   library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
