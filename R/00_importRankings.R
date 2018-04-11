@@ -20,6 +20,9 @@
 #' #' \itemize{
 #' \item rankings: data.frame containing the rankings
 #' \item colType: 'gene'or 'region'
+#' \item nColsInDB: Number of columns (e.g. genes/regions) available 
+#' in the database (.feather file). 
+#' Note that not all might be loaded in the current object.
 #' \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 #' \item org: human/mouse/fly
 #' \item genome: hg19, mm9, ...
@@ -47,8 +50,11 @@
 #' @export
 importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
 {
-  rnks <- read_feather(dbFile, columns=columns) # tibble
+  if(!file.exists(dbFile)) stop("File does not exist: ", dbFile)
+  
+  rnks <- feather::read_feather(dbFile, columns=columns) # tibble
   #rnks <- data.frame... #replaces dash in gene names... :(
+  nColsInDB <- feather::feather_metadata(dbFile)[["dim"]][2]
   
   dbFile_descr <- gsub(".feather",".descr", dbFile, fixed=TRUE)
   if(!is.null(dbDescr))
@@ -66,15 +72,17 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
             function(x) paste(x, dbDescr[x,1], sep=": "))), collapse="\n"))
     }else{
       # If not provided: keep empty
-      dbDescr <- as.matrix(list(colType="", 
-                                rowType="", 
+      dbDescr <- as.matrix(list(colType="column", 
+                                rowType="row", 
                                 org="", 
                                 genome="", 
+                                nColsAvailable=nColsInDB,
                                 maxRank = Inf, 
                                 description=""))
     }
   }
   
+  dbDescr["nColsAvailable",] <- nColsInDB
   dbDescr["description",] <- paste0(dbDescr["description",], 
                                     " [Source file: ", basename(dbFile),"]")
   
@@ -85,6 +93,7 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
       rowType=as.character(dbDescr["rowtype",]),
       org=as.character(dbDescr["org",]),
       genome=as.character(dbDescr["genome",]),
+      nColsInDB=as.numeric(dbDescr["ncolsavailable",]),
       maxRank = as.numeric(dbDescr["maxrank",]), 
       description=as.character(dbDescr["description",]))
 }

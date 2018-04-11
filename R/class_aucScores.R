@@ -15,7 +15,8 @@
 #' @method show aucScores
 #' @method getAUC aucScores
 #' @example inst/examples/example_aucScores_class.R
-#' @import SummarizedExperiment
+#' @importClassesFrom SummarizedExperiment SummarizedExperiment
+#' @importMethodsFrom SummarizedExperiment assay assays assayNames
 #' @importFrom R.utils capitalize
 #' @importFrom utils head
 #' @rdname aucScores-class
@@ -56,11 +57,11 @@ setMethod("show",
   }
 )
 ##### Access the matrix:
-#' @export
+#' @importFrom AUCell getAUC
+#' @name getAUC
 #' @rdname aucScores-class
 #' @aliases getAUC,aucScores-method
-setGeneric(name="getAUC",
-           def=function(object) standardGeneric("getAUC"))
+#' @exportMethod getAUC
 setMethod("getAUC",
   signature="aucScores",
   definition = function(object) {

@@ -7,23 +7,25 @@
 \alias{show,rankingRcisTarget-method}
 \alias{getRanking}
 \alias{getRanking,rankingRcisTarget-method}
-\alias{nrow}
 \alias{nrow,rankingRcisTarget-method}
-\alias{ncol}
 \alias{ncol,rankingRcisTarget-method}
 \alias{getMaxRank}
 \alias{getMaxRank,rankingRcisTarget-method}
+\alias{getNumColsInDB}
+\alias{getNumColsInDB,rankingRcisTarget-method}
 \title{Class to store the motif databases for RcisTarget.}
 \usage{
 \S4method{show}{rankingRcisTarget}(object)
 
-getRanking(x)
+\S4method{getRanking}{rankingRcisTarget}(object)
 
-nrow(x)
+\S4method{nrow}{rankingRcisTarget}(x)
 
-ncol(x)
+\S4method{ncol}{rankingRcisTarget}(x)
 
-getMaxRank(x)
+\S4method{getMaxRank}{rankingRcisTarget}(x)
+
+\S4method{getNumColsInDB}{rankingRcisTarget}(x)
 }
 \arguments{
 \item{object}{[method: show] rankingRcisTarget object to show}
@@ -53,6 +55,9 @@ Class slots:
 \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 \item org: human/mouse/fly
 \item genome: hg19, mm9, ...
+\item nColsInDB: Number of columns (e.g. genes/regions) available 
+in the database (.feather file). 
+Note that not all might be loaded in the current object.
 \item description: global description, summary, or any other information
 \item maxRank: Maximum ranking included in the database, 
 higher values are converted to Inf.
@@ -65,8 +70,8 @@ The 'description' slots are mostly for user convenience.
 }
 \examples{
 ## Loading from a .feather file:
-# dbFile <- "hg19_500bpUpstream_motifRanking_cispbOnly.feather"
-# motifRankings <- importRankings_summExp(dbFile)
+# dbFile <- "hg19-500bp-upstream-7species.mc9nr.feather"
+# motifRankings <- importRankings(dbFile)
 # motifRankings
 
 ## Loading a built object:

@@ -24,6 +24,9 @@ rankingRcisTarget object with the following slots:
 #' \itemize{
 \item rankings: data.frame containing the rankings
 \item colType: 'gene'or 'region'
+\item nColsInDB: Number of columns (e.g. genes/regions) available 
+in the database (.feather file). 
+Note that not all might be loaded in the current object.
 \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 \item org: human/mouse/fly
 \item genome: hg19, mm9, ...

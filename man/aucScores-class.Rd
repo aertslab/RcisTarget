@@ -12,7 +12,7 @@
 \usage{
 \S4method{show}{aucScores}(object)
 
-getAUC(object)
+\S4method{getAUC}{aucScores}(object)
 }
 \arguments{
 \item{object}{Results from \code{calcAUC}.}

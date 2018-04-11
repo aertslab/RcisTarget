@@ -19,6 +19,9 @@
 #' \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 #' \item org: human/mouse/fly
 #' \item genome: hg19, mm9, ...
+#' \item nColsInDB: Number of columns (e.g. genes/regions) available 
+#' in the database (.feather file). 
+#' Note that not all might be loaded in the current object.
 #' \item description: global description, summary, or any other information
 #' \item maxRank: Maximum ranking included in the database, 
 #' higher values are converted to Inf.
@@ -39,8 +42,8 @@
 
 #' @examples
 #' ## Loading from a .feather file:
-#' # dbFile <- "hg19_500bpUpstream_motifRanking_cispbOnly.feather"
-#' # motifRankings <- importRankings_summExp(dbFile)
+#' # dbFile <- "hg19-500bp-upstream-7species.mc9nr.feather"
+#' # motifRankings <- importRankings(dbFile)
 #' # motifRankings
 #' 
 #' ## Loading a built object:
@@ -48,7 +51,8 @@
 #' data("hg19_500bpUpstream_motifRanking_cispbOnly")
 #' hg19_500bpUpstream_motifRanking_cispbOnly
 #' class(hg19_500bpUpstream_motifRanking_cispbOnly)
-
+#' @importFrom methods slotNames
+#' 
 #' @rdname rankingRcisTarget-class
 #' @export rankingRcisTarget
 #' @exportClass rankingRcisTarget
@@ -62,6 +66,7 @@ rankingRcisTarget <- setClass(
     rowType = "character", # motif or whatever feature is stored (e.g. ChipSeq)
     org = "character", # human/mouse
     genome = "character", # hg19, mm9 ...
+    nColsInDB="numeric", # Number of columns (e.g. genes) available in DB
     maxRank = "numeric", # Higher ranks are converted to Inf
     description = "character", # Other info, shown with "show"
     rcistarget_version = "character" # Class/RcisTarget version
@@ -85,8 +90,10 @@ setMethod("show",
       "  Organism: ", object@org, genome,"\n")
     }
     
+    nGenes <- ncol(getRanking(object))
+    if(("nColsInDB" %in% slotNames(object)) && !is.na(object@nColsInDB)) nGenes <- paste0(nGenes," (",object@nColsInDB," available in the full DB)")
     message <- paste0(message,
-     "  Number of ",object@colType, "s: ", ncol(getRanking(object)),"\n",
+     "  Number of ",object@colType, "s: ", nGenes, "\n",
      "  Number of ",toupper(object@rowType),"S: ",nrow(getRanking(object)),"\n"
      )
     
@@ -110,24 +117,22 @@ setMethod("show",
 )
 
 ##### Access the rankings:
+#' @importFrom AUCell getRanking
+#' @name getRanking
 #' @rdname rankingRcisTarget-class
 #' @aliases getRanking,rankingRcisTarget-method
-#' @export
-setGeneric(name="getRanking",
-           def=function(x) standardGeneric("getRanking"))
+#' @exportMethod getRanking
 setMethod("getRanking",
           signature="rankingRcisTarget",
-          definition = function(x) {
-            x@rankings
+          definition = function(object) {
+            object@rankings
           }
 )
 
-
+#' @importFrom BiocGenerics nrow
 #' @rdname rankingRcisTarget-class
 #' @aliases nrow,rankingRcisTarget-method
 #' @export
-setGeneric(name="nrow",
-           def=function(x) standardGeneric("nrow"))
 setMethod("nrow",
           signature="rankingRcisTarget",
           definition = function(x) {
@@ -135,11 +140,10 @@ setMethod("nrow",
           }
 )
 
+#' @importFrom BiocGenerics ncol
 #' @rdname rankingRcisTarget-class
 #' @aliases ncol,rankingRcisTarget-method
 #' @export
-setGeneric(name="ncol",
-           def=function(x) standardGeneric("ncol"))
 setMethod("ncol",
           signature="rankingRcisTarget",
           definition = function(x) {
@@ -148,11 +152,12 @@ setMethod("ncol",
 )
 
 ##### Access the maxRank:
+setGeneric(name="getMaxRank",
+           def=function(x) standardGeneric("getMaxRank"))
+#' @name getMaxRank
 #' @rdname rankingRcisTarget-class
 #' @aliases getMaxRank,rankingRcisTarget-method
 #' @export
-setGeneric(name="getMaxRank",
-           def=function(x) standardGeneric("getMaxRank"))
 setMethod("getMaxRank",
           signature="rankingRcisTarget",
           definition = function(x) {
@@ -164,6 +169,29 @@ setMethod("getMaxRank",
             
             if(length(ret)==0)
               ret <- Inf
+            
+            return(ret)
+          }
+)
+
+##### Access the nColsAvailable:
+setGeneric(name="getNumColsInDB",
+           def=function(x) standardGeneric("getNumColsInDB"))
+#' @name getNumColsInDB
+#' @rdname rankingRcisTarget-class
+#' @aliases getNumColsInDB,rankingRcisTarget-method
+#' @export
+setMethod("getNumColsInDB",
+          signature="rankingRcisTarget",
+          definition = function(x) {
+            # Previous versions didn't have @maxRank -> Contain all ranks
+            ret <- tryCatch(
+              x@nColsInDB,
+              error=function(e) {NA}
+            )
+            
+            if(length(ret)==0)
+              ret <- NA
             
             return(ret)
           }

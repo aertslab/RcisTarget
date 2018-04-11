@@ -21,28 +21,30 @@ Description: RcisTarget identifies transcription factor binding
 URL: http://scenic.aertslab.org
 Depends: R (>= 3.4)
 Imports:
+    AUCell (>= 1.1.6),
+    BiocGenerics,
     data.table,
     feather,
-    SummarizedExperiment,
+    graphics,
     GSEABase,
     methods,
     R.utils,
-    graphics,
     stats,
+    SummarizedExperiment,
     utils
 Enhances: doMC, doRNG, zoo
 Suggests:
     Biobase,
-    visNetwork,
-    DT,
-    igraph,
     BiocStyle,
-    knitr,
-    rmarkdown,
     doParallel,
+    DT,
     foreach,
+    igraph,
+    knitr,
     RcisTarget.hg19.motifDBs.cisbpOnly.500bp, 
-    testthat
+    rmarkdown,
+    testthat,
+    visNetwork
 License: GPL-3
 BugReports: https://github.com/aertslab/RcisTarget/issues
 biocViews: GeneRegulation, MotifAnnotation, Transcriptomics, Transcription,
