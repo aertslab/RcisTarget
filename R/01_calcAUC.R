@@ -7,8 +7,8 @@
 #' This measure is used in the following steps to identify the DNA motifs
 #' that are significantly over-represented in the gene-set.
 #' @param geneSets List of gene-sets to analyze.
-#' The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
-#' \code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).
+#' The gene-sets should be provided as \code{\link{GeneSet}},
+#' \code{\link{GeneSetCollection}} or character list (see examples).
 #' @param rankings 'Motif rankings' database for the required organism and
 #' search-space (i.e. 10kbp around- or 500bp upstream the TSS).
 #' These objects are provided in separate files, 

@@ -14,8 +14,8 @@ cisTarget(geneSets, motifRankings, motifAnnot = NULL,
 }
 \arguments{
 \item{geneSets}{List of gene-sets to analyze.
-The gene-sets should be provided as \code{\link[GSEABase]{GeneSet}},
-\code{\link[GSEABase]{GeneSetCollection}} or character list (see examples).}
+The gene-sets should be provided as \code{\link{GeneSet}},
+\code{\link{GeneSetCollection}} or character list (see examples).}
 
 \item{motifRankings}{Database of the appropiate organism and search-space
 (i.e. 10kbp around- or 500bp upstream the TSS).
