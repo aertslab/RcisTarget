@@ -201,7 +201,7 @@ Mouse | TSS+/-10kbp | 7 | [mm9-tss-centered-10kb-7species.mc9nr](http://pyscenic
 Mouse | 500bp upstream TSS | 10 | [mm9-500bp-upstream-10species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-500bp-upstream-10species.mc9nr.feather)
 Mouse | TSS+/-5kbp | 10 | [mm9-tss-centered-5kb-10species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-tss-centered-5kb-10species.mc9nr.feather)
 Mouse | TSS+/-10kbp | 10 | [mm9-tss-centered-10kb-10species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-tss-centered-10kb-10species.mc9nr.feather)
-Fly |  |  | Coming soon...
+Fly |  |  | Coming soon... (Previous version: [dm6-5kb-upstream-full-tx-11species.mc8nr](http://pyscenic.aertslab.org/databases/dm6-5kb-upstream-full-tx-11species.mc8nr.feather)
 
 Once you have both files, they can be loaded with `importRankings()`: 
 ```{r loadDatabases, eval=FALSE}
