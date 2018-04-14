@@ -9,7 +9,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 output: 
   BiocStyle::html_document:
+    toc: yes
     number_sections: false
+    css: corrected.css
   pdf_document:
     toc: yes
   html_notebook:
