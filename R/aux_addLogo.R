@@ -7,7 +7,7 @@
 #' @param motifEnrDT Results from RcisTarget (data.table)
 #' @param addHTML Whether to add the HTML tag <img> around the URL or not
 #' (boolean).
-#' @param dbVersion For current databases use "v8"
+#' @param dbVersion For current databases (mc9nr) use "v9"
 #' @return Returns the results table with a new column: 'logo'.
 #' This column contains either a URL with the logo image, or the HTML code to
 #' show the logo [e.g. with datatable()].
