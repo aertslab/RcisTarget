@@ -12,7 +12,7 @@ addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9")
 \item{addHTML}{Whether to add the HTML tag <img> around the URL or not
 (boolean).}
 
-\item{dbVersion}{For current databases use "v8"}
+\item{dbVersion}{For current databases (mc9nr) use "v9"}
 }
 \value{
 Returns the results table with a new column: 'logo'.

@@ -52,8 +52,9 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
 {
   if(!file.exists(dbFile)) stop("File does not exist: ", dbFile)
   
+  if(!is.null(columns)) columns <- unique(c("features", columns))
   rnks <- feather::read_feather(dbFile, columns=columns) # tibble
-  #rnks <- data.frame... #replaces dash in gene names... :(
+  #rnks <- data.frame... #to avoid replacing dash in names: check.names=FALSE
   nColsInDB <- feather::feather_metadata(dbFile)[["dim"]][2]
   
   dbFile_descr <- gsub(".feather",".descr", dbFile, fixed=TRUE)
