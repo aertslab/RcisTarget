@@ -322,7 +322,6 @@ setMethod("getSignificantGenes", "GeneSetCollection",
     maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"),
     nCores=1, digits=3, nMean=20)
   {
-    print(plotCurve)
     if(length(geneSet)>1) stop("Provide only one gene set.")
     geneSet <- unlist(GSEABase::geneIds(geneSet))
 

@@ -58,11 +58,11 @@
 #' @example inst/examples/example_addMotifAnnotation.R
 #' @export
 addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
-    motifAnnot=NULL, 
-    motifAnnot_highConfCat=c("directAnnotation", "inferredBy_Orthology"), 
-    motifAnnot_lowConfCat=c("inferredBy_MotifSimilarity", 
-                            "inferredBy_MotifSimilarity_n_Orthology"), 
-    highlightTFs=NULL)
+       motifAnnot=NULL, 
+       motifAnnot_highConfCat=c("directAnnotation", "inferredBy_Orthology"), 
+       motifAnnot_lowConfCat=c("inferredBy_MotifSimilarity", 
+                               "inferredBy_MotifSimilarity_n_Orthology"), 
+       highlightTFs=NULL)
 {
   auc <- getAUC(auc)
   #### Check inputs
@@ -76,7 +76,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
       highlightTFs <- setNames(rep(list(highlightTFs), nrow(auc)),
                                rownames(auc))
     }
-
+    
     if(!all(names(highlightTFs) %in% rownames(auc))) warning("TFs 1")
     if(!all(rownames(auc) %in% names(highlightTFs))) warning("TFs 2")
   }
@@ -98,34 +98,37 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
     commonCat <- intersect(motifAnnot_highConfCat, motifAnnot_lowConfCat)
     if(length(commonCat)>0)
       warning("The following annotation types are both in", 
-          "'motifAnnot_highConfCat' and 'motifAnnot_lowConfCat': ", commonCat)
+              "'motifAnnot_highConfCat' and 'motifAnnot_lowConfCat': ", commonCat)
   }
   
-
-  #### Runs "auc.asTable" on each AUC columns i.e. signatures/cells
-  ret <- lapply(rownames(auc), function(geneSet) {
-      tfs <- highlightTFs[[geneSet]]
-      aucTable <- .auc.asTable(auc[geneSet,],
-                               nesThreshold=nesThreshold, digits=digits)
-      if(nrow(aucTable)>0)
-      {
-        aucTable <- .addTfs(aucTable,
-                            motifAnnot=motifAnnot,
-                            TFs=tfs, 
-                            motifAnnot_highConfCat=motifAnnot_highConfCat,
-                            motifAnnot_lowConfCat=motifAnnot_lowConfCat)
-        aucTable <- data.table::data.table(geneSet=geneSet, aucTable)
-      }else{
-        aucTable <- NULL
-      }
-      aucTable
-    })
-
+  #### Runs "auc.asTable" on each signature/geneset
+  applyFun <- lapply
+  if((nrow(auc)>4) && ("BiocParallel" %in% installed.packages())) 
+    applyFun <- BiocParallel::bplapply
+  
+  ret <- applyFun(rownames(auc), function(geneSet) {
+    tfs <- highlightTFs[[geneSet]]
+    aucTable <- .auc.asTable(auc[geneSet,],
+                             nesThreshold=nesThreshold, digits=digits)
+    if(nrow(aucTable)>0)
+    {
+      aucTable <- .addTfs(aucTable,
+                          motifAnnot=motifAnnot,
+                          TFs=tfs, 
+                          motifAnnot_highConfCat=motifAnnot_highConfCat,
+                          motifAnnot_lowConfCat=motifAnnot_lowConfCat)
+      aucTable <- data.table::data.table(geneSet=geneSet, aucTable)
+    }else{
+      aucTable <- NULL
+    }
+    aucTable
+  })
+  
   ## Merge the results from each signature/geneSet/regionSet into a single dt
   # ret <- do.call(rbind, unname(ret))  # Slower?
   # library(data.table)
   ret <- data.table::rbindlist(ret)
-
+  
   if(nrow(ret)>0)
     colnames(ret)[which(colnames(ret) == "ranking")] <- "motif"
   return(ret)
@@ -137,7 +140,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 {
   meanAUC <- mean(AUC)
   sdAUC <- sd(AUC)
-
+  
   # NES = (AUC-mean)/sd
   NES <- vapply(AUC, function(x) (x-meanAUC)/sdAUC,
                 FUN.VALUE=numeric(1))
@@ -148,11 +151,11 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 {
   nes <- .calcNES(auc)
   nes <- sort(nes, decreasing=TRUE)
-
+  
   signifRankings <- names(nes)[which(nes >= nesThreshold)]
   aucTable <- data.table::data.table(motif=signifRankings,
-                         NES=signif(nes[signifRankings], digits=digits),
-                         AUC=signif(auc[signifRankings],digits=digits))
+                                     NES=signif(nes[signifRankings], digits=digits),
+                                     AUC=signif(auc[signifRankings],digits=digits))
   aucTable
 }
 
@@ -165,9 +168,9 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
   if(!is.null(TFs))
   {
     aucTable <- data.table::data.table(aucTable,
-                           highlightedTFs=paste(TFs, collapse=", ") ,
-                           TFinDB="")
-
+                                 highlightedTFs=paste(TFs, collapse=", ") ,
+                                 TFinDB="")
+    
     if(!is.null(motifAnnot)) {
       motifAnnot_subset <- motifAnnot[(motifAnnot$motif %in% aucTable$motif) 
                                       & (motifAnnot$TF %in% TFs), 
@@ -186,14 +189,14 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
       }
     }
   }
-
+  
   if(!is.null(motifAnnot))
   {
     if(!is.null(motifAnnot_highConfCat))
     {
       TF_highConf <- .formatTfs(aucTable=aucTable, 
-                              motifAnnot=motifAnnot,
-                              annotCats=motifAnnot_highConfCat)
+                                motifAnnot=motifAnnot,
+                                annotCats=motifAnnot_highConfCat)
       
       aucTable <- data.table::data.table(aucTable, TF_highConf=TF_highConf)
     }
@@ -201,8 +204,8 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
     if(!is.null(motifAnnot_lowConfCat))
     {
       TF_lowConf <- .formatTfs(aucTable=aucTable, 
-                              motifAnnot=motifAnnot,
-                              annotCats=motifAnnot_lowConfCat)
+                               motifAnnot=motifAnnot,
+                               annotCats=motifAnnot_lowConfCat)
       
       aucTable <- data.table::data.table(aucTable, TF_lowConf=TF_lowConf)
     }
@@ -212,30 +215,48 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 }
 
 
-
 .formatTfs <- function(aucTable, motifAnnot, annotCats)
 {
-  vapply(aucTable$motif, function(mot) {
-    motifAnnot_selected <- motifAnnot[motifAnnot$motif==mot & 
-                                  motifAnnot$annotationSource %in% annotCats, ]
-    motifAnnot_selected <- split(motifAnnot_selected$TF, 
-                                 motifAnnot_selected$annotationSource)
-    motifAnnot_selected <- motifAnnot_selected[
-      which(lengths(motifAnnot_selected)>0)]
-    
-    if(length(motifAnnot_selected) > 0){
-      tfsByCat <- vapply(names(motifAnnot_selected), 
-             function(x) paste(paste(unlist(motifAnnot_selected[[x]]), 
-                                     collapse="; "), 
-                                           " (",x,"). ",
-                                           sep=""), "")
-      paste(tfsByCat, collapse="")
-    }else
-    {
-      ""
-    }
-  }, FUN.VALUE="")
+  motifAnnot_subset <- motifAnnot[motifAnnot$annotationSource %in% annotCats, ] 
+  motifAnnot_subset <- motifAnnot_subset[motifAnnot_subset$motif %in% aucTable$motif, ] 
+  motifAnnot_Cats <- vapply(split(motifAnnot_subset, motifAnnot_subset$motif), 
+              function(mat){
+                mat <- split(mat$TF, factor(mat$annotationSource))
+                tfsByCat <- vapply(names(mat),
+                                   function(x) paste(paste(unlist(mat[[x]]),
+                                                           collapse="; "),
+                                                     " (",x,").",
+                                                     sep=""), "")
+                paste(tfsByCat, collapse="")
+              }, FUN.VALUE="")
+  
+  ret <- setNames(rep("", nrow(aucTable)), aucTable$motif)
+  ret[names(motifAnnot_Cats)] <- motifAnnot_Cats
+  return(ret)
 }
-
-
-
+## Previous version:
+# .formatTfs <- function(aucTable, motifAnnot, annotCats)
+# {
+#   motifAnnot_Cats <- motifAnnot[motifAnnot$annotationSource %in% annotCats, ] 
+#   motifAnnot_Cats <- motifAnnot_Cats[motifAnnot_Cats$motif %in% aucTable$motif, ] 
+#   
+#   vapply(aucTable$motif, function(mot) {
+#     motifAnnot_selected <- motifAnnot_Cats[motifAnnot_Cats$motif==mot, ]
+#     motifAnnot_selected <- split(motifAnnot_selected$TF,
+#                                  motifAnnot_selected$annotationSource)
+#     motifAnnot_selected <- motifAnnot_selected[
+#       which(lengths(motifAnnot_selected)>0)]
+# 
+#     if(length(motifAnnot_selected) > 0){
+#       tfsByCat <- vapply(names(motifAnnot_selected),
+#                          function(x) paste(paste(unlist(motifAnnot_selected[[x]]),
+#                                                  collapse="; "),
+#                                            " (",x,"). ",
+#                                            sep=""), "")
+#       paste(tfsByCat, collapse="")
+#     }else
+#     {
+#       ""
+#     }
+#   }, FUN.VALUE="")
+# }
