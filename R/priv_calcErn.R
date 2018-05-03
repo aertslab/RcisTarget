@@ -40,17 +40,19 @@
 {
   # Calculate aproximated-RCC across all motifs at each rank position
   maxRankExtra <- maxRank+nMean
+  gsRankings.asMat <- as.matrix(gsRankings) # Much faster!
   globalMat <- matrix(0, nrow=nrow(gsRankings), ncol=maxRankExtra)
   for(i in 1:nrow(gsRankings)) # (TO DO: Paralellize?)
   {
-    x <- as.numeric(unlist(gsRankings[i,]))
+    x <- gsRankings.asMat[i,]
     x <- sort(x[x<maxRankExtra])
-
+    
     if(length(x) > 0){
       coords <- cbind(y=seq_along(x), x)
       globalMat[coords] <- globalMat[coords]+1
     }
   }
+  
 
   # Estimate mean and mean+2sd at each rank
   rccStatsRaw <- apply(globalMat, 2, function(x){

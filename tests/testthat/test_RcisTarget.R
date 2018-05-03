@@ -193,10 +193,10 @@
       expect_true("TF_highConf" %in% colnames(met)) 
       
       # check content (not very exhaustive)
-      expect_true(any(vapply(paste0(" (", motifAnnot_highConfCat,"). "), 
+      expect_true(any(vapply(paste0(" (", motifAnnot_highConfCat,")."), 
                              function(x) any(grepl(x, met$TF_highConf, fixed=TRUE)), TRUE)))
       
-      expect_false(any(vapply(paste0(" (", motifAnnot_lowConfCat,"). "), 
+      expect_false(any(vapply(paste0(" (", motifAnnot_lowConfCat,")."), 
                               function(x) any(grepl(x, met$TF_highConf, fixed=TRUE)), TRUE)))
     }
     
@@ -206,10 +206,10 @@
       expect_true("TF_lowConf" %in% colnames(met)) 
       
       # check content (not very exhaustive)
-      expect_true(any(vapply(paste0(" (", motifAnnot_lowConfCat,"). "), 
+      expect_true(any(vapply(paste0(" (", motifAnnot_lowConfCat,")."), 
                              function(x) any(grepl(x, met$TF_lowConf, fixed=TRUE)), TRUE)))
       
-      expect_false(any(vapply(paste0(" (", motifAnnot_highConfCat,"). "), 
+      expect_false(any(vapply(paste0(" (", motifAnnot_highConfCat,")."), 
                               function(x) any(grepl(x, met$TF_lowConf, fixed=TRUE)), TRUE)))
     }
   }
