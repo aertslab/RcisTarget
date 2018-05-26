@@ -9,20 +9,20 @@
 \alias{calcAUC,GeneSetCollection-method}
 \title{Calculate AUC}
 \usage{
-calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 * ncol(rankings),
-  verbose = TRUE)
+calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.03 *
+  getNumColsInDB(rankings), verbose = TRUE)
 
-\S4method{calcAUC}{list}(geneSets, rankings, nCores = 1, aucMaxRank = 0.05 *
-  ncol(rankings), verbose = TRUE)
+\S4method{calcAUC}{list}(geneSets, rankings, nCores = 1, aucMaxRank = 0.03 *
+  getNumColsInDB(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{character}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * ncol(rankings), verbose = TRUE)
+  aucMaxRank = 0.03 * getNumColsInDB(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{GeneSet}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * ncol(rankings), verbose = TRUE)
+  aucMaxRank = 0.03 * getNumColsInDB(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{GeneSetCollection}(geneSets, rankings, nCores = 1,
-  aucMaxRank = 0.05 * ncol(rankings), verbose = TRUE)
+  aucMaxRank = 0.03 * getNumColsInDB(rankings), verbose = TRUE)
 }
 \arguments{
 \item{geneSets}{List of gene-sets to analyze.

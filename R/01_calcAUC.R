@@ -56,7 +56,7 @@
 #' @export
 setGeneric("calcAUC", signature="geneSets",
   function(geneSets, rankings, nCores=1,
-      aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
+      aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
   {
     standardGeneric("calcAUC")
   })
@@ -65,7 +65,7 @@ setGeneric("calcAUC", signature="geneSets",
 #' @aliases calcAUC,list-method
 setMethod("calcAUC", "list",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
   {
     .RcisTarget_calcAUC(geneSets=geneSets,
                         rankings=rankings,
@@ -78,7 +78,7 @@ setMethod("calcAUC", "list",
 #' @aliases calcAUC,character-method
 setMethod("calcAUC", "character",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
   {
     geneSets <- list(geneSet=geneSets)
 
@@ -93,7 +93,7 @@ setMethod("calcAUC", "character",
 #' @aliases calcAUC,GeneSet-method
 setMethod("calcAUC", "GeneSet",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
   {
     geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
                          GSEABase::setName(geneSets))
@@ -109,7 +109,7 @@ setMethod("calcAUC", "GeneSet",
 #' @aliases calcAUC,GeneSetCollection-method
 setMethod("calcAUC", "GeneSetCollection",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
   {
     geneSets <- GSEABase::geneIds(geneSets)
 
@@ -121,7 +121,7 @@ setMethod("calcAUC", "GeneSetCollection",
   })
 
 .RcisTarget_calcAUC <- function(geneSets, rankings, nCores=1,
-                                aucMaxRank=0.05*ncol(rankings), verbose=TRUE)
+                                aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
 {
   # Check the gene sets
   if(!is.list(geneSets))
@@ -262,7 +262,7 @@ setMethod("calcAUC", "GeneSetCollection",
   rm(rankings)
 
   aucThreshold <- round(aucMaxRank)
-  maxAUC <- aucThreshold * ncol(gSetRanks)  # TODOgenes
+  maxAUC <- aucThreshold * ncol(gSetRanks)  
 
   auc <- apply(gSetRanks, 1, .auc, aucThreshold, maxAUC)
 

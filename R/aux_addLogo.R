@@ -8,6 +8,7 @@
 #' @param addHTML Whether to add the HTML tag <img> around the URL or not
 #' (boolean).
 #' @param dbVersion For current databases (mc9nr) use "v9"
+#' @param motifCol Name of the column which contains the logo ID.
 #' @return Returns the results table with a new column: 'logo'.
 #' This column contains either a URL with the logo image, or the HTML code to
 #' show the logo [e.g. with datatable()].
@@ -15,15 +16,15 @@
 #' \code{vignette("RcisTarget")}
 #' @example inst/examples/example_addLogo.R
 #' @export
-addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9")
+addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9", motifCol="motif")
 {
   logos <- paste("http://motifcollections.aertslab.org/",
-                 dbVersion,"/logos/",
-                 motifEnrDT$motif,".png", sep="")
+                dbVersion,"/logos/",
+                motifEnrDT[[motifCol]],".png", sep="")
   if(addHTML)
     logos <- paste('<img src="', logos,
-                   '") height="52" alt="',
-                   motifEnrDT$motif, '"></img>', sep="")
+                '") height="52" alt="',
+                motifEnrDT[[motifCol]], '"></img>', sep="")
 
   data.table::data.table(logo=logos, motifEnrDT)
 }

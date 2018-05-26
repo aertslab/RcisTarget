@@ -4,7 +4,7 @@
 \alias{addLogo}
 \title{Add motif logo to RcisTarget results table}
 \usage{
-addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9")
+addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9", motifCol = "motif")
 }
 \arguments{
 \item{motifEnrDT}{Results from RcisTarget (data.table)}
@@ -13,6 +13,8 @@ addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9")
 (boolean).}
 
 \item{dbVersion}{For current databases (mc9nr) use "v9"}
+
+\item{motifCol}{Name of the column which contains the logo ID.}
 }
 \value{
 Returns the results table with a new column: 'logo'.

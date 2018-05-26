@@ -40,16 +40,22 @@ Columns:
 RcisTarget package includes the motif annotations for the rankings 
 using motif collection version 9 ('mc9nr', 24453 motifs): 
 
-Human: \code{data(motifAnnotations_hgnc)} 
-Mouse: \code{data(motifAnnotations_mgi)}
+\itemize{
+\item{Human: }{ \code{data(motifAnnotations_hgnc)}}
+\item{Mouse: }{ \code{data(motifAnnotations_mgi)}}
+\item{Fly: }{ \code{data(motifAnnotations_dmel)}}
+\item{Previous versions (Annotations for motif collection version 8:}{
+motifAnnotations_hgnc_v8 (Human), motifAnnotations_mgi_v8 (Mouse), motifAnnotations_dmel_v8 (Fly)
+}
+}
 
 This function (importAnnotations) allows to import annotations 
 for other versions of the rankings, or to keep extra data columns.
 
 e.g. Source of the annotations (motif collection 9 'mc9nr'):
 \itemize{
-\item [Human (motifs-v9-nr.hgnc-m0.001-o0.0)](http://pyscenic.aertslab.org/resources/motifs-v9-nr.hgnc-m0.001-o0.0.tbl)
-\item [Mouse (motifs-v9-nr.mgi-m0.001-o0.0)](http://pyscenic.aertslab.org/resources/motifs-v9-nr.mgi-m0.001-o0.0.tbl)
+\item{ Human: }{ https://resources.aertslab.org/cistarget/motif2tf/motifs-v9-nr.hgnc-m0.001-o0.0.tbl}
+\item{ Mouse: }{ https://resources.aertslab.org/cistarget/motif2tf/motifs-v9-nr.mgi-m0.001-o0.0.tbl}
 }
 }
 \examples{
@@ -63,7 +69,6 @@ e.g. Source of the annotations (motif collection 9 'mc9nr'):
 data(motifAnnotations_hgnc)
 }
 \seealso{
-motifAnnotation_hgnc, motifAnnotation_mgi
 See \emph{iRegulon} paper and documentation for \bold{details} on how the
 rankings and annotations were built.
 }
