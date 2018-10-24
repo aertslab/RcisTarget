@@ -29,6 +29,8 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 ##################################################
 
 ### (This step: Step 2)
+# Before starting: Setup the paralell computation
+library(BiocParallel); register(MulticoreParam(workers = 2)) 
 # Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
                                            motifAnnot=motifAnnotation)
