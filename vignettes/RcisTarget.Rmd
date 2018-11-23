@@ -86,11 +86,12 @@ RcisTarget uses species-specific databases which are provided as independent R-p
 
 In addition, some extra packages can be installed to run RcisTarget in parallel or run the interactive examples in this tutorial: 
 ```{r installDep, eval=FALSE}
-source("http://bioconductor.org/biocLite.R")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
 # To support paralell execution:
-biocLite(c("doMC", "doRNG"))
+BiocManager::install(c("doMC", "doRNG"))
 # For the examples in the follow-up section of the tutorial:
-biocLite(c("DT", "visNetwork"))
+BiocManager::install(c("DT", "visNetwork"))
 ```
 
 
@@ -242,8 +243,9 @@ In addition to the full versions of the databases (20k motifs), we also provide 
 To install this package:
 ```{r installDatabases, eval=FALSE}
 # From Bioconductor
-source("http://bioconductor.org/biocLite.R")
-biocLite("RcisTarget.hg19.motifDBs.cisbpOnly.500bp")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("RcisTarget.hg19.motifDBs.cisbpOnly.500bp")
 ```
 
 For this vignette (demonstration purposes), we will use this database:
