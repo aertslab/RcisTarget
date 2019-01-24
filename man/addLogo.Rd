@@ -4,7 +4,8 @@
 \alias{addLogo}
 \title{Add motif logo to RcisTarget results table}
 \usage{
-addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9", motifCol = "motif")
+addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9",
+  motifCol = "motif")
 }
 \arguments{
 \item{motifEnrDT}{Results from RcisTarget (data.table)}

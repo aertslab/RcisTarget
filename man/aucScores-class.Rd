@@ -6,7 +6,6 @@
 \alias{aucScores}
 \alias{getAUC}
 \alias{show,aucScores-method}
-\alias{getAUC}
 \alias{getAUC,aucScores-method}
 \title{Class to store the AUC scores for RcisTarget.}
 \usage{

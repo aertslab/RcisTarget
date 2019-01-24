@@ -4,7 +4,8 @@
 \alias{importAnnotations}
 \title{Imports the annotations of motifs to transcription factors}
 \usage{
-importAnnotations(annotFile, motifsInRanking = NULL, columnsToKeep = NULL)
+importAnnotations(annotFile, motifsInRanking = NULL,
+  columnsToKeep = NULL)
 }
 \arguments{
 \item{annotFile}{File containing the motif annotations corresponding to the

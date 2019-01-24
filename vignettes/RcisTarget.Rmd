@@ -45,7 +45,7 @@ This is a sample on how to run the analysis (see the following sections for deta
 library(RcisTarget)
 
 # Load gene sets to analyze. e.g.:
-geneList1 <- c("gene1", "gene2", "gene3")
+geneList1 <- read.table(file.path(system.file('examples', package='RcisTarget'), "hypoxiaGeneSet.txt"), stringsAsFactors=FALSE)[,1]
 geneLists <- list(geneListName=geneList1)
 # geneLists <- GSEABase::GeneSet(genes, setName="geneListName") # alternative
 

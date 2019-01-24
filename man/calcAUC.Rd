@@ -12,8 +12,8 @@
 calcAUC(geneSets, rankings, nCores = 1, aucMaxRank = 0.03 *
   getNumColsInDB(rankings), verbose = TRUE)
 
-\S4method{calcAUC}{list}(geneSets, rankings, nCores = 1, aucMaxRank = 0.03 *
-  getNumColsInDB(rankings), verbose = TRUE)
+\S4method{calcAUC}{list}(geneSets, rankings, nCores = 1,
+  aucMaxRank = 0.03 * getNumColsInDB(rankings), verbose = TRUE)
 
 \S4method{calcAUC}{character}(geneSets, rankings, nCores = 1,
   aucMaxRank = 0.03 * getNumColsInDB(rankings), verbose = TRUE)

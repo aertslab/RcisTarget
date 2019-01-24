@@ -32,8 +32,9 @@ addSignificantGenes(resultsTable, geneSets, rankings, maxRank = 5000,
   method = "aprox", nMean = 20, nCores = 1)
 
 \S4method{addSignificantGenes}{GeneSetCollection}(resultsTable, geneSets,
-  rankings, maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
-  method = "aprox", nMean = 20, nCores = 1)
+  rankings, maxRank = 5000, plotCurve = FALSE,
+  genesFormat = "geneList", method = "aprox", nMean = 20,
+  nCores = 1)
 
 getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
   method = "iCisTarget", maxRank = 5000, plotCurve = FALSE,
