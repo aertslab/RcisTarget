@@ -142,6 +142,7 @@ setMethod("calcAUC", "GeneSetCollection",
         ") should not be bigger than the maximum ranking available ",
         "in the database (", getMaxRank(rankings),")")
   }
+  if(aucMaxRank <=0) stop("aucMaxRank should be a positive value.")
 
   rankingsInfo <- c(org="", genome="", description="")
   if(isS4(rankings)) {
@@ -187,19 +188,29 @@ setMethod("calcAUC", "GeneSetCollection",
     if(verbose)
       message("Using ", foreach::getDoParWorkers(), " cores.")
 
-    # aucMatrix <- foreach(gSetName=names(geneSets)) %dopar%
-    gSetName <- NULL
-    "%dopar%"<- foreach::"%dopar%"
-    aucMatrix <- foreach::"%dopar%"(foreach::foreach(gSetName=names(geneSets)),
-    {
-      setNames(list(.AUC.geneSet(geneSet=geneSets[[gSetName]],
-                                 rankings=rankings[,-1],  # featureName
-                                 aucMaxRank=aucMaxRank,
-                                 gSetName=gSetName)), gSetName)
-    })
-    aucMatrix <- do.call(rbind,
-            unlist(aucMatrix, recursive = FALSE)[names(geneSets)])
-    colnames(aucMatrix)[1:(ncol(aucMatrix)-2)]<-as.character(rankings$features)
+    aucMatrix <- tryCatch({
+      gSetName <- NULL
+      "%dopar%"<- foreach::"%dopar%"
+        aucList <- foreach::"%dopar%"(foreach::foreach(gSetName=names(geneSets)),
+        {
+          setNames(list(.AUC.geneSet(geneSet=geneSets[[gSetName]],
+                                     rankings=rankings[,-1],  # featureName
+                                     aucMaxRank=aucMaxRank,
+                                     gSetName=gSetName)), gSetName)
+        })
+      aucList <- unlist(aucList, recursive = FALSE)[names(geneSets)]
+      aucMatrix <- do.call(rbind, aucList)
+      colnames(aucMatrix)[1:(ncol(aucMatrix)-2)]<-as.character(rankings$features)
+      return(aucMatrix)
+    }, 
+    error = function(e) {
+      warning("\n\nSomething was wrong when calculating the motif enrichment.",
+              " A temporary file has been saved as 'error_rcisTarget.RData' for debugging.\n\n", immediate. = TRUE)
+      error_rcisTarget <- list(geneSets=geneSets, aucMaxRank=aucMaxRank, aucList=aucList)
+      save(error_rcisTarget, file="error_rcisTarget.RData")
+      stop(e)
+    }
+    )
   }
 
   ######################################################################
@@ -259,7 +270,7 @@ setMethod("calcAUC", "GeneSetCollection",
 
   # gene names are no longer needed
   gSetRanks <- rankings[,geneSet]
-  rm(rankings)
+  #rm(rankings)
 
   aucThreshold <- round(aucMaxRank)
   maxAUC <- aucThreshold * ncol(gSetRanks)  
