@@ -191,17 +191,17 @@ setMethod("calcAUC", "GeneSetCollection",
     aucMatrix <- tryCatch({
       gSetName <- NULL
       "%dopar%"<- foreach::"%dopar%"
-        aucList <- foreach::"%dopar%"(foreach::foreach(gSetName=names(geneSets)),
-        {
-          setNames(list(.AUC.geneSet(geneSet=geneSets[[gSetName]],
-                                     rankings=rankings[,-1],  # featureName
-                                     aucMaxRank=aucMaxRank,
-                                     gSetName=gSetName)), gSetName)
-        })
+      aucList <- foreach::"%dopar%"(foreach::foreach(gSetName=names(geneSets)),
+                                    {
+                                      setNames(list(.AUC.geneSet(geneSet=geneSets[[gSetName]],
+                                                                 rankings=rankings[,-1],  # featureName
+                                                                 aucMaxRank=aucMaxRank,
+                                                                 gSetName=gSetName)), gSetName)
+                                    })
       aucList <- unlist(aucList, recursive = FALSE)[names(geneSets)]
-      aucMatrix <- do.call(rbind, aucList)
-      colnames(aucMatrix)[1:(ncol(aucMatrix)-2)]<-as.character(rankings$features)
-      return(aucMatrix)
+      aucMat <- do.call(rbind, aucList)
+      colnames(aucMat)[1:(ncol(aucMat)-2)]<-as.character(rankings$features)
+      aucMat
     }, 
     error = function(e) {
       warning("\n\nSomething was wrong when calculating the motif enrichment.",
