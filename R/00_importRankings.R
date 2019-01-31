@@ -50,6 +50,7 @@
 #' @export
 importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
 {
+  dbFile <- path.expand(dbFile)
   if(!file.exists(dbFile)) stop("File does not exist: ", dbFile)
   
   if(!is.null(columns)) columns <- unique(c("features", columns))
