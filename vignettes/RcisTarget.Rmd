@@ -51,7 +51,7 @@ geneLists <- list(geneListName=geneList1)
 
 # Select motif database to use (i.e. organism and distance around TSS)
 data(motifAnnotations_hgnc)
-motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+motifRankings <- importRankings("hg19-tss-centered-10kb-7species.mc9nr.feather")
 
 # Motif enrichment analysis:
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
@@ -182,34 +182,16 @@ and one with extension `.descr` which contains the description of the file.
 You can download the files using your preferred method.
 For example, to download within R:
 ```{r downloadDatabases, eval=FALSE}
-featherURL <- "http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-7species.mc9nr.feather" # .feather
+featherURL <- "https://resources.aertslab.org/cistarget/databases/homo_sapiens/hg19/refseq_r45/mc9nr/gene_based/hg19-tss-centered-10kb-7species.mc9nr.feather" 
 download.file(featherURL, destfile=basename(featherURL)) # saved in current dir
-featherURL <- "http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-7species.mc9nr.descr" # .descr
-download.file(featherURL, destfile=basename(featherURL))
 ```
 
-**Download URLs** for the current databases (version 'mc9nr': including 24453 motifs) [Aprox file size: **1GB**]:
+The list of all available databases is at: https://resources.aertslab.org/cistarget/
 
-Species | Search space | #ort  | File
-------- | ----- | ----- | ----- | -----
-Human | 500bp upstream TSS | 7 | [hg19-500bp-upstream-7species.mc9nr](http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-7species.mc9nr.feather)
-Human | TSS+/-5kbp | 7 | [hg19-tss-centered-5kb-7species.mc9nr](http://pyscenic.aertslab.org/databases/hg19-tss-centered-5kb-7species.mc9nr.feather)
-Human | TSS+/-10kbp | 7 | [hg19-tss-centered-10kb-7species.mc9nr](http://pyscenic.aertslab.org/databases/hg19-tss-centered-10kb-7species.mc9nr.feather)
-Human | 500bp upstream TSS | 10 | [hg19-500bp-upstream-10species.mc9nr](http://pyscenic.aertslab.org/databases/hg19-500bp-upstream-10species.mc9nr.feather)
-Human | TSS+/-5kbp | 10 | [hg19-tss-centered-5kb-10species.mc9nr](http://pyscenic.aertslab.org/databases/hg19-tss-centered-5kb-10species.mc9nr.feather)
-Human | TSS+/-10kbp | 10 | [hg19-tss-centered-10kb-10species.mc9nr](http://pyscenic.aertslab.org/databases/hg19-tss-centered-10kb-10species.mc9nr.feather)
-Mouse | 500bp upstream TSS | 7 | [mm9-500bp-upstream-7species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-500bp-upstream-7species.mc9nr.feather)
-Mouse | TSS+/-5kbp | 7 | [mm9-tss-centered-5kb-7species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-tss-centered-5kb-7species.mc9nr.feather)
-Mouse | TSS+/-10kbp | 7 | [mm9-tss-centered-10kb-7species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-tss-centered-10kb-7species.mc9nr.feather)
-Mouse | 500bp upstream TSS | 10 | [mm9-500bp-upstream-10species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-500bp-upstream-10species.mc9nr.feather)
-Mouse | TSS+/-5kbp | 10 | [mm9-tss-centered-5kb-10species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-tss-centered-5kb-10species.mc9nr.feather)
-Mouse | TSS+/-10kbp | 10 | [mm9-tss-centered-10kb-10species.mc9nr](http://pyscenic.aertslab.org/databases/mm9-tss-centered-10kb-10species.mc9nr.feather)
-Fly |  |  | Coming soon... (Previous version: [dm6-5kb-upstream-full-tx-11species.mc8nr](http://pyscenic.aertslab.org/databases/dm6-5kb-upstream-full-tx-11species.mc8nr.feather)
-
-Once you have both files, they can be loaded with `importRankings()`: 
+Once you have the .feather files, they can be loaded with `importRankings()`: 
 ```{r loadDatabases, eval=FALSE}
 # Search space: 10k bp around TSS - HUMAN
-motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+motifRankings <- importRankings("hg19-tss-centered-10kb-7species.mc9nr.feather")
 # Load the annotation to human transcription factors
 data(motifAnnotations_hgnc)
 ```
