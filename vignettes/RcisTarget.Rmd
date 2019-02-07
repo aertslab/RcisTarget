@@ -27,7 +27,10 @@ library(data.table)
 
 *Vignette built on `r format(Sys.time(), "%b %d, %Y")` with RcisTarget **version `r packageVersion("RcisTarget")`***.
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a960f81f852f56651b36f65266a2bbea8b80fc52
 # What is RcisTarget?
 RcisTarget is an R-package to identify transcription factor (TF) binding motifs over-represented on a gene list. 
 
