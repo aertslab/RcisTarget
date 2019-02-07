@@ -1,6 +1,5 @@
 ---
 title: "RcisTarget: Transcription factor binding motif enrichment"
-package: "`r pkg_ver('RcisTarget')`"
 abstract: >
   This tutorial shows how to use **RcisTarget** to obtain  
   transcription factor binding motifs enriched on a gene list. 
@@ -8,7 +7,7 @@ vignette: >
   %\VignetteIndexEntry{RcisTarget: Transcription factor binding motif enrichment}
   %\VignetteEngine{knitr::rmarkdown}
 output: 
-  BiocStyle::html_document:
+  html_document:
     toc: yes
     number_sections: false
     css: corrected.css
@@ -26,6 +25,8 @@ library(data.table)
 #require(visNetwork)
 })
 ```
+
+*Vignette built on `r format(Sys.time(), "%b %d, %Y")` with RcisTarget **version `r packageVersion("RcisTarget")`***.
 
 # What is RcisTarget?
 RcisTarget is an R-package to identify transcription factor (TF) binding motifs over-represented on a gene list. 

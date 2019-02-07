@@ -23,7 +23,7 @@ addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9", motifCol="motif")
                 motifEnrDT[[motifCol]],".png", sep="")
   if(addHTML)
     logos <- paste('<img src="', logos,
-                '") height="52" alt="',
+                '" height="52" alt="',
                 motifEnrDT[[motifCol]], '"></img>', sep="")
 
   data.table::data.table(logo=logos, motifEnrDT)
