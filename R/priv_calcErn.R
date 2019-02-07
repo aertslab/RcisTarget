@@ -41,15 +41,17 @@
   # Calculate aproximated-RCC across all motifs at each rank position
   maxRankExtra <- maxRank+nMean
   gsRankings.asMat <- as.matrix(gsRankings) # Much faster!
+  gsRankings.asMat[gsRankings.asMat>maxRankExtra] <- NA
   globalMat <- matrix(0, nrow=nrow(gsRankings), ncol=maxRankExtra)
+  
   for(i in 1:nrow(gsRankings)) # (TO DO: Paralellize?)
   {
-    x <- gsRankings.asMat[i,]
-    x <- sort(x[x<maxRankExtra])
-    
+    x <- sort(gsRankings.asMat[i,])
     if(length(x) > 0){
       coords <- cbind(y=seq_along(x), x)
       globalMat[coords] <- globalMat[coords]+1
+      
+      # for(y in seq_along(x)) globalMat[y,x[y]] <- globalMat[y,x[y]]+1
     }
   }
   
