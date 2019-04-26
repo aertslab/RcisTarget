@@ -1,25 +1,28 @@
+VERSION 1.3
+----------------------
+- Added function: getMotifAnnotation
+
 VERSION 0.99.7
 ----------------------
-    - Main update: Re-formatted ranking databases. 
-    They are now loaded from .feather files (and therefore, they are transposed: 
-    motifs are stored as rows, and genes/regions as columns, 
-    which allows to load only specific genes/regions)
+- Main update: Re-formatted ranking databases. 
+They are now loaded from .feather files (and therefore, they are transposed: 
+motifs are stored as rows, and genes/regions as columns, which allows to load only specific genes/region)
     
 VERSION 0.99.6
 ----------------------
-    - Main update: Re-formatted annotation database. For easier subsetting.
+- Main update: Re-formatted annotation database. For easier subsetting.
     
 VERSION 0.99.1
 ----------------------
-    - Main update: New class for the Rankings (rankingRcisTarget)
+- Main update: New class for the Rankings (rankingRcisTarget)
 
 VERSION 0.7
 ----------------------
-    - Converted the ranking databases to an S4 class.
+- Converted the ranking databases to an S4 class.
 
 VERSION 0.6
 ----------------------
-    - Added function addLogo()
-    - AUC is now returned as a class
+- Added function addLogo()
+- AUC is now returned as a class
 
 

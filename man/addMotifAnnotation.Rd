@@ -62,7 +62,7 @@ based on lower-confidence annotations.
 }
 \description{
 Select significant motifs and/or annotate motifs to
-transcription factors.
+genes or transcription factors.
 The motifs are considered significantly enriched if they pass the the
 Normalized Enrichment Score (NES) threshold.
 }
@@ -113,6 +113,12 @@ motifEnrichment_wIndirect <- addMotifAnnotation(motifs_AUC, nesThreshold=2,
                                 "inferredBy_MotifSimilarity_n_Orthology",
                                 "inferredBy_Orthology"),
         digits=3)
+
+# Getting TFs for a given TF:
+motifs <- motifEnrichmentTable$motif[1:3]
+
+getMotifAnnotation(motifs, motifAnnot=motifAnnotation)
+getMotifAnnotation(motifs, motifAnnot=motifAnnotation, returnFormat="list")
 
 ### Exploring the output:
 # Number of enriched motifs (Over the given NES threshold)
