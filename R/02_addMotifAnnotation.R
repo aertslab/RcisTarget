@@ -5,7 +5,7 @@
 #'
 #' @title Add motif annotation
 #' @description Select significant motifs and/or annotate motifs to
-#' transcription factors.
+#' genes or transcription factors.
 #' The motifs are considered significantly enriched if they pass the the
 #' Normalized Enrichment Score (NES) threshold.
 #' @param auc Output from calcAUC.
@@ -194,7 +194,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
   {
     if(!is.null(motifAnnot_highConfCat))
     {
-      TF_highConf <- .formatTfs(aucTable=aucTable, 
+      TF_highConf <- .formatTfs(motifs=aucTable$motif, 
                                 motifAnnot=motifAnnot,
                                 annotCats=motifAnnot_highConfCat)
       
@@ -203,7 +203,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
     
     if(!is.null(motifAnnot_lowConfCat))
     {
-      TF_lowConf <- .formatTfs(aucTable=aucTable, 
+      TF_lowConf <- .formatTfs(motifs=aucTable$motif, 
                                motifAnnot=motifAnnot,
                                annotCats=motifAnnot_lowConfCat)
       
@@ -215,48 +215,92 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 }
 
 
-.formatTfs <- function(aucTable, motifAnnot, annotCats)
+## 26 apr 2019
+# Replaced input: aucTable by motifs. In calls:  .formatTfs(motifs=aucTable$motif
+# aucTable$motif --> motifs
+# nrow(aucTable) --> length(motifs)
+.formatTfs <- function(motifs, motifAnnot, annotCats)
 {
   motifAnnot_subset <- motifAnnot[motifAnnot$annotationSource %in% annotCats, ] 
-  motifAnnot_subset <- motifAnnot_subset[motifAnnot_subset$motif %in% aucTable$motif, ] 
+  motifAnnot_subset <- motifAnnot_subset[motifAnnot_subset$motif %in% motifs, ] 
   motifAnnot_Cats <- vapply(split(motifAnnot_subset, motifAnnot_subset$motif), 
               function(mat){
                 mat <- split(mat$TF, factor(mat$annotationSource))
                 tfsByCat <- vapply(names(mat),
                                    function(x) paste(paste(unlist(mat[[x]]),
                                                            collapse="; "),
-                                                     " (",x,").",
+                                                     " (",x,"). ",
                                                      sep=""), "")
                 paste(tfsByCat, collapse="")
               }, FUN.VALUE="")
   
-  ret <- setNames(rep("", nrow(aucTable)), aucTable$motif)
+  ret <- setNames(rep("", length(motifs)), motifs)
   ret[names(motifAnnot_Cats)] <- motifAnnot_Cats
   return(ret)
 }
-## Previous version:
-# .formatTfs <- function(aucTable, motifAnnot, annotCats)
-# {
-#   motifAnnot_Cats <- motifAnnot[motifAnnot$annotationSource %in% annotCats, ] 
-#   motifAnnot_Cats <- motifAnnot_Cats[motifAnnot_Cats$motif %in% aucTable$motif, ] 
-#   
-#   vapply(aucTable$motif, function(mot) {
-#     motifAnnot_selected <- motifAnnot_Cats[motifAnnot_Cats$motif==mot, ]
-#     motifAnnot_selected <- split(motifAnnot_selected$TF,
-#                                  motifAnnot_selected$annotationSource)
-#     motifAnnot_selected <- motifAnnot_selected[
-#       which(lengths(motifAnnot_selected)>0)]
-# 
-#     if(length(motifAnnot_selected) > 0){
-#       tfsByCat <- vapply(names(motifAnnot_selected),
-#                          function(x) paste(paste(unlist(motifAnnot_selected[[x]]),
-#                                                  collapse="; "),
-#                                            " (",x,"). ",
-#                                            sep=""), "")
-#       paste(tfsByCat, collapse="")
-#     }else
-#     {
-#       ""
-#     }
-#   }, FUN.VALUE="")
-# }
+
+#' @title Get motif annotation
+#' @description Get the genes/transcription factors annotated to the given motifs
+
+#' @param motifs Motif IDs 
+#' @param motifAnnot Motif annotation database containing the 
+#' annotations of the motif to genes or transcription factors.
+#' @param annotCats Annotation categories to be considered:  
+#' "directAnnotation" (annotated in the source database),  
+#' "inferredBy_Orthology" (the motif is annotated to an homologous/ortologous 
+#' gene), or inferred based on motif similarity ("inferredBy_MotifSimilarity", 
+#' "inferredBy_MotifSimilarity_n_Orthology").
+#' @param returnFormat Determines the output format. Choose one of the following values:
+#' \itemize{
+#' \item \code{asCharacter}: Named vector with the genes or TFs annotated to the given motifs (in the same order, including empty and duplicated values).
+#' \item \code{subset}: Subset of the annotation table (list split by motif)
+#' \item \code{list}: List of TF names (unique values), duplicated motifs or motifs without annotation are not returned.
+#' }
+#' @return See argument \code{returnFormat}
+#' @seealso \code{\link{addMotifAnnotation}} add the annotation directly to the motif enrichment results.
+#' 
+#' See the package vignette for examples and more details:
+#' \code{vignette("RcisTarget")}
+#' @example inst/examples/example_addMotifAnnotation.R
+#' @export
+getMotifAnnotation <- function(motifs, 
+                               motifAnnot, 
+                               annotCats=c("directAnnotation",
+                                           "inferredBy_MotifSimilarity",
+                                           "inferredBy_Orthology",
+                                           "inferredBy_MotifSimilarity_n_Orthology"),
+                               returnFormat=c("asCharacter","subset","list")[1])
+{
+  ## Check inputs:
+  returnFormat <- tolower(returnFormat)
+  if(!returnFormat %in% c("ascharacter","subset","list")) stop("returnFormat should be eihter 'asCharacter', 'subset', or 'list'.")
+  if(length(returnFormat)>1) stop("Please, choose ONE returnFormat.")
+  
+  ## Run:
+  if(returnFormat=="ascharacter"){
+    ret <- .formatTfs(motifs=motifs, 
+                      motifAnnot=motifAnnot,
+                      annotCats=annotCats) 
+  }else{
+    ret <- .getTfs(motifs=motifs, 
+                   motifAnnot=motifAnnot,
+                   annotCats=annotCats,
+                   returnFormat=returnFormat) 
+  }
+  return(ret)
+}
+
+.getTfs <- function(motifs, motifAnnot, annotCats, returnFormat)
+{
+  motifAnnot_subset <- motifAnnot[motifAnnot$annotationSource %in% annotCats, ] 
+  motifAnnot_subset <- motifAnnot_subset[motifAnnot_subset$motif %in% motifs, ] 
+  motifAnnot_subset <- split(motifAnnot_subset[,c("TF", "directAnnotation", "inferred_Orthology", "inferred_MotifSimil","annotationSource")], motifAnnot_subset$motif)
+  
+  ret <- motifAnnot_subset # returnFormat=="subset"
+  
+  if(returnFormat=="list")
+    ret <- lapply(ret, function(x) sort(unique(x$TF)))
+  
+  return(ret)
+}
+
