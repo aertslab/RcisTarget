@@ -1,44 +1,45 @@
 #' @title Import the motif databases for RcisTarget.
-#' @param dbFile .feather file containing the rankings
-#' @param columns Columns to import from the .feather file 
+#' @param dbFile .feather or .parquet file containing the rankings
+#' @param columns Columns to import from the .feather or .parquet file
 #' (e.g. only selected genes or regions)
-#' @param dbDescr The description fields are typically imported from the  
-#' ".descr" file with the same filename as the \code{dbFile}. 
-#' Otherwise they can be manually set e.g.: 
-#' 
-#' \code{dbDescr=list(colType="gene", rowType="motif", 
+#' @param dbDescr The description fields are typically imported from the
+#' ".descr" file with the same filename as the \code{dbFile}.
+#' Otherwise they can be manually set e.g.:
+#'
+#' \code{dbDescr=list(colType="gene", rowType="motif",
 #' org="Human", genome="hg19", maxRank=Inf, description="")}
-#' 
+#'
 #' @description
-#' The rankings are typically loaded from a .feather file 
+#' The rankings are typically loaded from a .feather or .parquet file
 #' with \code{importRankings()}.
-#' 
-#' If the associated .descr file is available, 
+#'
+#' If the associated .descr file is available,
 #' it will also load the description of the database.
 #' @return
 #' rankingRcisTarget object with the following slots:
 #' #' \itemize{
 #' \item rankings: data.frame containing the rankings
 #' \item colType: 'gene'or 'region'
-#' \item nColsInDB: Number of columns (e.g. genes/regions) available 
-#' in the database (.feather file). 
+#' \item nColsInDB: Number of columns (e.g. genes/regions) available
+#' in the database (.feather or .parquet file).
 #' Note that not all might be loaded in the current object.
 #' \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 #' \item org: human/mouse/fly
 #' \item genome: hg19, mm9, ...
 #' \item description: global description, summary, or any other information
-#' \item maxRank: Maximum ranking included in the database, 
+#' \item maxRank: Maximum ranking included in the database,
 #' higher values are converted to Inf.
 #' }
 
 #' @examples
-#' ## Loading from a .feather file (the .descr file is read automatically):
+#' ## Loading from a .feather or .parquet file (the .descr file is read automatically):
 #' #motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
-#' 
-#' ## The annotations for Motif collection 9 (sufix 'mc9nr') 
+#' #motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.parquet")
+#'
+#' ## The annotations for Motif collection 9 (sufix 'mc9nr')
 #' # are already included in RcisTarget, and can be loaded with:
 #' data(motifAnnotations_hgnc)
-#' 
+#'
 #' ## For other versions, import the appropiate annotation. e.g.:
 #' # annotDb <- importAnnotations("motifs-v9-nr.hgnc-m0.001-o0.0.tbl")
 #' # optional: motifsInRanking <- getRanking(motifRankings)$features
@@ -52,42 +53,53 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
 {
   dbFile <- path.expand(dbFile)
   if(!file.exists(dbFile)) stop("File does not exist: ", dbFile)
-  
+
   if(!is.null(columns)) columns <- unique(c("features", columns))
-  rnks <- feather::read_feather(dbFile, columns=columns) # tibble
-  #rnks <- data.frame... #to avoid replacing dash in names: check.names=FALSE
-  nColsInDB <- feather::feather_metadata(dbFile)[["dim"]][2]
-  
-  dbFile_descr <- gsub(".feather",".descr", dbFile, fixed=TRUE)
+  extension <- strsplit(dbFile, "\\.") [[1]][length(strsplit(dbFile, "\\.") [[1]])]
+  if (extension == 'feather'){
+    rnks <- feather::read_feather(dbFile, columns=columns) # tibble
+    #rnks <- data.frame... #to avoid replacing dash in names: check.names=FALSE
+    nColsInDB <- feather::feather_metadata(dbFile)[["dim"]][2]-1
+  }
+  else if (extension == "parquet"){
+    rnks <- arrow::read_parquet(dbFile, columns = columns)
+    pq <- arrow::parquet_file_reader(dbFile)
+    nColsInDB <- pq$GetSchema()$num_fields()-1
+  }
+  else{
+    stop("Database format must be feather or parquet.")
+  }
+
+  dbFile_descr <- gsub(paste0(".", extension),".descr", dbFile, fixed=TRUE)
   if(!is.null(dbDescr))
   {
     dbDescr <- as.matrix(dbDescr)
-    if(file.exists(dbFile_descr)) 
+    if(file.exists(dbFile_descr))
       warning("Ignoring the DB file description (.descr)")
   } else {
     if(file.exists(dbFile_descr))
     {
       dbDescr <- utils::read.table(file=dbFile_descr,
                             sep = "\t", row.names=1, stringsAsFactors=FALSE)
-      message("Imported description file:\n", 
-              paste("\t", unname(sapply(rownames(dbDescr), 
+      message("Imported description file:\n",
+              paste("\t", unname(sapply(rownames(dbDescr),
             function(x) paste(x, dbDescr[x,1], sep=": "))), collapse="\n"))
     }else{
       # If not provided: keep empty
-      dbDescr <- as.matrix(list(colType="column", 
-                                rowType="row", 
-                                org="", 
-                                genome="", 
+      dbDescr <- as.matrix(list(colType="column",
+                                rowType="row",
+                                org="",
+                                genome="",
                                 nColsAvailable=nColsInDB,
-                                maxRank = Inf, 
+                                maxRank = Inf,
                                 description=""))
     }
   }
-  
+
   dbDescr["nColsAvailable",] <- nColsInDB
-  dbDescr["description",] <- paste0(dbDescr["description",], 
+  dbDescr["description",] <- paste0(dbDescr["description",],
                                     " [Source file: ", basename(dbFile),"]")
-  
+
   rownames(dbDescr) <- tolower(rownames(dbDescr))
   new("rankingRcisTarget",
       rankings=rnks,
@@ -96,7 +108,6 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
       org=as.character(dbDescr["org",]),
       genome=as.character(dbDescr["genome",]),
       nColsInDB=as.numeric(dbDescr["ncolsavailable",]),
-      maxRank = as.numeric(dbDescr["maxrank",]), 
+      maxRank = as.numeric(dbDescr["maxrank",]),
       description=as.character(dbDescr["description",]))
 }
-

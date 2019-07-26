@@ -7,16 +7,16 @@
 importRankings(dbFile, columns = NULL, dbDescr = NULL)
 }
 \arguments{
-\item{dbFile}{.feather file containing the rankings}
+\item{dbFile}{.feather or .parquet file containing the rankings}
 
-\item{columns}{Columns to import from the .feather file 
+\item{columns}{Columns to import from the .feather or .parquet file
 (e.g. only selected genes or regions)}
 
 \item{dbDescr}{The description fields are typically imported from the
-".descr" file with the same filename as the \code{dbFile}. 
-Otherwise they can be manually set e.g.: 
+".descr" file with the same filename as the \code{dbFile}.
+Otherwise they can be manually set e.g.:
 
-\code{dbDescr=list(colType="gene", rowType="motif", 
+\code{dbDescr=list(colType="gene", rowType="motif",
 org="Human", genome="hg19", maxRank=Inf, description="")}}
 }
 \value{
@@ -24,29 +24,30 @@ rankingRcisTarget object with the following slots:
 #' \itemize{
 \item rankings: data.frame containing the rankings
 \item colType: 'gene'or 'region'
-\item nColsInDB: Number of columns (e.g. genes/regions) available 
-in the database (.feather file). 
+\item nColsInDB: Number of columns (e.g. genes/regions) available
+in the database (.feather or .parquet file).
 Note that not all might be loaded in the current object.
 \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 \item org: human/mouse/fly
 \item genome: hg19, mm9, ...
 \item description: global description, summary, or any other information
-\item maxRank: Maximum ranking included in the database, 
+\item maxRank: Maximum ranking included in the database,
 higher values are converted to Inf.
 }
 }
 \description{
-The rankings are typically loaded from a .feather file 
+The rankings are typically loaded from a .feather or .parquet file
 with \code{importRankings()}.
 
-If the associated .descr file is available, 
+If the associated .descr file is available,
 it will also load the description of the database.
 }
 \examples{
-## Loading from a .feather file (the .descr file is read automatically):
+## Loading from a .feather or .parquet file (the .descr file is read automatically):
 #motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+#motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.parquet")
 
-## The annotations for Motif collection 9 (sufix 'mc9nr') 
+## The annotations for Motif collection 9 (sufix 'mc9nr')
 # are already included in RcisTarget, and can be loaded with:
 data(motifAnnotations_hgnc)
 

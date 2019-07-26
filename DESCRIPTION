@@ -45,7 +45,8 @@ Suggests:
     RcisTarget.hg19.motifDBs.cisbpOnly.500bp, 
     rmarkdown,
     testthat,
-    visNetwork
+    visNetwork,
+    arrow
 License: GPL-3
 BugReports: https://github.com/aertslab/RcisTarget/issues
 biocViews: GeneRegulation, MotifAnnotation, Transcriptomics, Transcription,
