@@ -12,6 +12,4 @@ The package also contains a **tutorial** [(vignette)](https://bioconductor.org/p
 
 *Databases*: 
 
-The databases required to run (R)cisTarget are available at: https://resources.aertslab.org/cistarget/ (see the vignette for details)
-
-Alternative *mirror*: https://resources-mirror.aertslab.org/cistarget/
+The databases required to run (R)cisTarget are available at: https://resources.aertslab.org/cistarget/ (see the vignette for details). Alternative *mirror*: https://resources-mirror.aertslab.org/cistarget/
