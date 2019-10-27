@@ -17,54 +17,54 @@
 \usage{
 addSignificantGenes(resultsTable, geneSets, rankings, maxRank = 5000,
   plotCurve = FALSE, genesFormat = "geneList", method = "aprox",
-  nMean = 20, nCores = 1)
+  nMean = 50, nCores = 1)
 
 \S4method{addSignificantGenes}{list}(resultsTable, geneSets, rankings,
   maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
-  method = "aprox", nMean = 20, nCores = 1)
+  method = "aprox", nMean = 50, nCores = 1)
 
 \S4method{addSignificantGenes}{character}(resultsTable, geneSets, rankings,
   maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
-  method = "aprox", nMean = 20, nCores = 1)
+  method = "aprox", nMean = 50, nCores = 1)
 
 \S4method{addSignificantGenes}{GeneSet}(resultsTable, geneSets, rankings,
   maxRank = 5000, plotCurve = FALSE, genesFormat = "geneList",
-  method = "aprox", nMean = 20, nCores = 1)
+  method = "aprox", nMean = 50, nCores = 1)
 
 \S4method{addSignificantGenes}{GeneSetCollection}(resultsTable, geneSets,
   rankings, maxRank = 5000, plotCurve = FALSE,
-  genesFormat = "geneList", method = "aprox", nMean = 20,
+  genesFormat = "geneList", method = "aprox", nMean = 50,
   nCores = 1)
 
 getSignificantGenes(geneSet, rankings, signifRankingNames = NULL,
   method = "iCisTarget", maxRank = 5000, plotCurve = FALSE,
   genesFormat = c("geneList", "incidMatrix"), nCores = 1, digits = 3,
-  nMean = 20)
+  nMean = 50)
 
 \S4method{getSignificantGenes}{list}(geneSet, rankings,
   signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
   plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
-  nCores = 1, digits = 3, nMean = 20)
+  nCores = 1, digits = 3, nMean = 50)
 
 \S4method{getSignificantGenes}{character}(geneSet, rankings,
   signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
   plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
-  nCores = 1, digits = 3, nMean = 20)
+  nCores = 1, digits = 3, nMean = 50)
 
 \S4method{getSignificantGenes}{factor}(geneSet, rankings,
   signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
   plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
-  nCores = 1, digits = 3, nMean = 20)
+  nCores = 1, digits = 3, nMean = 50)
 
 \S4method{getSignificantGenes}{GeneSet}(geneSet, rankings,
   signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
   plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
-  nCores = 1, digits = 3, nMean = 20)
+  nCores = 1, digits = 3, nMean = 50)
 
 \S4method{getSignificantGenes}{GeneSetCollection}(geneSet, rankings,
   signifRankingNames = NULL, method = "iCisTarget", maxRank = 5000,
   plotCurve = FALSE, genesFormat = c("geneList", "incidMatrix"),
-  nCores = 1, digits = 3, nMean = 20)
+  nCores = 1, digits = 3, nMean = 50)
 }
 \arguments{
 \item{resultsTable}{[addSignificantGenes]
@@ -92,7 +92,7 @@ highly ranked genes:
  useful to scan multiple gene sets). (Default: "aprox")}
 
 \item{nMean}{Only used for "aprox" method: Interval to calculate the running
-mean and sd. Default: 20 (aprox. nGenesInRanking/1000).}
+mean and sd. Default: 50 (aprox. nGenesInRanking/400).}
 
 \item{nCores}{Number of cores to use for parallelization (Default: 1).}
 

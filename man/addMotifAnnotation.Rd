@@ -8,7 +8,8 @@ addMotifAnnotation(auc, nesThreshold = 3, digits = 3,
   motifAnnot = NULL, motifAnnot_highConfCat = c("directAnnotation",
   "inferredBy_Orthology"),
   motifAnnot_lowConfCat = c("inferredBy_MotifSimilarity",
-  "inferredBy_MotifSimilarity_n_Orthology"), highlightTFs = NULL)
+  "inferredBy_MotifSimilarity_n_Orthology"), idColumn = "motif",
+  highlightTFs = NULL)
 }
 \arguments{
 \item{auc}{Output from calcAUC.}
@@ -34,6 +35,8 @@ gene).}
 'lower confidence' source for annotations. By default, the annotations 
 inferred based on motif similarity ("inferredBy_MotifSimilarity", 
 "inferredBy_MotifSimilarity_n_Orthology").}
+
+\item{idColumn}{Annotation column containing the ID (e.g. motif, accession)}
 
 \item{highlightTFs}{Character. If a list of transcription factors is
 provided, the column TFinDB in the otuput table will indicate whether any

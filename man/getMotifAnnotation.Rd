@@ -6,7 +6,7 @@
 \usage{
 getMotifAnnotation(motifs, motifAnnot, annotCats = c("directAnnotation",
   "inferredBy_MotifSimilarity", "inferredBy_Orthology",
-  "inferredBy_MotifSimilarity_n_Orthology"),
+  "inferredBy_MotifSimilarity_n_Orthology"), idColumn = "motif",
   returnFormat = c("asCharacter", "subset", "list")[1])
 }
 \arguments{

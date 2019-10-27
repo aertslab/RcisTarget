@@ -178,8 +178,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
     
     if(!is.null(motifAnnot)) {
       motifAnnot_subset <- motifAnnot[(motifAnnot[[idColumn]] %in% aucTable[[idColumn]]) 
-                                      & (motifAnnot$TF %in% TFs), 
-                                      c(idColumn, "TF", "annotationSource")]
+                                      & (motifAnnot$TF %in% TFs), ][,c(idColumn, "TF", "annotationSource"),with=F]
       motifAnnot_subset <- split(motifAnnot_subset, motifAnnot_subset[[idColumn]])
       for(motifName in names(motifAnnot_subset))
       {
