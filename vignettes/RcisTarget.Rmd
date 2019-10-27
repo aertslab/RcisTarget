@@ -164,7 +164,7 @@ To analyze the gene list, RcisTarget needs two types of databases:
 ### Gene-motif rankings
 
 The score of each pair of gene-motif can be performed using different parameters. 
-Therefore, we provide multiple databases ([motif-rankings(https://resources.aertslab.org/cistarget/)), according to several possibilities: 
+Therefore, we provide multiple databases ([motif-rankings](https://resources.aertslab.org/cistarget/)), according to several possibilities: 
 
 - Species: Species of the input gene set. 
 *Available values: Human (Homo sapiens), mouse (Mus musculus) or fly (Drosophila melanogaster)*
@@ -177,7 +177,8 @@ If you don't know which database to choose, for an analisis of a gene list we wo
 the *500bp upstream TSS*, and a larger search space (e.g. *TSS+/-5kbp* or *TSS+/-10kbp*) 
 with 7 species. Of course, selecting Human, Mouse or fly depending on your input gene list. 
 
-The list of all available databases is at https://resources.aertslab.org/cistarget/. Each database is stored in a `.feather` file . Note that the download size is typically over 1GB (100GB for human region databases), we recommend downloading the files with zsync_curl (see the [Help with downloads](https://resources.aertslab.org/cistarget/help.html)).
+The list of all available databases is at https://resources.aertslab.org/cistarget/ (alternative mirror: https://resources-mirror.aertslab.org/cistarget/). Each database is stored in a `.feather` file. Note that the download size is typically over 1GB (100GB for human region databases), we recommend downloading the files with zsync_curl 
+(see the [Help with downloads](https://resources.aertslab.org/cistarget/help.html)).
 
 For example, to download within R:
 ```{r downloadDatabases, eval=FALSE}
