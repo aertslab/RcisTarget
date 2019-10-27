@@ -39,11 +39,13 @@
                            signifRankingNames, plotCurve, nCores, nMean)
 {
   # Calculate aproximated-RCC across all motifs at each rank position
+  # maxRank <- min(c(maxRank, nrow(gsRankings)))  # Correct??
   maxRankExtra <- maxRank+nMean
   gsRankings.asMat <- as.matrix(gsRankings) # Much faster!
   gsRankings.asMat[gsRankings.asMat>maxRankExtra] <- NA
-  globalMat <- matrix(0, nrow=nrow(gsRankings), ncol=maxRankExtra)
+  globalMat <- matrix(0, nrow=max(nrow(gsRankings),max(gsRankings.asMat, na.rm=T)), ncol=maxRankExtra) #  nrow=nrow(gsRankings): can be out of range, add extra rows and subset at the end
   
+  # x <- x[seq_len(min(length(x), nrow(globalMat)))] # or: # if(nrow(globalMat) < length(x)) x <- x[seq_len(nrow(globalMat))] # cannot be in the loop... too slow!
   for(i in 1:nrow(gsRankings)) # (TO DO: Paralellize?)
   {
     x <- sort(gsRankings.asMat[i,])
@@ -54,8 +56,8 @@
       # for(y in seq_along(x)) globalMat[y,x[y]] <- globalMat[y,x[y]]+1
     }
   }
+  globalMat <- globalMat[1:nrow(gsRankings), 1:maxRankExtra] # 
   
-
   # Estimate mean and mean+2sd at each rank
   rccStatsRaw <- apply(globalMat, 2, function(x){
     tmp <- x
