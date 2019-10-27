@@ -256,6 +256,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 #' "inferredBy_Orthology" (the motif is annotated to an homologous/ortologous 
 #' gene), or inferred based on motif similarity ("inferredBy_MotifSimilarity", 
 #' "inferredBy_MotifSimilarity_n_Orthology").
+#' @param idColumn Annotation column containing the ID (e.g. motif, accession)
 #' @param returnFormat Determines the output format. Choose one of the following values:
 #' \itemize{
 #' \item \code{asCharacter}: Named vector with the genes or TFs annotated to the given motifs (in the same order, including empty and duplicated values).
