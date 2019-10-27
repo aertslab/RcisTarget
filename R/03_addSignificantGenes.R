@@ -88,7 +88,7 @@
 #' @export
 setGeneric("addSignificantGenes", signature="geneSets",
   function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE,
-    genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+    genesFormat="geneList", method="aprox", nMean=100, nCores=1)
   {
     standardGeneric("addSignificantGenes")
   })
@@ -97,7 +97,7 @@ setGeneric("addSignificantGenes", signature="geneSets",
 #' @aliases addSignificantGenes,list-method
 setMethod("addSignificantGenes", "list",
   function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE,
-    genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+    genesFormat="geneList", method="aprox", nMean=100, nCores=1)
   {
     .addSignificantGenes(resultsTable=resultsTable,
                          geneSets=geneSets,
@@ -114,7 +114,7 @@ setMethod("addSignificantGenes", "list",
 #' @aliases addSignificantGenes,character-method
 setMethod("addSignificantGenes", "character",
   function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE,
-    genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+    genesFormat="geneList", method="aprox", nMean=100, nCores=1)
   {
     geneSets <- list(geneSet=geneSets)
 
@@ -133,7 +133,7 @@ setMethod("addSignificantGenes", "character",
 #' @aliases addSignificantGenes,GeneSet-method
 setMethod("addSignificantGenes", "GeneSet",
   function(resultsTable, geneSets, rankings, maxRank=5000, plotCurve=FALSE,
-    genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+    genesFormat="geneList", method="aprox", nMean=100, nCores=1)
   {
     geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
                          GSEABase::setName(geneSets))
@@ -153,7 +153,7 @@ setMethod("addSignificantGenes", "GeneSet",
 #' @aliases addSignificantGenes,GeneSetCollection-method
 setMethod("addSignificantGenes", "GeneSetCollection",
   function(resultsTable, geneSets, rankings, maxRank=5000,
-    plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=20, nCores=1)
+    plotCurve=FALSE, genesFormat="geneList", method="aprox", nMean=100, nCores=1)
   {
     geneSets <- GSEABase::geneIds(geneSets)
 
@@ -170,7 +170,7 @@ setMethod("addSignificantGenes", "GeneSetCollection",
 
 .addSignificantGenes <- function(resultsTable, geneSets, rankings,
                          maxRank=5000, plotCurve=FALSE, genesFormat="geneList",
-                         method="aprox", nMean=20, nCores=1)
+                         method="aprox", nMean=100, nCores=1)
 {
   if(isS4(rankings)) {
     if(getMaxRank(rankings) < Inf)
@@ -196,11 +196,11 @@ setMethod("addSignificantGenes", "GeneSetCollection",
   # (Paralelized inside enrichment function)
   signifMotifsAsList <- lapply(geneSetNames, function(gsn)
   {
-    enrRnkT_ByGs <- resultsTable[resultsTable$geneSet==gsn]
+    enrRnkT_ByGs <- resultsTable[which(resultsTable$geneSet==gsn),]
 
     signifGenes <- .getSignificantGenes(
                        geneSet=as.character(
-                         geneSets[[unique(enrRnkT_ByGs$geneSet)]]),
+                         geneSets[[unique(as.character(enrRnkT_ByGs$geneSet))]]),
                        rankings=rankings,
                        signifRankingNames=unname(unlist(subset(enrRnkT_ByGs,
                                                             select=rnkType))),
@@ -229,7 +229,7 @@ setMethod("addSignificantGenes", "GeneSetCollection",
 setGeneric("getSignificantGenes", signature="geneSet",
   function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget",
     maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"),
-    nCores=1, digits=3, nMean=20)
+    nCores=1, digits=3, nMean=100)
   {
     standardGeneric("getSignificantGenes")
   })
@@ -239,7 +239,7 @@ setGeneric("getSignificantGenes", signature="geneSet",
 setMethod("getSignificantGenes", "list",
   function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget",
     maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"),
-    nCores=1, digits=3, nMean=20)
+    nCores=1, digits=3, nMean=100)
   {
     if(length(geneSet)>1) stop("Provide only one gene set.")
     geneSet <- as.character(unname(unlist(geneSet)))
@@ -260,7 +260,7 @@ setMethod("getSignificantGenes", "list",
 setMethod("getSignificantGenes", "character",
   function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget",
     maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"),
-    nCores=1, digits=3, nMean=20)
+    nCores=1, digits=3, nMean=100)
   {
     .getSignificantGenes(geneSet=geneSet,
                          rankings=rankings,
@@ -279,7 +279,7 @@ setMethod("getSignificantGenes", "character",
 setMethod("getSignificantGenes", "factor",
   function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget",
     maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"),
-    nCores=1, digits=3, nMean=20)
+    nCores=1, digits=3, nMean=100)
   {
     geneSet <- as.character(geneSet)
     .getSignificantGenes(geneSet=geneSet,
@@ -299,7 +299,7 @@ setMethod("getSignificantGenes", "factor",
 setMethod("getSignificantGenes", "GeneSet",
   function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget",
     maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"),
-    nCores=1, digits=3, nMean=20)
+    nCores=1, digits=3, nMean=100)
   {
     geneSet <- GSEABase::geneIds(geneSet)
 
@@ -320,7 +320,7 @@ setMethod("getSignificantGenes", "GeneSet",
 setMethod("getSignificantGenes", "GeneSetCollection",
   function(geneSet, rankings, signifRankingNames=NULL, method="iCisTarget",
     maxRank=5000, plotCurve=FALSE, genesFormat=c("geneList", "incidMatrix"),
-    nCores=1, digits=3, nMean=20)
+    nCores=1, digits=3, nMean=100)
   {
     if(length(geneSet)>1) stop("Provide only one gene set.")
     geneSet <- unlist(GSEABase::geneIds(geneSet))
@@ -346,7 +346,7 @@ setMethod("getSignificantGenes", "GeneSetCollection",
                                  genesFormat=c("geneList", "incidMatrix"),
                                  nCores=1,
                                  digits=3,
-                                 nMean=20)
+                                 nMean=100)
 {
   ############################################################################
   # Argument checks & init. vars
