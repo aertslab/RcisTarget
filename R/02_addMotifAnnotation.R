@@ -106,7 +106,10 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
   #### Runs "auc.asTable" on each signature/geneset
   applyFun <- lapply
   if((nrow(auc)>4) && ("BiocParallel" %in% installed.packages())) 
+  {
     applyFun <- BiocParallel::bplapply
+    message("Using BiocParallel...")
+  }
   
   ret <- applyFun(rownames(auc), function(geneSet) {
     tfs <- highlightTFs[[geneSet]]
