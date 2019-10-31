@@ -1,20 +1,15 @@
 #' @title Import the motif databases for RcisTarget.
 #' @param dbFile .feather or .parquet file containing the rankings
-#' @param columns Columns to import from the .feather or .parquet file
-#' (e.g. only selected genes or regions)
-#' @param dbDescr The description fields are typically imported from the
-#' ".descr" file with the same filename as the \code{dbFile}.
-#' Otherwise they can be manually set e.g.:
-#'
+#' @param columns Columns to load from the .feather or .parquet file
+#' (e.g. to read only specific genes or regions)
+#' @param dbDescr Description fields (not used internally) e.g.:
 #' \code{dbDescr=list(colType="gene", rowType="motif",
 #' org="Human", genome="hg19", maxRank=Inf, description="")}
-#'
+#' @param indexCol Column name containing the feature IDs (e.g. motif names or chip-seq tracks). 
+#' @param warnMissingColumns If 'columns' is provided, warn if any ID is not available in the rankings? 
 #' @description
 #' The rankings are typically loaded from a .feather or .parquet file
 #' with \code{importRankings()}.
-#'
-#' If the associated .descr file is available,
-#' it will also load the description of the database.
 #' @return
 #' rankingRcisTarget object with the following slots:
 #' #' \itemize{
@@ -49,12 +44,20 @@
 #' @import feather
 #' @import utils
 #' @export
-importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
+importRankings <- function(dbFile, columns=NULL, dbDescr=NULL, indexCol="features", warnMissingColumns=TRUE)
 {
   dbFile <- path.expand(dbFile)
   if(!file.exists(dbFile)) stop("File does not exist: ", dbFile)
 
-  if(!is.null(columns)) columns <- unique(c("features", columns))
+  if(!is.null(columns)){
+    missingColumns <- columns[which(!columns %in% getColumnNames(dbFile))]
+    if(length(columns)>0 & warnMissingColumns)
+    {
+      warning("The following columns are missing from the database: ", paste(missingColumns, collapse=", "))
+      columns <- columns[which(columns %in% getColumnNames(dbFile))]
+    }
+    columns <- unique(c(indexCol, columns))
+  }
   extension <- strsplit(dbFile, "\\.") [[1]][length(strsplit(dbFile, "\\.") [[1]])]
   if (extension == 'feather'){
     rnks <- feather::read_feather(dbFile, columns=columns) # tibble
@@ -111,3 +114,35 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL)
       maxRank = as.numeric(dbDescr["maxrank",]),
       description=as.character(dbDescr["description",]))
 }
+
+#' @rdname importRankings
+#' @import feather
+#' @export
+getRowNames <- function(dbPath)
+{
+  extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
+  if (extension == 'feather'){
+    ret <- unlist(feather::read_feather(path.expand(dbPath), columns=1))
+  }
+  else if (extension == "parquet"){
+     stop("Not implemented") # TODO: add arrow
+  }
+  return(ret)
+}
+
+#' @rdname importRankings
+#' @import feather
+#' @export
+getColumnNames <- function(dbPath) # TODO: Check if they are really genes/regions
+{
+  extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
+  if (extension == 'feather'){
+    ret <- names(feather::feather_metadata(path=path.expand(dbPath))$types)[-1]
+  }
+  else if (extension == "parquet"){
+    stop("Not implemented") # TODO: add arrow
+  }
+  return(ret)
+}
+# 
+# getGeneNames <- getRegionNames <- getColumnNames 
