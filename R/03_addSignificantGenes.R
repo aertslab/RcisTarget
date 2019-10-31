@@ -188,7 +188,8 @@ setMethod("addSignificantGenes", "GeneSetCollection",
   if(!method %in% c("icistarget", "icistargetaprox", "aprox"))
     stop("'method' should be either 'iCisTarget' or 'iCisTargetAprox'.")
 
-  geneSetNames <- unique(resultsTable$geneSet)
+  resultsTable$geneSet <- as.character(resultsTable$geneSet)
+  geneSetNames <- as.character(unique(resultsTable$geneSet))
 
   rnkType <- c("ranking", "motif")
   rnkType <- rnkType[which(rnkType %in% colnames(resultsTable))]
