@@ -2,22 +2,30 @@
 % Please edit documentation in R/00_importRankings.R
 \name{importRankings}
 \alias{importRankings}
+\alias{getRowNames}
+\alias{getColumnNames}
 \title{Import the motif databases for RcisTarget.}
 \usage{
-importRankings(dbFile, columns = NULL, dbDescr = NULL)
+importRankings(dbFile, columns = NULL, dbDescr = NULL,
+  indexCol = "features", warnMissingColumns = TRUE)
+
+getRowNames(dbPath)
+
+getColumnNames(dbPath)
 }
 \arguments{
 \item{dbFile}{.feather or .parquet file containing the rankings}
 
-\item{columns}{Columns to import from the .feather or .parquet file
-(e.g. only selected genes or regions)}
+\item{columns}{Columns to load from the .feather or .parquet file
+(e.g. to read only specific genes or regions)}
 
-\item{dbDescr}{The description fields are typically imported from the
-".descr" file with the same filename as the \code{dbFile}.
-Otherwise they can be manually set e.g.:
-
+\item{dbDescr}{Description fields (not used internally) e.g.:
 \code{dbDescr=list(colType="gene", rowType="motif",
 org="Human", genome="hg19", maxRank=Inf, description="")}}
+
+\item{indexCol}{Column name containing the feature IDs (e.g. motif names or chip-seq tracks).}
+
+\item{warnMissingColumns}{If 'columns' is provided, warn if any ID is not available in the rankings?}
 }
 \value{
 rankingRcisTarget object with the following slots:
@@ -38,9 +46,6 @@ higher values are converted to Inf.
 \description{
 The rankings are typically loaded from a .feather or .parquet file
 with \code{importRankings()}.
-
-If the associated .descr file is available,
-it will also load the description of the database.
 }
 \examples{
 ## Loading from a .feather or .parquet file (the .descr file is read automatically):

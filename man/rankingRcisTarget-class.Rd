@@ -9,6 +9,8 @@
 \alias{getRanking,rankingRcisTarget-method}
 \alias{nrow,rankingRcisTarget-method}
 \alias{ncol,rankingRcisTarget-method}
+\alias{colnames,rankingRcisTarget-method}
+\alias{rownames,rankingRcisTarget-method}
 \alias{getMaxRank}
 \alias{getMaxRank,rankingRcisTarget-method}
 \alias{getNumColsInDB}
@@ -22,6 +24,10 @@
 \S4method{nrow}{rankingRcisTarget}(x)
 
 \S4method{ncol}{rankingRcisTarget}(x)
+
+\S4method{colnames}{rankingRcisTarget}(x)
+
+\S4method{rownames}{rankingRcisTarget}(x)
 
 \S4method{getMaxRank}{rankingRcisTarget}(x)
 
