@@ -90,7 +90,7 @@ setMethod("show",
       "  Organism: ", object@org, genome,"\n")
     }
     
-    nGenes <- ncol(getRanking(object))
+    nGenes <- ncol(getRanking(object))-1
     if(("nColsInDB" %in% slotNames(object)) && !is.na(object@nColsInDB)) nGenes <- paste0(nGenes," (",object@nColsInDB," available in the full DB)")
     message <- paste0(message,
      "  Number of ",object@colType, "s: ", nGenes, "\n",
@@ -148,6 +148,29 @@ setMethod("ncol",
           signature="rankingRcisTarget",
           definition = function(x) {
             ncol(getRanking(x))
+          }
+)
+
+
+#' @importFrom BiocGenerics colnames
+#' @rdname rankingRcisTarget-class
+#' @aliases colnames,rankingRcisTarget-method
+#' @export
+setMethod("colnames",
+          signature="rankingRcisTarget",
+          definition = function(x) {
+            colnames(getRanking(x)[-1])
+          }
+)
+
+#' @importFrom BiocGenerics rownames
+#' @rdname rankingRcisTarget-class
+#' @aliases rownames,rankingRcisTarget-method
+#' @export
+setMethod("rownames",
+          signature="rankingRcisTarget",
+          definition = function(x) {
+            rownames(getRanking(x))
           }
 )
 
