@@ -182,6 +182,11 @@ setMethod("addSignificantGenes", "GeneSetCollection",
     }
 
     rankings <- getRanking(rankings)
+    
+    if((ncol(rankings) != rankings@nColsInDB+1))
+    {
+      warning("The rakings provided only include a subset of genes/regions included in the whole database.")
+    }
   }
  
   method <- tolower(method[1])
@@ -190,6 +195,7 @@ setMethod("addSignificantGenes", "GeneSetCollection",
 
   resultsTable$geneSet <- as.character(resultsTable$geneSet)
   geneSetNames <- as.character(unique(resultsTable$geneSet))
+  if(any(!geneSetNames %in% names(geneSets))) stop("Missing gene sets: ", paste(geneSetNames[which(!geneSetNames %in% names(geneSets))], collapse=", "))
 
   rnkType <- c("ranking", "motif")
   rnkType <- rnkType[which(rnkType %in% colnames(resultsTable))]
@@ -199,9 +205,9 @@ setMethod("addSignificantGenes", "GeneSetCollection",
   {
     enrRnkT_ByGs <- resultsTable[which(resultsTable$geneSet==gsn),]
 
+    geneSet <- as.character(geneSets[[unique(as.character(enrRnkT_ByGs$geneSet))]])
     signifGenes <- .getSignificantGenes(
-                       geneSet=as.character(
-                         geneSets[[unique(as.character(enrRnkT_ByGs$geneSet))]]),
+                       geneSet=geneSet,
                        rankings=rankings,
                        signifRankingNames=unname(unlist(subset(enrRnkT_ByGs,
                                                             select=rnkType))),

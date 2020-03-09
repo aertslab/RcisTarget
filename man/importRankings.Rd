@@ -9,9 +9,9 @@
 importRankings(dbFile, columns = NULL, dbDescr = NULL,
   indexCol = "features", warnMissingColumns = TRUE)
 
-getRowNames(dbPath)
+getRowNames(dbFile)
 
-getColumnNames(dbPath)
+getColumnNames(dbFile)
 }
 \arguments{
 \item{dbFile}{.feather or .parquet file containing the rankings}

@@ -7,7 +7,8 @@
 getMotifAnnotation(motifs, motifAnnot, annotCats = c("directAnnotation",
   "inferredBy_MotifSimilarity", "inferredBy_Orthology",
   "inferredBy_MotifSimilarity_n_Orthology"), idColumn = "motif",
-  returnFormat = c("asCharacter", "subset", "list")[1])
+  returnFormat = c("asCharacter", "subset", "list")[1],
+  keepAnnotationCategory = TRUE)
 }
 \arguments{
 \item{motifs}{Motif IDs}
@@ -23,7 +24,9 @@ gene), or inferred based on motif similarity ("inferredBy_MotifSimilarity",
 
 \item{idColumn}{Annotation column containing the ID (e.g. motif, accession)}
 
-\item{returnFormat}{Determines the output format. Choose one of the following values:
+\item{returnFormat}{Determines the output format. Choose one of the following values:}
+
+\item{keepAnnotationCategory}{Include annotation type in the TF information?
 \itemize{
 \item \code{asCharacter}: Named vector with the genes or TFs annotated to the given motifs (in the same order, including empty and duplicated values).
 \item \code{subset}: Subset of the annotation table (list split by motif)

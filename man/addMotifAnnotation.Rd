@@ -9,7 +9,7 @@ addMotifAnnotation(auc, nesThreshold = 3, digits = 3,
   "inferredBy_Orthology"),
   motifAnnot_lowConfCat = c("inferredBy_MotifSimilarity",
   "inferredBy_MotifSimilarity_n_Orthology"), idColumn = "motif",
-  highlightTFs = NULL)
+  highlightTFs = NULL, keepAnnotationCategory = TRUE)
 }
 \arguments{
 \item{auc}{Output from calcAUC.}
@@ -45,6 +45,8 @@ of those TFs are included within the 'high-confidence' annotation
 or 'low-confidence' annotation (one asterisk, *) of the motif.
 The vector can be named to indicate which TF to highlight for each gene-set.
 Otherwise, all TFs will be used for all geneSets.}
+
+\item{keepAnnotationCategory}{Include annotation type in the TF information?}
 }
 \value{
 \code{\link[data.table]{data.table}} with the folowing columns:

@@ -34,7 +34,7 @@
 #' or 'low-confidence' annotation (one asterisk, *) of the motif.
 #' The vector can be named to indicate which TF to highlight for each gene-set.
 #' Otherwise, all TFs will be used for all geneSets.
-#' 
+#' @param keepAnnotationCategory Include annotation type in the TF information?
 #' @return \code{\link[data.table]{data.table}} with the folowing columns:
 #' \itemize{
 #' \item geneSet: Name of the gene set
@@ -64,7 +64,8 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
        motifAnnot_lowConfCat=c("inferredBy_MotifSimilarity", 
                                "inferredBy_MotifSimilarity_n_Orthology"), 
        idColumn="motif",
-       highlightTFs=NULL)
+       highlightTFs=NULL,
+       keepAnnotationCategory=TRUE)
 {
   auc <- getAUC(auc)
   #### Check inputs
@@ -122,7 +123,8 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
                           TFs=tfs, 
                           motifAnnot_highConfCat=motifAnnot_highConfCat,
                           motifAnnot_lowConfCat=motifAnnot_lowConfCat,
-                          idColumn=idColumn)
+                          idColumn=idColumn,
+                          keepAnnotationCategory=keepAnnotationCategory)
       aucTable <- data.table::data.table(geneSet=geneSet, aucTable)
     }else{
       aucTable <- NULL
@@ -171,7 +173,8 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
                     TFs=NULL,
                     motifAnnot_highConfCat=NULL,
                     motifAnnot_lowConfCat=NULL,
-                    idColumn="motif")
+                    idColumn="motif",
+                    keepAnnotationCategory=keepAnnotationCategory)
 {
   if(!is.null(TFs))
   {
@@ -204,7 +207,8 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
       TF_highConf <- .formatTfs(motifs=aucTable[[idColumn]], 
                                 motifAnnot=motifAnnot,
                                 annotCats=motifAnnot_highConfCat,
-                                idColumn=idColumn)
+                                idColumn=idColumn,
+                                keepAnnotationCategory=keepAnnotationCategory)
       
       aucTable <- data.table::data.table(aucTable, TF_highConf=TF_highConf)
     }
@@ -214,7 +218,8 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
       TF_lowConf <- .formatTfs(motifs=aucTable[[idColumn]], 
                                motifAnnot=motifAnnot,
                                annotCats=motifAnnot_lowConfCat,
-                               idColumn=idColumn)
+                               idColumn=idColumn, 
+                               keepAnnotationCategory=keepAnnotationCategory)
       
       aucTable <- data.table::data.table(aucTable, TF_lowConf=TF_lowConf)
     }
@@ -228,21 +233,29 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 # Replaced input: aucTable by motifs. In calls:  .formatTfs(motifs=aucTable[[idColumn]]
 # aucTable$motif --> motifs
 # nrow(aucTable) --> length(motifs)
-.formatTfs <- function(motifs, motifAnnot, annotCats, idColumn)
+.formatTfs <- function(motifs, motifAnnot, annotCats, idColumn, keepAnnotationCategory)
 {
   motifAnnot_subset <- motifAnnot[motifAnnot$annotationSource %in% annotCats, ] 
   motifAnnot_subset <- motifAnnot_subset[motifAnnot_subset[[idColumn]] %in% motifs, ] 
-  motifAnnot_Cats <- vapply(split(motifAnnot_subset, motifAnnot_subset[[idColumn]]), 
-              function(mat){
-                mat <- split(mat$TF, factor(mat$annotationSource))
-                tfsByCat <- vapply(names(mat),
-                                   function(x) paste(paste(unlist(mat[[x]]),
-                                                           collapse="; "),
-                                                     " (",x,"). ",
-                                                     sep=""), "")
-                paste(tfsByCat, collapse="")
-              }, FUN.VALUE="")
-  
+  if(keepAnnotationCategory)
+  {
+    motifAnnot_Cats <- vapply(split(motifAnnot_subset, motifAnnot_subset[[idColumn]]), 
+                              function(mat){
+                                mat <- split(mat$TF, factor(mat$annotationSource))
+                                tfsByCat <- vapply(names(mat),
+                                                   function(x) paste(paste(unlist(mat[[x]]),
+                                                                           collapse="; "),
+                                                                     " (",x,"). ",
+                                                                     sep=""), "")
+                                paste(tfsByCat, collapse="")
+                              }, FUN.VALUE="")
+  }else{
+    motifAnnot_Cats <- vapply(split(motifAnnot_subset, motifAnnot_subset[[idColumn]]), 
+                              function(mat){
+                                paste(unique(unlist(mat$TF)), collapse="; ")
+                              }, FUN.VALUE="")
+  }
+   
   ret <- setNames(rep("", length(motifs)), motifs)
   ret[names(motifAnnot_Cats)] <- motifAnnot_Cats
   return(ret)
@@ -261,6 +274,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
 #' "inferredBy_MotifSimilarity_n_Orthology").
 #' @param idColumn Annotation column containing the ID (e.g. motif, accession)
 #' @param returnFormat Determines the output format. Choose one of the following values:
+#' @param keepAnnotationCategory Include annotation type in the TF information?
 #' \itemize{
 #' \item \code{asCharacter}: Named vector with the genes or TFs annotated to the given motifs (in the same order, including empty and duplicated values).
 #' \item \code{subset}: Subset of the annotation table (list split by motif)
@@ -280,7 +294,8 @@ getMotifAnnotation <- function(motifs,
                                            "inferredBy_Orthology",
                                            "inferredBy_MotifSimilarity_n_Orthology"),
                                idColumn="motif",
-                               returnFormat=c("asCharacter","subset","list")[1])
+                               returnFormat=c("asCharacter","subset","list")[1],
+                               keepAnnotationCategory=TRUE)
 {
   ## Check inputs:
   returnFormat <- tolower(returnFormat)
@@ -292,7 +307,8 @@ getMotifAnnotation <- function(motifs,
     ret <- .formatTfs(motifs=motifs, 
                       motifAnnot=motifAnnot,
                       annotCats=annotCats,
-                      idColumn=idColumn) 
+                      idColumn=idColumn,
+                      keepAnnotationCategory=keepAnnotationCategory) 
   }else{
     ret <- .getTfs(motifs=motifs, 
                    motifAnnot=motifAnnot,

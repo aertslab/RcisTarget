@@ -118,8 +118,9 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL, indexCol="feature
 #' @rdname importRankings
 #' @import feather
 #' @export
-getRowNames <- function(dbPath)
+getRowNames <- function(dbFile)
 {
+  dbPath <- dbFile
   extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
   if (extension == 'feather'){
     ret <- unlist(feather::read_feather(path.expand(dbPath), columns=1))
@@ -133,8 +134,9 @@ getRowNames <- function(dbPath)
 #' @rdname importRankings
 #' @import feather
 #' @export
-getColumnNames <- function(dbPath) # TODO: Check if they are really genes/regions
+getColumnNames <- function(dbFile) # TODO: Check if they are really genes/regions
 {
+  dbPath <- dbFile
   extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
   if (extension == 'feather'){
     ret <- names(feather::feather_metadata(path=path.expand(dbPath))$types)[-1]
