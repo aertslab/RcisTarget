@@ -4,11 +4,15 @@
 \alias{getMotifAnnotation}
 \title{Get motif annotation}
 \usage{
-getMotifAnnotation(motifs, motifAnnot, annotCats = c("directAnnotation",
-  "inferredBy_MotifSimilarity", "inferredBy_Orthology",
-  "inferredBy_MotifSimilarity_n_Orthology"), idColumn = "motif",
+getMotifAnnotation(
+  motifs,
+  motifAnnot,
+  annotCats = c("directAnnotation", "inferredBy_MotifSimilarity",
+    "inferredBy_Orthology", "inferredBy_MotifSimilarity_n_Orthology"),
+  idColumn = "motif",
   returnFormat = c("asCharacter", "subset", "list")[1],
-  keepAnnotationCategory = TRUE)
+  keepAnnotationCategory = TRUE
+)
 }
 \arguments{
 \item{motifs}{Motif IDs}

@@ -4,12 +4,18 @@
 \alias{addMotifAnnotation}
 \title{Add motif annotation}
 \usage{
-addMotifAnnotation(auc, nesThreshold = 3, digits = 3,
-  motifAnnot = NULL, motifAnnot_highConfCat = c("directAnnotation",
-  "inferredBy_Orthology"),
+addMotifAnnotation(
+  auc,
+  nesThreshold = 3,
+  digits = 3,
+  motifAnnot = NULL,
+  motifAnnot_highConfCat = c("directAnnotation", "inferredBy_Orthology"),
   motifAnnot_lowConfCat = c("inferredBy_MotifSimilarity",
-  "inferredBy_MotifSimilarity_n_Orthology"), idColumn = "motif",
-  highlightTFs = NULL, keepAnnotationCategory = TRUE)
+    "inferredBy_MotifSimilarity_n_Orthology"),
+  idColumn = "motif",
+  highlightTFs = NULL,
+  keepAnnotationCategory = TRUE
+)
 }
 \arguments{
 \item{auc}{Output from calcAUC.}

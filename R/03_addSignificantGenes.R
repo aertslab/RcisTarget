@@ -180,13 +180,11 @@ setMethod("addSignificantGenes", "GeneSetCollection",
              "than the maximum ranking available in the database (",
              getMaxRank(rankings),")")
     }
-
-    rankings <- getRanking(rankings)
-    
     if((ncol(rankings) != rankings@nColsInDB+1))
     {
       warning("The rakings provided only include a subset of genes/regions included in the whole database.")
     }
+    rankings <- getRanking(rankings)
   }
  
   method <- tolower(method[1])

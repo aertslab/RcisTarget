@@ -6,8 +6,13 @@
 \alias{getColumnNames}
 \title{Import the motif databases for RcisTarget.}
 \usage{
-importRankings(dbFile, columns = NULL, dbDescr = NULL,
-  indexCol = "features", warnMissingColumns = TRUE)
+importRankings(
+  dbFile,
+  columns = NULL,
+  dbDescr = NULL,
+  indexCol = "features",
+  warnMissingColumns = TRUE
+)
 
 getRowNames(dbFile)
 

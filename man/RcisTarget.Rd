@@ -4,13 +4,21 @@
 \alias{cisTarget}
 \title{cisTarget}
 \usage{
-cisTarget(geneSets, motifRankings, motifAnnot = NULL,
+cisTarget(
+  geneSets,
+  motifRankings,
+  motifAnnot = NULL,
   motifAnnot_highConfCat = c("directAnnotation", "inferredBy_Orthology"),
   motifAnnot_lowConfCat = c("inferredBy_MotifSimilarity",
-  "inferredBy_MotifSimilarity_n_Orthology"), highlightTFs = NULL,
-  nesThreshold = 3, aucMaxRank = 0.05 * ncol(motifRankings),
-  geneErnMethod = "aprox", geneErnMmaxRank = 5000, nCores = 1,
-  verbose = TRUE)
+    "inferredBy_MotifSimilarity_n_Orthology"),
+  highlightTFs = NULL,
+  nesThreshold = 3,
+  aucMaxRank = 0.05 * ncol(motifRankings),
+  geneErnMethod = "aprox",
+  geneErnMmaxRank = 5000,
+  nCores = 1,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{geneSets}{List of gene-sets to analyze.
