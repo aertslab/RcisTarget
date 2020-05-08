@@ -18,13 +18,18 @@
 #' @export
 addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9", motifCol="motif")
 {
+  isNA <- which(motifEnrDT[[motifCol]]=="")
   logos <- paste("http://motifcollections.aertslab.org/",
                 dbVersion,"/logos/",
                 motifEnrDT[[motifCol]],".png", sep="")
+  
   if(addHTML)
+  {
     logos <- paste('<img src="', logos,
                 '" height="52" alt="',
                 motifEnrDT[[motifCol]], '"></img>', sep="")
-
+  }
+  logos[isNA] <- ""
+  
   data.table::data.table(logo=logos, motifEnrDT)
 }
