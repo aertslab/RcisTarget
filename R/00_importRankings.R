@@ -51,7 +51,7 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL, indexCol="feature
 
   if(!is.null(columns)){
     missingColumns <- columns[which(!columns %in% getColumnNames(dbFile))]
-    if(length(columns)>0 & warnMissingColumns)
+    if(length(missingColumns)>0 & warnMissingColumns)
     {
       warning("The following columns are missing from the database: ", paste(missingColumns, collapse=", "))
       columns <- columns[which(columns %in% getColumnNames(dbFile))]
@@ -63,13 +63,11 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL, indexCol="feature
     rnks <- feather::read_feather(dbFile, columns=columns) # tibble
     #rnks <- data.frame... #to avoid replacing dash in names: check.names=FALSE
     nColsInDB <- feather::feather_metadata(dbFile)[["dim"]][2]-1
-  }
-  else if (extension == "parquet"){
+  }else if (extension == "parquet"){
     rnks <- arrow::read_parquet(dbFile, columns = columns)
     pq <- arrow::parquet_file_reader(dbFile)
     nColsInDB <- pq$GetSchema()$num_fields()-1
-  }
-  else{
+  }else{
     stop("Database format must be feather or parquet.")
   }
 
