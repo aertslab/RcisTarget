@@ -337,7 +337,7 @@ The final output of RcisTarget is a `data.table` containing the information abou
 
 
 ```{r output}
-motifEnrichmentTable_wGenes_wLogo <- addLogo(motifEnrichmentTable_wGenes)
+motifEnrichmentTable_wGenes_wLogo <- addLogo(motifEnrichmentTable)
 
 resultsSubset <- motifEnrichmentTable_wGenes_wLogo[1:10,]
 

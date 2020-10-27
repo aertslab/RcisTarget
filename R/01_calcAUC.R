@@ -56,7 +56,9 @@
 #' @export
 setGeneric("calcAUC", signature="geneSets",
   function(geneSets, rankings, nCores=1,
-      aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
+      aucMaxRank=0.03*getNumColsInDB(rankings),
+      # rnkIndexCol="features",
+      verbose=TRUE)
   {
     standardGeneric("calcAUC")
   })
@@ -65,12 +67,15 @@ setGeneric("calcAUC", signature="geneSets",
 #' @aliases calcAUC,list-method
 setMethod("calcAUC", "list",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), 
+           # rnkIndexCol="features", 
+           verbose=TRUE)
   {
     .RcisTarget_calcAUC(geneSets=geneSets,
                         rankings=rankings,
                         nCores=nCores,
                         aucMaxRank=aucMaxRank,
+                        # rnkIndexCol=rnkIndexCol,
                         verbose=verbose)
   })
 
@@ -78,7 +83,9 @@ setMethod("calcAUC", "list",
 #' @aliases calcAUC,character-method
 setMethod("calcAUC", "character",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), 
+           # rnkIndexCol="features", 
+           verbose=TRUE)
   {
     geneSets <- list(geneSet=geneSets)
 
@@ -86,6 +93,7 @@ setMethod("calcAUC", "character",
                         rankings=rankings,
                         nCores=nCores,
                         aucMaxRank=aucMaxRank,
+                        # rnkIndexCol=rnkIndexCol,
                         verbose=verbose)
   })
 
@@ -93,7 +101,9 @@ setMethod("calcAUC", "character",
 #' @aliases calcAUC,GeneSet-method
 setMethod("calcAUC", "GeneSet",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), 
+           # rnkIndexCol="features", 
+           verbose=TRUE)
   {
     geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
                          GSEABase::setName(geneSets))
@@ -102,6 +112,7 @@ setMethod("calcAUC", "GeneSet",
                         rankings=rankings,
                         nCores=nCores,
                         aucMaxRank=aucMaxRank,
+                        # rnkIndexCol=rnkIndexCol,
                         verbose=verbose)
   })
 
@@ -109,7 +120,9 @@ setMethod("calcAUC", "GeneSet",
 #' @aliases calcAUC,GeneSetCollection-method
 setMethod("calcAUC", "GeneSetCollection",
   function(geneSets, rankings, nCores=1,
-           aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
+           aucMaxRank=0.03*getNumColsInDB(rankings), 
+           # rnkIndexCol="features", 
+           verbose=TRUE)
   {
     geneSets <- GSEABase::geneIds(geneSets)
 
@@ -117,11 +130,14 @@ setMethod("calcAUC", "GeneSetCollection",
                         rankings=rankings,
                         nCores=nCores,
                         aucMaxRank=aucMaxRank,
+                        # rnkIndexCol=rnkIndexCol,
                         verbose=verbose)
   })
 
 .RcisTarget_calcAUC <- function(geneSets, rankings, nCores=1,
-                                aucMaxRank=0.03*getNumColsInDB(rankings), verbose=TRUE)
+                                aucMaxRank=0.03*getNumColsInDB(rankings), 
+                                # rnkIndexCol="features",
+                                verbose=TRUE)
 {
   # Check the gene sets
   if(!is.list(geneSets))
@@ -151,9 +167,9 @@ setMethod("calcAUC", "GeneSetCollection",
                       description=rankings@description)
     rankings <- getRanking(rankings)
     
-    # could be added as argument...
-    if(!"features" %in% colnames(rankings)) 
-      stop("No feature names in the ranking (column 'features')")
+    # # could be added as argument...
+    # if(!rnkIndexCol %in% colnames(rankings)) 
+    #   stop(paste0("No feature names in the ranking (column '",rnkIndexCol,"')"))
   }
   if(!is.data.frame(rankings))
     stop("Rankings does not have the right format.")
@@ -178,7 +194,7 @@ setMethod("calcAUC", "GeneSetCollection",
                    gSetName=gSetName),
       FUN.VALUE=numeric(nrow(rankings)+2))
     aucMatrix <- t(aucMatrix)
-    colnames(aucMatrix)[1:(ncol(aucMatrix)-2)]<-as.character(rankings$features)
+    colnames(aucMatrix)[1:(ncol(aucMatrix)-2)] <- as.character(unlist(rankings[,1]))
   }else
   {
     # Run each geneSet in parallel
@@ -200,7 +216,7 @@ setMethod("calcAUC", "GeneSetCollection",
                                     })
       aucList <- unlist(aucList, recursive = FALSE)[names(geneSets)]
       aucMat <- do.call(rbind, aucList)
-      colnames(aucMat)[1:(ncol(aucMat)-2)]<-as.character(rankings$features)
+      colnames(aucMat)[1:(ncol(aucMat)-2)] <- as.character(unlist(rankings[,1]))
       aucMat
     }, 
     error = function(e) {
