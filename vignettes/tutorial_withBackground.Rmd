@@ -1,0 +1,81 @@
+---
+title: "Motif enrichment with background"
+abstract: >
+  This tutorial shows how to use **RcisTarget** with background.
+vignette: >
+  %\VignetteIndexEntry{RcisTarget - with background}
+  %\VignetteEngine{knitr::rmarkdown}
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: false
+  pdf_document:
+    toc: yes
+  html_notebook:
+    toc: yes
+---
+```{r libraries, echo=FALSE, message=FALSE, warning=FALSE}
+suppressPackageStartupMessages({
+library(RcisTarget)
+library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp) 
+library(DT)
+library(data.table)
+#require(visNetwork)
+})
+```
+
+This tutorial requires RcisTarget >= 1.7.1. 
+```{r}
+packageVersion("RcisTarget")
+# devtools::install_github("aertslab/RcisTarget")
+```
+
+### 1. Select the gene/region set to analyze & the "background"
+
+```{r}
+# Genes to analyze:
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),"hypoxiaGeneSet.txt", sep="/")
+geneSets <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
+
+# Background: 
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),"randomGeneSet.txt", sep="/") # for the toy example we will use a few random genes
+background <- read.table(txtFile, stringsAsFactors=FALSE)[,1]
+```
+
+The background should contain the target genes.
+
+If for any reason that is not the case, you can **add** the target genes to the background, or **remove** the target genes missing from the background (depending on what makes more sense in your specific analysis).
+
+```{r}
+# A: Add
+background <- unique(c(geneSets$hypoxia, background))
+# B: Intersect
+# geneSets$hypoxia <- intersect(geneSets$hypoxia, background)
+```
+
+```{r fig.height=3, fig.width=3}
+gplots::venn(list(background=background, geneLists=unlist(geneSets)))
+```
+
+
+### 2. Create the background-ranking
+
+Select the appropriate ranking-database: 
+```{r}
+dbPath <- "~/databases/hg19-500bp-upstream-10species.mc9nr.feather"
+```
+
+Load the database and re-rank the genes/motifs (e.g. only within the "background+foreground")
+```{r}
+library(RcisTarget)
+rankingsDb <- importRankings(dbPath, columns=background)
+bgRanking <- reRank(rankingsDb) 
+```
+  
+### 3. Run RcisTarget with this new ranking
+
+Once the "background-ranking" is ready, just use it to run RcisTarget:
+```{r}
+motifEnrichmentTable <- cisTarget(geneSets, bgRanking, aucMaxRank=0.03*getNumColsInDB(bgRanking))
+```
