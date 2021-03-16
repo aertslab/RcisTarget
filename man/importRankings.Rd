@@ -8,10 +8,10 @@
 \usage{
 importRankings(
   dbFile,
+  indexCol = NULL,
   columns = NULL,
-  dbDescr = NULL,
-  indexCol = "features",
-  warnMissingColumns = TRUE
+  warnMissingColumns = TRUE,
+  dbDescr = NULL
 )
 
 getRowNames(dbFile)
@@ -21,16 +21,17 @@ getColumnNames(dbFile)
 \arguments{
 \item{dbFile}{.feather or .parquet file containing the rankings}
 
+\item{indexCol}{Column name containing the feature IDs (e.g. motif names or chip-seq tracks). If NULL, it will take the first column.}
+
 \item{columns}{Columns to load from the .feather or .parquet file
 (e.g. to read only specific genes or regions)}
 
-\item{dbDescr}{Description fields (not used internally) e.g.:
+\item{warnMissingColumns}{If 'columns' is provided, warn if any ID is not available in the rankings?}
+
+\item{dbDescr}{Description fields (not used in the analysis, just for convenience of the user) 
+e.g.:
 \code{dbDescr=list(colType="gene", rowType="motif",
 org="Human", genome="hg19", maxRank=Inf, description="")}}
-
-\item{indexCol}{Column name containing the feature IDs (e.g. motif names or chip-seq tracks).}
-
-\item{warnMissingColumns}{If 'columns' is provided, warn if any ID is not available in the rankings?}
 }
 \value{
 rankingRcisTarget object with the following slots:
