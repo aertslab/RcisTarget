@@ -42,7 +42,8 @@
 
 ##### Load/import the ranking from a feather file:
 #' @rdname importRankings
-#' @import arrow
+#' @importFrom arrow read_feather read_parquet FeatherReader ParquetFileReader ReadableFile
+#' @import dplyr
 #' @importFrom utils read.table
 #' @export
 importRankings <- function(dbFile, indexCol=NULL, columns=NULL, warnMissingColumns=TRUE, dbDescr=NULL)
@@ -119,12 +120,12 @@ importRankings <- function(dbFile, indexCol=NULL, columns=NULL, warnMissingColum
 
 #' @rdname importRankings
 #' @export
-getRowNames <- function(dbFile)
+getRowNames <- function(dbFile, indexCol=1)
 {
   dbPath <- dbFile
   extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
   if (extension == 'feather'){
-    ret <- unname(unlist(arrow::read_feather(path.expand(dbPath), col_select=1, mmap = TRUE)))
+    ret <- unname(unlist(arrow::read_feather(path.expand(dbPath), col_select=indexCol, mmap = TRUE)))
   }
   else if (extension == "parquet"){
     stop("Not implemented") # TODO: add arrow
@@ -139,14 +140,11 @@ getColumnNames <- function(dbFile) # TODO: Check if they are really genes/region
   dbPath <- dbFile
   extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
   if (extension == 'feather'){
-    ret <- names(arrow::FeatherReader$create(arrow::ReadableFile$create(dbPath)))[-1]
+    ret <- names(arrow::FeatherReader$create(arrow::ReadableFile$create(dbPath))) #[-1]
   }
   else if (extension == "parquet"){
-    # Not tested!! (if it works, the if can be removed)
-    ret <- names(arrow::FeatherReader$create(arrow::ReadableFile$create(dbPath)))[-1]
-    # stop("Not implemented") # TODO: add arrow
+    # ret <- names(arrow::ParquetFileReader$create(arrow::ReadableFile$create(dbPath)))[-1]  #maybe?
+    stop("Not implemented") # TODO: add arrow
   }
   return(ret)
 }
-# 
-# getGeneNames <- getRegionNames <- getColumnNames 

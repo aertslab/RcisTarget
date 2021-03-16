@@ -14,7 +14,7 @@ importRankings(
   dbDescr = NULL
 )
 
-getRowNames(dbFile)
+getRowNames(dbFile, indexCol = 1)
 
 getColumnNames(dbFile)
 }
