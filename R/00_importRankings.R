@@ -63,7 +63,7 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL, indexCol="feature
     rnks <- arrow::read_feather(dbFile, col_select=!!columns, mmap = TRUE); dim(rnks)
     nColsInDB <- length(names(arrow::FeatherReader$create(arrow::ReadableFile$create(dbFile))))-1
   }else if (extension == "parquet"){
-    rnks <- arrow::read_parquet(dbFile, columns = !!columns)
+    rnks <- read_parquet(dbFile, columns = !!columns)
     pq <- arrow::ParquetFileReader(dbFile)
     nColsInDB <- pq$GetSchema()$num_fields()-1
   }else{

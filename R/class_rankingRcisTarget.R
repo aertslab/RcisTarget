@@ -52,7 +52,7 @@
 #' hg19_500bpUpstream_motifRanking_cispbOnly
 #' class(hg19_500bpUpstream_motifRanking_cispbOnly)
 #' @importFrom methods slotNames
-#' @import dplyr
+#' @import tibble
 #' 
 #' @rdname rankingRcisTarget-class
 #' @export rankingRcisTarget
@@ -62,7 +62,7 @@ rankingRcisTarget <- setClass(
   Class="rankingRcisTarget",
   
   slots = c(
-    rankings = "tbl_df", #"data.frame",
+    rankings = "tbl_df", # "data.frame",
     colType = "character", # gene/region
     rowType = "character", # motif or whatever feature is stored (e.g. ChipSeq)
     org = "character", # human/mouse
