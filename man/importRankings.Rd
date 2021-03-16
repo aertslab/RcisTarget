@@ -53,7 +53,7 @@ The rankings are typically loaded from a .feather or .parquet file
 with \code{importRankings()}.
 }
 \examples{
-## Loading from a .feather or .parquet file (the .descr file is read automatically):
+## Loading from a .feather or .parquet file:
 #motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
 #motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.parquet")
 

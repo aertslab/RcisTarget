@@ -56,7 +56,7 @@ it will also load the description of the database.
 Class slots:
 
 \itemize{
-\item rankings: data.frame containing the rankings
+\item rankings: data.frame (tbl_df) containing the rankings
 \item colType: 'gene'or 'region'
 \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 \item org: human/mouse/fly

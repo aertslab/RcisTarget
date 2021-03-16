@@ -14,7 +14,7 @@
 #' Class slots:
 #' 
 #' \itemize{
-#' \item rankings: data.frame containing the rankings
+#' \item rankings: data.frame (tbl_df) containing the rankings
 #' \item colType: 'gene'or 'region'
 #' \item rowType: 'motif' or the type of feature is stored (e.g. ChipSeq)
 #' \item org: human/mouse/fly
@@ -52,6 +52,7 @@
 #' hg19_500bpUpstream_motifRanking_cispbOnly
 #' class(hg19_500bpUpstream_motifRanking_cispbOnly)
 #' @importFrom methods slotNames
+#' @import dplyr
 #' 
 #' @rdname rankingRcisTarget-class
 #' @export rankingRcisTarget
@@ -61,7 +62,7 @@ rankingRcisTarget <- setClass(
   Class="rankingRcisTarget",
   
   slots = c(
-    rankings = "data.frame",
+    rankings = "tbl_df", #"data.frame",
     colType = "character", # gene/region
     rowType = "character", # motif or whatever feature is stored (e.g. ChipSeq)
     org = "character", # human/mouse
