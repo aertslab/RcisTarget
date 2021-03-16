@@ -42,6 +42,7 @@
 ##### Load/import the ranking from a feather file:
 #' @rdname importRankings
 #' @import feather
+#' @import arrow
 #' @import utils
 #' @export
 importRankings <- function(dbFile, columns=NULL, dbDescr=NULL, indexCol="features", warnMissingColumns=TRUE)
@@ -60,9 +61,10 @@ importRankings <- function(dbFile, columns=NULL, dbDescr=NULL, indexCol="feature
   }
   extension <- strsplit(dbFile, "\\.") [[1]][length(strsplit(dbFile, "\\.") [[1]])]
   if (extension == 'feather'){
-    rnks <- feather::read_feather(dbFile, columns=columns) # tibble
+    rnks <- arrow::read_feather(dbFile, col_select=columns, mmap = TRUE) # now:data.frame; previous: tibble  
+    rnks <- as_tibble(rnks) #  TODO: check  if needed
     #rnks <- data.frame... #to avoid replacing dash in names: check.names=FALSE
-    nColsInDB <- feather::feather_metadata(dbFile)[["dim"]][2]-1
+    nColsInDB <- arrow::feather_metadata(dbFile)[["dim"]][2]-1  #TODO: replace?
   }else if (extension == "parquet"){
     rnks <- arrow::read_parquet(dbFile, columns = columns)
     pq <- arrow::parquet_file_reader(dbFile)
@@ -121,7 +123,8 @@ getRowNames <- function(dbFile)
   dbPath <- dbFile
   extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
   if (extension == 'feather'){
-    ret <- unlist(feather::read_feather(path.expand(dbPath), columns=1))
+    # ret <- unlist(feather::read_feather(path.expand(dbPath), columns=1))
+    ret <- unlist(arrow::read_feather(path.expand(dbPath), col_select=1, mmap = TRUE)) #TODO: check
   }
   else if (extension == "parquet"){
      stop("Not implemented") # TODO: add arrow

@@ -62,12 +62,12 @@ gplots::venn(list(background=background, geneLists=unlist(geneSets)))
 ### 2. Create the background-ranking
 
 Select the appropriate ranking-database: 
-```{r}
+```{r eval=FALSE}
 dbPath <- "~/databases/hg19-500bp-upstream-10species.mc9nr.feather"
 ```
 
 Load the database and re-rank the genes/motifs (e.g. only within the "background+foreground")
-```{r}
+```{r eval=FALSE}
 library(RcisTarget)
 rankingsDb <- importRankings(dbPath, columns=background)
 bgRanking <- reRank(rankingsDb) 
@@ -76,6 +76,6 @@ bgRanking <- reRank(rankingsDb)
 ### 3. Run RcisTarget with this new ranking
 
 Once the "background-ranking" is ready, just use it to run RcisTarget:
-```{r}
+```{r eval=FALSE}
 motifEnrichmentTable <- cisTarget(geneSets, bgRanking, aucMaxRank=0.03*getNumColsInDB(bgRanking))
 ```
