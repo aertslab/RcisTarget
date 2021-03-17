@@ -1,6 +1,0 @@
-VERSION 1.11.+
-----------------------
-- importRankings() updates for extended compatibility:
-    * indexCol by default is now 'NULL', which will take the first column. 
-      If it is set to any other column, that one will be used instead.
-    
