@@ -380,10 +380,11 @@ setMethod("getSignificantGenes", "GeneSetCollection",
     }
   }
   if(isS4(rankings)) rankings <- getRanking(rankings)
-
+  
+  indexCol <- colnames(rankings)[1]
 
   if(is.null(signifRankingNames)) {
-    signifRankingNames <- rankings$features
+    signifRankingNames <- rankings[,indexCol]
     warning("'signifRankingNames' has not been provided.",
             "The significant genes will be calculated for all rankings.")
   }
@@ -407,7 +408,7 @@ setMethod("getSignificantGenes", "GeneSetCollection",
   geneSet <- unique(geneSet)
   geneSet <- geneSet[which(geneSet %in% colnames(rankings)[-1])]
 
-  motifNames <- as.character(unlist(rankings[,"features"]))
+  motifNames <- as.character(unlist(rankings[,indexCol]))
   gSetRanks <- data.frame(row.names=motifNames, rankings[,geneSet])
   rm(rankings)
 
