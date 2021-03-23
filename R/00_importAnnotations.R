@@ -60,7 +60,7 @@
 #' data(motifAnnotations_hgnc)
 ##### Load/import the ranking from a feather file:
 #' @rdname importAnnotations
-#' @rawNamespace import(data.table, except = shift)
+#' @rawNamespace import(data.table, except = c(shift, last, first, between))
 #' @export
 importAnnotations <- function(annotFile, 
                               motifsInRanking=NULL, 

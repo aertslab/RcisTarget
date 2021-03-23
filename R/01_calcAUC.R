@@ -1,4 +1,4 @@
-#' @import GSEABase
+#' @rawNamespace import(GSEABase, except = c(union, intersect, setdiff))
 #' @importFrom methods new
 #'
 #' @title Calculate AUC
