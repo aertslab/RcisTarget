@@ -2,8 +2,8 @@ Package: RcisTarget
 Type: Package
 Title: RcisTarget: Identify transcription factor binding motifs enriched on a
     list of genes or genomic regions
-Version: 1.11.4
-Date: 2021-03-17
+Version: 1.11.5
+Date: 2021-03-23
 Author: Sara Aibar, Gert Hulselmans, Stein Aerts. Laboratory of Computational Biology. 
     VIB-KU Leuven Center for Brain & Disease Research. Leuven, Belgium
 Maintainer: Sara Aibar <sara.aibar@kuleuven.vib.be>
@@ -47,7 +47,8 @@ Suggests:
     rmarkdown,
     testthat,
     visNetwork,
-    arrow
+    arrow,
+    dplyr
 License: GPL-3
 BugReports: https://github.com/aertslab/RcisTarget/issues
 biocViews: GeneRegulation, MotifAnnotation, Transcriptomics, Transcription,
