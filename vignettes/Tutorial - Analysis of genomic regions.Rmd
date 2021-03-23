@@ -1,0 +1,91 @@
+---
+title: "Motif enrichment in genomic regions"
+abstract: >
+  Example using **RcisTarget** to analyze genomic regions (instead of genes).
+vignette: >
+  %\VignetteIndexEntry{RcisTarget - on regiions}
+  %\VignetteEngine{knitr::rmarkdown}
+output: 
+  html_document:
+    toc: yes
+    toc_float: yes
+    number_sections: false
+  pdf_document:
+    toc: yes
+  html_notebook:
+    toc: yes
+---
+```{r libraries, echo=FALSE, message=FALSE, warning=FALSE}
+suppressPackageStartupMessages({
+library(RcisTarget)
+})
+```
+
+This tutorial requires RcisTarget >= 1.11
+```{r}
+packageVersion("RcisTarget")
+```
+
+### 1. Prepare/download the input regions
+
+```{r}
+download.file("https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/examples/input_files/human/peaks/Encode_GATA1_peaks.bed", "Encode_GATA1_peaks.bed")
+regionsList <- rtracklayer::import.bed("Encode_GATA1_peaks.bed")
+regionSets <- list(GATA1_peaks=regionsList)
+```
+
+### 2. Load the RcisTarget databases
+
+This analysis requires the region-based databases (for the appropriate organism):
+- Region-based motif rankings
+- Motif-TF annotations (same for region- & gene-based analysis)
+- Region location (i.e. conversion from region ID to genomic location)
+
+The databases can be downloaded from: https://resources.aertslab.org/cistarget/ 
+
+```{r eval=FALSE}
+library(RcisTarget)
+# Motif rankings
+featherFilePath <- "~/databases/hg19-regions-9species.all_regions.mc9nr.feather"
+
+# Motif-TF annotations
+data("motifAnnotations_hgnc")
+motifAnnotation <- motifAnnotations_hgnc
+
+# Regions location *
+data(dbRegionsLoc_hg19)
+dbRegionsLoc <- dbRegionsLoc_hg19
+```
+
+* Note: The region location is only needed for human and mouse databases.
+For **drosophila**, the region ID contains the location, and can be obtained with:
+```{r eval=FALSE}
+dbRegionsLoc <- getDbRegionsLoc(featherFilePath)
+``` 
+
+### 3. Run the analysis
+
+The main difference with a gene-based analysis is that the regions need to be converted to the database IDs first, and the parameter `aucMaxRank` should be adjusted:
+
+* For Human: `aucMaxRank= 0.005`
+* For Mouse: `aucMaxRank= 0.005` 
+* For Fly: `aucMaxRank= 0.01`
+
+```{r eval=FALSE}
+# Convert regions
+regionSets_db <- lapply(regionSets, function(x) convertToTargetRegions(queryRegions=x, targetRegions=dbRegionsLoc))
+
+# Import rankings
+allRegionsToImport <- unique(unlist(regionSets_db)); length(allRegionsToImport)
+motifRankings <- importRankings(featherFilePath, columns=allRegionsToImport)
+
+# Run RcisTarget
+motifEnrichmentTable <- cisTarget(regionSets_db, motifRankings, aucMaxRank=0.005*getNumColsInDB(motifRankings))
+
+# Show output:
+resultsToShow <- addLogo(motifEnrichmentTable)
+DT::datatable(resultsToShow[,-c("enrichedGenes", "TF_lowConf"), with=FALSE], 
+          escape = FALSE, # To show the logo
+          filter="top", options=list(pageLength=5))
+```
+
