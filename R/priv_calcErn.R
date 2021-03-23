@@ -20,6 +20,7 @@
     x <- min(which.max(rccs[,sr]-rccM2sd))
     c(x=x, y=unname(rccs[x,sr]))
   })
+  colnames(maxEnr) <- signifRankingNames
 
   # Plot
   if(plotCurve)

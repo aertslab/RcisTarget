@@ -137,10 +137,12 @@ getRowNames <- function(dbFile, indexCol=1)
 #' @export
 getColumnNames <- function(dbFile) # TODO: Check if they are really genes/regions
 {
-  dbPath <- dbFile
+  dbPath <- path.expand(dbFile)
   extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
   if (extension == 'feather'){
-    ret <- names(arrow::FeatherReader$create(arrow::ReadableFile$create(dbPath))) #[-1]
+    ret <- arrow::ReadableFile$create(dbPath)
+    ret <- arrow::FeatherReader$create(ret)
+    ret <- names(ret) #[-1]
   }
   else if (extension == "parquet"){
     # ret <- names(arrow::ParquetFileReader$create(arrow::ReadableFile$create(dbPath)))[-1]  #maybe?
