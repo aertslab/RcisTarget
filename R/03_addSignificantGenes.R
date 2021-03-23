@@ -172,6 +172,15 @@ setMethod("addSignificantGenes", "GeneSetCollection",
                          maxRank=5000, plotCurve=FALSE, genesFormat="geneList",
                          method="aprox", nMean=50, nCores=1)
 {
+  if(!"geneSet" %in% colnames(resultsTable)) stop("There is no column 'geneSet' in the input results table. Please, confirm its format.")
+  method <- tolower(method[1])
+  if(!method %in% c("icistarget", "icistargetaprox", "aprox"))
+    stop("'method' should be either 'iCisTarget' or 'iCisTargetAprox'.")
+
+  resultsTable$geneSet <- as.character(resultsTable$geneSet)
+  geneSetNames <- as.character(unique(resultsTable$geneSet))
+  if(any(!geneSetNames %in% names(geneSets))) stop("Missing gene sets: ", paste(geneSetNames[which(!geneSetNames %in% names(geneSets))], collapse=", "))
+
   if(isS4(rankings)) {
     if(getMaxRank(rankings) < Inf)
     {
@@ -186,15 +195,7 @@ setMethod("addSignificantGenes", "GeneSetCollection",
     }
     rankings <- getRanking(rankings)
   }
- 
-  method <- tolower(method[1])
-  if(!method %in% c("icistarget", "icistargetaprox", "aprox"))
-    stop("'method' should be either 'iCisTarget' or 'iCisTargetAprox'.")
-
-  resultsTable$geneSet <- as.character(resultsTable$geneSet)
-  geneSetNames <- as.character(unique(resultsTable$geneSet))
-  if(any(!geneSetNames %in% names(geneSets))) stop("Missing gene sets: ", paste(geneSetNames[which(!geneSetNames %in% names(geneSets))], collapse=", "))
-
+  
   rnkType <- c("ranking", "motif")
   rnkType <- rnkType[which(rnkType %in% colnames(resultsTable))]
 
@@ -389,7 +390,7 @@ setMethod("getSignificantGenes", "GeneSetCollection",
             "The significant genes will be calculated for all rankings.")
   }
 
-  signifRankingNames <- unname(signifRankingNames)
+  signifRankingNames <- as.character(unname(signifRankingNames))
   if(!all(genesFormat %in% c("geneList", "incidMatrix", "none")))
     stop('"genesFormat" should be ither "geneList" and/or "incidMatrix".')
 
