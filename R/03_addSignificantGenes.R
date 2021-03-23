@@ -217,11 +217,13 @@ setMethod("addSignificantGenes", "GeneSetCollection",
       nCores=nCores, digits=3, nMean=nMean)
     
     enrRnkT_ByGs <- cbind(enrRnkT_ByGs, tibble::as_tibble(signifGenes$enrStats))
-    if("geneList" %in% genesFormat)
-      enrRnkT_ByGs <- cbind(enrRnkT_ByGs,
-                            enrichedGenes=tibble::as_tibble(vapply(signifGenes$enrichedGenes,
-                                                                   function(x) paste(unlist(x), collapse=";"),
-                                                                   FUN.VALUE="")))
+    if("geneList" %in% genesFormat){
+      enrichedGenes <- tibble::as_tibble(vapply(signifGenes$enrichedGenes,
+                               function(x) paste(unlist(x), collapse=";"),
+                               FUN.VALUE=""))
+      colnames(enrichedGenes) <- "enrichedGenes"
+      enrRnkT_ByGs <- cbind(enrRnkT_ByGs, enrichedGenes)
+    }
     if("incidMatrix" %in% genesFormat)
       enrRnkT_ByGs <- cbind(enrRnkT_ByGs, tibble::as_tibble(signifGenes$incidMatrix))
     enrRnkT_ByGs
