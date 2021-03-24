@@ -18,7 +18,7 @@ convertToTargetRegions(
 
 \item{targetRegions}{List of regions in the target set (normally the database).}
 
-\item{minOverlap}{Minimum overlap to consider (in either direction, default: 40%).}
+\item{minOverlap}{Minimum overlap to consider (in either direction, default: 0.40).}
 
 \item{overlapType}{Parameter for \code{findOverlaps} (default: "any")}
 
