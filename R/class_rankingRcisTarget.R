@@ -52,8 +52,7 @@
 #' hg19_500bpUpstream_motifRanking_cispbOnly
 #' class(hg19_500bpUpstream_motifRanking_cispbOnly)
 #' @importFrom methods slotNames
-#' @import tibble
-#' 
+#' @importClassesFrom tibble tbl_df
 #' @rdname rankingRcisTarget-class
 #' @export rankingRcisTarget
 #' @exportClass rankingRcisTarget

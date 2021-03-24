@@ -75,7 +75,7 @@ importRankings <- function(dbFile, indexCol=NULL, columns=NULL, warnMissingColum
     rnks <- arrow::read_feather(dbFile, col_select=!!columns, mmap = TRUE); dim(rnks)
     nColsInDB <- length(allColumns)-1  #names(arrow::FeatherReader$create(arrow::ReadableFile$create(dbFile)))
   }else if (extension == "parquet"){
-    rnks <- read_parquet(dbFile, columns = !!columns)
+    rnks <- arrow::read_parquet(dbFile, columns = !!columns)
     nColsInDB <- length(allColumns)-1 # pq <- arrow::ParquetFileReader(dbFile); pq$GetSchema()$num_fields()-1
   }else{
     stop("Database format must be feather or parquet.")

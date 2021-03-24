@@ -16,8 +16,8 @@
 #' 
 #' Source: \emph{mm9__refseq_r70__regulatory_regions.regionid-location.bed}}
 #' 
-#'\item{For \bold{drosophila}, use the function \code{\link{getDbRegionsLoc}}.
-#'
+#'\item{For \bold{drosophila}, use the function \code{\link{getDbRegionsLoc}}}
+#' }
 #' @docType data
 #' @seealso https://resources.aertslab.org/cistarget
 #' @keywords datasets

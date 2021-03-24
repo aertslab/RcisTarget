@@ -7,6 +7,7 @@
 #' @importFrom methods new
 #' @importFrom graphics lines plot points polygon
 #' @importFrom utils installed.packages
+#' @importFrom tibble as_tibble
 #'
 #' @title Add significant genes
 #' @description Identify which genes (of the gene-set) are highly ranked

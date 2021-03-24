@@ -2,7 +2,7 @@
 #' @description Convert a set of input regions to the overlapping regions in the target set.
 #' @param queryRegions List of regions to convert (normally the query region set).
 #' @param targetRegions List of regions in the target set (normally the database).
-#' @param minOverlap Minimum overlap to consider (in either direction, default: 40%).
+#' @param minOverlap Minimum overlap to consider (in either direction, default: 0.40).
 #' @param overlapType Parameter for \code{findOverlaps} (default: "any")
 #' @param returnCorrespondence Returns a table containing the matches, 
 #' or only a list of overlapping regions (default: FALSE).

@@ -7,6 +7,8 @@
 getDbRegionsLoc(featherFilePath, spltChr = "__")
 }
 \arguments{
+\item{featherFilePath}{Path to the rankings database}
+
 \item{spltChr}{Character(s) used to split the prefix from the region location.
 The default is used for current Drosophila versions.}
 }

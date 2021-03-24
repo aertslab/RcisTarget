@@ -5,7 +5,7 @@
 #' 
 #' For \bold{human/mouse} the region locations are stored in a separate object 
 #' (i.e. \code{}). This function is not needed.
-#' @param featherFilePath
+#' @param featherFilePath Path to the rankings database
 #' @param spltChr Character(s) used to split the prefix from the region location.
 #' The default is used for current Drosophila versions.
 #' @return The region locations in a GRanges object, with the original region ID as name.
