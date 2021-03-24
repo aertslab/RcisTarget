@@ -26,6 +26,11 @@ Imports:
     data.table,
     feather,
     graphics,
+    GenomeInfoDb,
+    GenomicRanges,
+    arrow,
+    dplyr,
+    tibble,
     GSEABase,
     methods,
     R.utils,
@@ -41,14 +46,14 @@ Suggests:
     DT,
     tibble,
     foreach,
+    gplots,
+    rtracklayer,
     igraph,
     knitr,
     RcisTarget.hg19.motifDBs.cisbpOnly.500bp, 
     rmarkdown,
     testthat,
-    visNetwork,
-    arrow,
-    dplyr
+    visNetwork
 License: GPL-3
 BugReports: https://github.com/aertslab/RcisTarget/issues
 biocViews: GeneRegulation, MotifAnnotation, Transcriptomics, Transcription,
