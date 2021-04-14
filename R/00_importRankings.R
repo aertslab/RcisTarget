@@ -150,3 +150,4 @@ getColumnNames <- function(dbFile) # TODO: Check if they are really genes/region
   }
   return(ret)
 }
+

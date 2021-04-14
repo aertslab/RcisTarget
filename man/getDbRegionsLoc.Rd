@@ -4,13 +4,13 @@
 \alias{getDbRegionsLoc}
 \title{Gets the region location for the given database IDs.}
 \usage{
-getDbRegionsLoc(featherFilePath, spltChr = "__")
+getDbRegionsLoc(featherFilePath, spltChr = "__", rnkIndexCol = "features")
 }
 \arguments{
 \item{featherFilePath}{Path to the rankings database}
 
 \item{spltChr}{Character(s) used to split the prefix from the region location.
-The default is used for current Drosophila versions.}
+The default is used for current Drosophila versions. Use NULL to skip.}
 }
 \value{
 The region locations in a GRanges object, with the original region ID as name.

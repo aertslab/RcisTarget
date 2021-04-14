@@ -36,7 +36,8 @@ Convert a set of input regions to the overlapping regions in the target set.
 \examples{
 \dontrun{
  ## To apply on a list of regionSets:
- regionSets_db <- lapply(regionSets, function(x) convertToTargetRegions(queryRegions=x, targetRegions=dbRegionsLoc))
+ regionSets_db <- lapply(regionSets, function(x) 
+    convertToTargetRegions(queryRegions=x, targetRegions=dbRegionsLoc))
  }
 }
 \seealso{
