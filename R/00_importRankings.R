@@ -46,17 +46,13 @@
 #' @import dplyr
 #' @importFrom utils read.table
 #' @export
-importRankings <- function(dbFile, indexCol=NULL, columns=NULL, warnMissingColumns=TRUE, dbDescr=NULL)
+importRankings <- function(dbFile, indexCol=NULL, colType="gene", columns=NULL, warnMissingColumns=TRUE, dbDescr=NULL)
 {
   dbFile <- path.expand(dbFile)
   if(!file.exists(dbFile)) stop("File does not exist: ", dbFile)
   
   allColumns <- getColumnNames(dbFile)
-  if(is.null(indexCol)) {
-    indexCol <- allColumns[1]
-  }else{
-    if(!indexCol %in% allColumns) stop(paste0("The index column '", indexCol,"' is not available in the file."))
-  }
+  indexCol <- .getIndexCol(allColumns, indexCol=indexCol, verbose=warnMissingColumns)
   
   ## If columns are subset: add the index column
   if(!is.null(columns)){
@@ -93,7 +89,7 @@ importRankings <- function(dbFile, indexCol=NULL, columns=NULL, warnMissingColum
     dbDescr <- as.matrix(dbDescr)
   } else {
     # If not provided: keep empty
-    dbDescr <- as.matrix(list(colType="column",
+    dbDescr <- as.matrix(list(colType=colType,
                               rowType=indexCol,
                               org="",
                               genome="",
@@ -120,8 +116,11 @@ importRankings <- function(dbFile, indexCol=NULL, columns=NULL, warnMissingColum
 
 #' @rdname importRankings
 #' @export
-getRowNames <- function(dbFile, indexCol=1)
+getRowNames <- function(dbFile, indexCol=NULL)
 {
+  allColumns <- getColumnNames(path.expand(dbFile))
+  indexCol <- .getIndexCol(allColumns, indexCol=indexCol, verbose=FALSE)
+  
   dbPath <- dbFile
   extension <- strsplit(dbPath, "\\.") [[1]][length(strsplit(dbPath, "\\.") [[1]])]
   if (extension == 'feather'){
@@ -151,3 +150,14 @@ getColumnNames <- function(dbFile) # TODO: Check if they are really genes/region
   return(ret)
 }
 
+.getIndexCol <-  function(allColumns, indexCol=NULL, verbose=TRUE)
+{
+  if(is.null(indexCol)) {
+    indexCol <- allColumns[1]
+    if(verbose) message("Using the column '", indexCol, "' as feature index for the ranking database.")
+  }else{
+    if(!indexCol %in% allColumns) stop(paste0("The index column '", indexCol,"' is not available in the file."))
+  }
+  
+  return(indexCol)
+}

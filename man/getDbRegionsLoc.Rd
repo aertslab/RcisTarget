@@ -4,7 +4,7 @@
 \alias{getDbRegionsLoc}
 \title{Gets the region location for the given database IDs.}
 \usage{
-getDbRegionsLoc(featherFilePath, spltChr = "__", rnkIndexCol = "features")
+getDbRegionsLoc(featherFilePath, spltChr = "__", indexCol = NULL)
 }
 \arguments{
 \item{featherFilePath}{Path to the rankings database}

@@ -4,15 +4,13 @@
 \alias{reRank}
 \title{Re-rank RcisTarget ranking}
 \usage{
-reRank(rankingsDb, columns = NULL, indexCol = "features")
+reRank(rankingsDb, columns = NULL)
 }
 \arguments{
 \item{rankingsDb}{Results from RcisTarget (data.table)}
 
 \item{columns}{Whether to add the HTML tag <img> around the URL or not
 (boolean).}
-
-\item{indexCol}{Name of the column (in the ranking) which contains the motif/feature ID.}
 }
 \value{
 Returns a new ranking database with the new ranking values.

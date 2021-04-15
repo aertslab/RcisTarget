@@ -57,7 +57,6 @@
 setGeneric("calcAUC", signature="geneSets",
   function(geneSets, rankings, nCores=1,
       aucMaxRank=0.03*getNumColsInDB(rankings),
-      # rnkIndexCol="features",
       verbose=TRUE)
   {
     standardGeneric("calcAUC")
@@ -68,7 +67,6 @@ setGeneric("calcAUC", signature="geneSets",
 setMethod("calcAUC", "list",
   function(geneSets, rankings, nCores=1,
            aucMaxRank=0.03*getNumColsInDB(rankings), 
-           # rnkIndexCol="features", 
            verbose=TRUE)
   {
     .RcisTarget_calcAUC(geneSets=geneSets,
@@ -84,7 +82,6 @@ setMethod("calcAUC", "list",
 setMethod("calcAUC", "character",
   function(geneSets, rankings, nCores=1,
            aucMaxRank=0.03*getNumColsInDB(rankings), 
-           # rnkIndexCol="features", 
            verbose=TRUE)
   {
     geneSets <- list(geneSet=geneSets)
@@ -102,7 +99,6 @@ setMethod("calcAUC", "character",
 setMethod("calcAUC", "GeneSet",
   function(geneSets, rankings, nCores=1,
            aucMaxRank=0.03*getNumColsInDB(rankings), 
-           # rnkIndexCol="features", 
            verbose=TRUE)
   {
     geneSets <- setNames(list(GSEABase::geneIds(geneSets)),
@@ -121,7 +117,6 @@ setMethod("calcAUC", "GeneSet",
 setMethod("calcAUC", "GeneSetCollection",
   function(geneSets, rankings, nCores=1,
            aucMaxRank=0.03*getNumColsInDB(rankings), 
-           # rnkIndexCol="features", 
            verbose=TRUE)
   {
     geneSets <- GSEABase::geneIds(geneSets)
@@ -136,7 +131,6 @@ setMethod("calcAUC", "GeneSetCollection",
 
 .RcisTarget_calcAUC <- function(geneSets, rankings, nCores=1,
                                 aucMaxRank=0.03*getNumColsInDB(rankings), 
-                                # rnkIndexCol="features",
                                 verbose=TRUE)
 {
   # Check the gene sets

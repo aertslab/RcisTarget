@@ -9,12 +9,13 @@
 importRankings(
   dbFile,
   indexCol = NULL,
+  colType = "gene",
   columns = NULL,
   warnMissingColumns = TRUE,
   dbDescr = NULL
 )
 
-getRowNames(dbFile, indexCol = 1)
+getRowNames(dbFile, indexCol = NULL)
 
 getColumnNames(dbFile)
 }

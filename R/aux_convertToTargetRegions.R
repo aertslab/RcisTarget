@@ -20,6 +20,7 @@
 #'     convertToTargetRegions(queryRegions=x, targetRegions=dbRegionsLoc))
 #'  }
 #' @rdname convertToTargetRegions
+#' @importFrom GenomeInfoDb keepSeqlevels
 #' @export
 convertToTargetRegions <- function(queryRegions, targetRegions, minOverlap=0.4, overlapType="any", returnCorrespondence=FALSE, verbose=TRUE)
 {

@@ -6,16 +6,15 @@
 #' @param rankingsDb Results from RcisTarget (data.table)
 #' @param columns Whether to add the HTML tag <img> around the URL or not
 #' (boolean).
-#' @param indexCol Name of the column (in the ranking) which contains the motif/feature ID.
 #' @return Returns a new ranking database with the new ranking values.
 #' @seealso See the "background" vignette for more examples:
 #' \code{vignette("RcisTarget-withBackground")}
 #' @example inst/examples/example_reRank.R
 #' @export
-reRank <- function(rankingsDb, columns=NULL, indexCol="features")
+reRank <- function(rankingsDb, columns=NULL)
 {
   rankingMat <- getRanking(rankingsDb)
-  if(!is.null(columns)) rankingMat <- rankingMat[,unique(c(indexCol, columns))]
+  if(!is.null(columns)) rankingMat <- rankingMat[,unique(c(colnames(rankingMat)[1], columns))]
   
   # Re-rank the genes...
   featureNames <- unname(unlist(rankingMat[,1]))

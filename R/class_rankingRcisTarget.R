@@ -94,7 +94,7 @@ setMethod("show",
     if(("nColsInDB" %in% slotNames(object)) && !is.na(object@nColsInDB)) nGenes <- paste0(nGenes," (",object@nColsInDB," available in the full DB)")
     message <- paste0(message,
      "  Number of ",object@colType, "s: ", nGenes, "\n",
-     "  Number of ",toupper(object@rowType),"S: ",nrow(getRanking(object)),"\n"
+     "  Number of ",toupper(object@rowType),": ",nrow(getRanking(object)),"\n"
      )
     
     if(getMaxRank(object) < Inf)
