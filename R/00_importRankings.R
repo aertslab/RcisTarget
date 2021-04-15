@@ -1,6 +1,7 @@
 #' @title Import the motif databases for RcisTarget.
 #' @param dbFile .feather or .parquet file containing the rankings
 #' @param indexCol Column name containing the feature IDs (e.g. motif names or chip-seq tracks). If NULL, it will take the first column.
+#' @param colType Colum type. i.e.:'gene'or 'region'
 #' @param columns Columns to load from the .feather or .parquet file
 #' (e.g. to read only specific genes or regions)
 #' @param warnMissingColumns If 'columns' is provided, warn if any ID is not available in the rankings? 

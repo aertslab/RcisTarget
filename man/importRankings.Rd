@@ -24,6 +24,8 @@ getColumnNames(dbFile)
 
 \item{indexCol}{Column name containing the feature IDs (e.g. motif names or chip-seq tracks). If NULL, it will take the first column.}
 
+\item{colType}{Colum type. i.e.:'gene'or 'region'}
+
 \item{columns}{Columns to load from the .feather or .parquet file
 (e.g. to read only specific genes or regions)}
 
