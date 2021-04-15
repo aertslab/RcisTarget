@@ -28,7 +28,7 @@ getDbRegionsLoc <- function(featherFilePath, spltChr="__", indexCol=NULL)
   featherFilePath <- path.expand(featherFilePath)
   
   dbCols <- getColumnNames(featherFilePath)
-  indexCol <- .getIndexCol(dbCols, indexCol=indexCol, verbose=warnMissingColumns)
+  indexCol <- .getIndexCol(dbCols, indexCol=indexCol, verbose=FALSE)
   
   dbCols <- setdiff(dbCols, indexCol); length(dbCols)
   dbCols <- setNames(dbCols, dbCols)
