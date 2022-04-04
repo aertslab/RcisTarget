@@ -3,7 +3,7 @@ title: "Motif enrichment in genomic regions"
 abstract: >
   Example using **RcisTarget** to analyze genomic regions (instead of genes).
 vignette: >
-  %\VignetteIndexEntry{RcisTarget - on regiions}
+  %\VignetteIndexEntry{RcisTarget - on regions}
   %\VignetteEngine{knitr::rmarkdown}
 output: 
   html_document:
