@@ -21,7 +21,8 @@
 #'  }
 #' @rdname convertToTargetRegions
 #' @importFrom GenomeInfoDb keepSeqlevels
-#' @importFrom GenomicRanges findOverlaps queryHits subjectHits width
+#' @importFrom GenomicRanges findOverlaps width
+#' @importFrom S4Vectors queryHits subjectHits
 #' @export
 convertToTargetRegions <- function(queryRegions, targetRegions, minOverlap=0.4, overlapType="any", returnCorrespondence=FALSE, verbose=TRUE)
 {
