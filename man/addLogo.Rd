@@ -23,7 +23,7 @@ show the logo [e.g. with datatable()].
 }
 \description{
 Adds a column containing the logo URL to RcisTarget results
-table. Note that Transfac-Pro logos cannot be shown.
+table.
 }
 \examples{
 # Run the enrichment (or load previous results)
@@ -42,6 +42,7 @@ datatable(newMotifErnTable[,-c("enrichedGenes"), with=FALSE],
 
 }
 \seealso{
+\code{vignette("showLogo")} to directly show the table as HTML. 
 See the package vignette for more examples:
 \code{vignette("RcisTarget")}
 }
