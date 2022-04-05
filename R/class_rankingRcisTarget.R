@@ -207,7 +207,6 @@ setGeneric(name="getNumColsInDB",
 setMethod("getNumColsInDB",
           signature="rankingRcisTarget",
           definition = function(x) {
-            # Previous versions didn't have @maxRank -> Contain all ranks
             ret <- tryCatch(
               x@nColsInDB,
               error=function(e) {NA}

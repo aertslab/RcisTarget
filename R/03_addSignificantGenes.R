@@ -183,12 +183,13 @@ setMethod("addSignificantGenes", "GeneSetCollection",
   if(any(!geneSetNames %in% names(geneSets))) stop("Missing gene sets: ", paste(geneSetNames[which(!geneSetNames %in% names(geneSets))], collapse=", "))
   
   if(isS4(rankings)) {
-    if(getMaxRank(rankings) < Inf)
+    maxRankInDb <- max(c(getMaxRank(rankings), getNumColsInDB(rankings)))
+    if(maxRankInDb < Inf)
     {
-      if(maxRank > getMaxRank(rankings))
+      if(maxRank > maxRankInDb)
         stop("maxRank (", maxRank, ") should not be bigger ",
              "than the maximum ranking available in the database (",
-             getMaxRank(rankings),")")
+             maxRankInDb,")")
     }
     # if((ncol(rankings) != rankings@nColsInDB+1))
     # {
@@ -366,20 +367,21 @@ setMethod("getSignificantGenes", "GeneSetCollection",
   
   maxRank <- round(maxRank)
   if(isS4(rankings)) {
-    if(getMaxRank(rankings) < Inf)
+    maxRankInDb <- max(c(getMaxRank(rankings), getNumColsInDB(rankings)))
+    if(maxRankInDb < Inf)
     {
       if(method %in% c("icistarget")){
-        if(maxRank > getMaxRank(rankings))
+        if(maxRank > maxRankInDb)
           stop("maxRank (", maxRank, ") should not be bigger ",
                "than the maximum ranking available in the database (",
-               getMaxRank(rankings),")")
+               maxRankInDb,")")
       }
       
       if(method %in% c("icistargetaprox", "aprox")){
-        if(maxRank+nMean > getMaxRank(rankings))
+        if(maxRank+nMean > maxRankInDb)
           stop("maxRank + nMean (", maxRank+nMean, ") should not be bigger ",
                "than the maximum ranking available in the database (",
-               getMaxRank(rankings),")")
+               maxRankInDb,")")
       }
     }
   }

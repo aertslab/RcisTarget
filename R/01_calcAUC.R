@@ -145,12 +145,13 @@ setMethod("calcAUC", "GeneSetCollection",
   if(! "rankingRcisTarget" %in% class(rankings))
     stop("The rankings should be of class rankingRcisTarget.")
   
-  if(getMaxRank(rankings) < Inf)
+  maxRankInDb <- max(c(getMaxRank(rankings), getNumColsInDB(rankings)))
+  if(maxRankInDb < Inf)
   {
-    if(aucMaxRank > getMaxRank(rankings))
+    if(aucMaxRank > maxRankInDb)
       stop("aucMaxRank (", aucMaxRank,
         ") should not be bigger than the maximum ranking available ",
-        "in the database (", getMaxRank(rankings),")")
+        "in the database (", maxRankInDb,")")
   }
   if(aucMaxRank <=0) stop("aucMaxRank should be a positive value.")
 
