@@ -15,6 +15,7 @@ output:
   html_notebook:
     toc: yes
 ---
+
 ```{r libraries, echo=FALSE, message=FALSE, warning=FALSE}
 suppressPackageStartupMessages({
 library(RcisTarget)
@@ -25,7 +26,8 @@ library(data.table)
 })
 ```
 
-This tutorial requires RcisTarget >= 1.7.1. 
+This tutorial requires RcisTarget \>= 1.7.1.
+
 ```{r}
 packageVersion("RcisTarget")
 ```
@@ -57,25 +59,35 @@ background <- unique(c(geneSets$hypoxia, background))
 gplots::venn(list(background=background, geneLists=unlist(geneSets)))
 ```
 
-
 ### 2. Create the background-ranking
 
-Select the appropriate ranking-database: 
+Select the appropriate ranking-database:
+
 ```{r eval=FALSE}
 dbPath <- "~/databases/hg19-500bp-upstream-10species.mc9nr.feather"
 ```
 
 Load the database and re-rank the genes/motifs (e.g. only within the "background+foreground")
+
 ```{r eval=FALSE}
 library(RcisTarget)
 rankingsDb <- importRankings(dbPath, columns=background)
 bgRanking <- reRank(rankingsDb) 
 ```
-  
+
 ### 3. Run RcisTarget with this new ranking
 
 Once the "background-ranking" is ready, just use it to run RcisTarget as usual:
 
+> Note: Since the 'background database' is typically much smaller than the full database (it has fewer genes or regions), we recommend to use `geneErnMethod = "icistarget"` instead of 'aprox'.
+
 ```{r eval=FALSE}
-motifEnrichmentTable <- cisTarget(geneSets, bgRanking, aucMaxRank=0.03*getNumColsInDB(bgRanking))
+motifEnrichmentTable <- cisTarget(geneSets, bgRanking, 
+                                  aucMaxRank=0.03*getNumColsInDB(bgRanking),
+                                  geneErnMaxRank=getNumColsInDB(bgRanking),
+                                  geneErnMethod = "icistarget")
+```
+
+```{r eval=FALSE}
+showLogo(motifEnrichmentTable)
 ```

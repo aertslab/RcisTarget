@@ -60,7 +60,7 @@
 #' Common values range from 1 to 10\%.
 #' @param geneErnMethod "iCisTarget" or "aprox". Method to identify the highly
 #' ranked genes (see \link{addSignificantGenes} for details).
-#' @param geneErnMmaxRank Maximum rank to take into account for the gene
+#' @param geneErnMaxRank Maximum rank to take into account for the gene
 #' enrichment recovery curve (see \link{addSignificantGenes} for details).
 #' @param nCores Number of cores to use for computation.
 #' Note: In general, using a higher number of cores (e.g. processes) decreases
@@ -82,7 +82,7 @@ cisTarget <- function(geneSets, motifRankings,
                                   "inferredBy_MotifSimilarity_n_Orthology"), 
           highlightTFs=NULL, nesThreshold=3.0,
           aucMaxRank=0.05*ncol(motifRankings),
-          geneErnMethod="aprox", geneErnMmaxRank=5000,
+          geneErnMethod="aprox", geneErnMaxRank=5000,
           nCores=1, verbose=TRUE)
 {
   # Calculate AUC

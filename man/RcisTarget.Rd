@@ -15,7 +15,7 @@ cisTarget(
   nesThreshold = 3,
   aucMaxRank = 0.05 * ncol(motifRankings),
   geneErnMethod = "aprox",
-  geneErnMmaxRank = 5000,
+  geneErnMaxRank = 5000,
   nCores = 1,
   verbose = TRUE
 )
@@ -79,7 +79,7 @@ Common values range from 1 to 10\%.}
 \item{geneErnMethod}{"iCisTarget" or "aprox". Method to identify the highly
 ranked genes (see \link{addSignificantGenes} for details).}
 
-\item{geneErnMmaxRank}{Maximum rank to take into account for the gene
+\item{geneErnMaxRank}{Maximum rank to take into account for the gene
 enrichment recovery curve (see \link{addSignificantGenes} for details).}
 
 \item{nCores}{Number of cores to use for computation.

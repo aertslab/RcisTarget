@@ -45,6 +45,7 @@ addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9", motifCol="motif")
 #' @param colsToShow Columns to show in the HTML 
 #' (by default, the list of the enriched genes is hidden)
 #' @param options List of options to pass to \code{DT::databable}
+#' @param ... Other arguments to pass to \code{DT::databable}
 #' @return Returns the DT::datatable() object which can be shown as HTML.
 #' @seealso See the package vignette for more examples:
 #' \code{vignette("RcisTarget")}
@@ -86,5 +87,5 @@ showLogo <- function(motifEnrDT,
   
   # Show...
   DT::datatable(met, 
-                escape=FALSE, filter="top", options=options)#, ...)
+                escape=FALSE, filter="top", options=options, ...)
 }

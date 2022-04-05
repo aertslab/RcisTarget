@@ -21,8 +21,8 @@
 #'  }
 #' @rdname convertToTargetRegions
 #' @importFrom GenomeInfoDb keepSeqlevels
-#' @importFrom GenomicRanges findOverlaps width
-#' @importFrom S4Vectors queryHits subjectHits
+#' @importFrom GenomicRanges findOverlaps width pintersect
+#' @importFrom S4Vectors queryHits subjectHits elementMetadata
 #' @export
 convertToTargetRegions <- function(queryRegions, targetRegions, minOverlap=0.4, overlapType="any", returnCorrespondence=FALSE, verbose=TRUE)
 {
@@ -33,8 +33,8 @@ convertToTargetRegions <- function(queryRegions, targetRegions, minOverlap=0.4, 
   ###
   
   seqlvls <- intersect(seqlevels(queryRegions), seqlevels(targetRegions))
-  queryRegions <- keepSeqlevels(queryRegions, seqlvls, pruning.mode = "coarse")
-  overlapHits <- findOverlaps(queryRegions, targetRegions,
+  queryRegions <- GenomeInfoDb::keepSeqlevels(queryRegions, seqlvls, pruning.mode = "coarse")
+  overlapHits <- GenomicRanges::findOverlaps(queryRegions, targetRegions,
                               minoverlap=1,  
                               type=overlapType, select="all", ignore.strand=TRUE)
   
@@ -42,9 +42,9 @@ convertToTargetRegions <- function(queryRegions, targetRegions, minOverlap=0.4, 
   {
     # In i-cisTarget, the default is 40% minimum overlap. Both ways: It takes the maximum percentage (of the peak or the ict region)
     # To reproduce those results:
-    overlaps <- pintersect(queryRegions[queryHits(overlapHits)], targetRegions[subjectHits(overlapHits)])
-    percentOverlapDb <- width(overlaps) / width(targetRegions[subjectHits(overlapHits)])
-    percentOverlapQuery <- width(overlaps) / width(queryRegions[queryHits(overlapHits)])
+    overlaps <- GenomicRanges::pintersect(queryRegions[queryHits(overlapHits)], targetRegions[subjectHits(overlapHits)])
+    percentOverlapDb <- GenomicRanges::width(overlaps) / GenomicRanges::width(targetRegions[subjectHits(overlapHits)])
+    percentOverlapQuery <- GenomicRanges::width(overlaps) / GenomicRanges::width(queryRegions[queryHits(overlapHits)])
     maxOverlap <- apply(cbind(percentOverlapDb, percentOverlapQuery), 1, max)
     overlapHits <- overlapHits[maxOverlap > 0.4]
   }

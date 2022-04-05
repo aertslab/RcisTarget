@@ -11,6 +11,8 @@ getDbRegionsLoc(featherFilePath, spltChr = "__", indexCol = NULL)
 
 \item{spltChr}{Character(s) used to split the prefix from the region location.
 The default is used for current Drosophila versions. Use NULL to skip.}
+
+\item{indexCol}{Column name including the motif/feature IDs. By default it will use the first column.}
 }
 \value{
 The region locations in a GRanges object, with the original region ID as name.

@@ -24,7 +24,6 @@ Imports:
     AUCell (>= 1.1.6),
     BiocGenerics,
     data.table,
-    feather,
     graphics,
     GenomeInfoDb,
     GenomicRanges,
@@ -40,6 +39,7 @@ Imports:
     utils
 Enhances: doMC, doRNG, zoo
 Suggests:
+    arrow,
     Biobase,
     BiocStyle,
     BiocParallel,

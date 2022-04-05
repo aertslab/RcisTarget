@@ -29,6 +29,8 @@ showLogo(
 (by default, the list of the enriched genes is hidden)}
 
 \item{options}{List of options to pass to \code{DT::databable}}
+
+\item{...}{Other arguments to pass to \code{DT::databable}}
 }
 \value{
 Returns the DT::datatable() object which can be shown as HTML.

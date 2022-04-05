@@ -183,18 +183,7 @@ setMethod("addSignificantGenes", "GeneSetCollection",
   if(any(!geneSetNames %in% names(geneSets))) stop("Missing gene sets: ", paste(geneSetNames[which(!geneSetNames %in% names(geneSets))], collapse=", "))
   
   if(isS4(rankings)) {
-    maxRankInDb <- max(c(getMaxRank(rankings), getNumColsInDB(rankings)))
-    if(maxRankInDb < Inf)
-    {
-      if(maxRank > maxRankInDb)
-        stop("maxRank (", maxRank, ") should not be bigger ",
-             "than the maximum ranking available in the database (",
-             maxRankInDb,")")
-    }
-    # if((ncol(rankings) != rankings@nColsInDB+1))
-    # {
-    #   warning("The rakings provided only include a subset of genes/regions included in the whole database.")
-    # }
+    .maxRank.check(maxRank, rankings, method, nMean)
     rankings <- getRanking(rankings)
   }
   
@@ -367,25 +356,9 @@ setMethod("getSignificantGenes", "GeneSetCollection",
   
   maxRank <- round(maxRank)
   if(isS4(rankings)) {
-    maxRankInDb <- max(c(getMaxRank(rankings), getNumColsInDB(rankings)))
-    if(maxRankInDb < Inf)
-    {
-      if(method %in% c("icistarget")){
-        if(maxRank > maxRankInDb)
-          stop("maxRank (", maxRank, ") should not be bigger ",
-               "than the maximum ranking available in the database (",
-               maxRankInDb,")")
-      }
-      
-      if(method %in% c("icistargetaprox", "aprox")){
-        if(maxRank+nMean > maxRankInDb)
-          stop("maxRank + nMean (", maxRank+nMean, ") should not be bigger ",
-               "than the maximum ranking available in the database (",
-               maxRankInDb,")")
-      }
-    }
+    .maxRank.check(maxRank, rankings, method, nMean)
+    rankings <- getRanking(rankings)
   }
-  if(isS4(rankings)) rankings <- getRanking(rankings)
   
   indexCol <- colnames(rankings)[1]
   
@@ -455,3 +428,25 @@ setMethod("getSignificantGenes", "GeneSetCollection",
     return(ret)
 }
 
+
+.maxRank.check <- function(maxRank, rankings, method, nMean){
+  maxRankInDb <- min(c(getMaxRank(rankings), getNumColsInDB(rankings)))
+  print(maxRankInDb)
+  if(maxRankInDb < Inf)
+  {
+    if(method %in% c("icistarget")){
+      if(maxRank > maxRankInDb)
+        stop("maxRank (", maxRank, ") should not be bigger ",
+             "than the maximum ranking available in the database (",
+             maxRankInDb,")")
+    }
+    
+    if(method %in% c("icistargetaprox", "aprox")){
+      if(maxRank+nMean > maxRankInDb)
+        stop("maxRank + nMean (", maxRank+nMean, ") should not be bigger ",
+             "than the maximum ranking available in the database (",
+             maxRankInDb,")")
+    }
+  }
+  return(NULL)
+}
