@@ -20,6 +20,7 @@
 #'     convertToTargetRegions(queryRegions=x, targetRegions=dbRegionsLoc))
 #'  }
 #' @rdname convertToTargetRegions
+#' @importFrom methods isClass
 #' @importFrom GenomeInfoDb keepSeqlevels
 #' @importFrom GenomicRanges findOverlaps width pintersect
 #' @importFrom S4Vectors queryHits subjectHits elementMetadata

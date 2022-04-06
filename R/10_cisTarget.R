@@ -106,7 +106,7 @@ cisTarget <- function(geneSets, motifRankings,
      resultsTable=motifEnrichmentTable,
      geneSets=geneSets,
      rankings=motifRankings,
-     maxRank=geneErnMmaxRank,
+     maxRank=geneErnMaxRank,
      plotCurve=FALSE, genesFormat="geneList",
      method=geneErnMethod, nCores=nCores)
 }
