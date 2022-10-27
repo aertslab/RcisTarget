@@ -1,6 +1,6 @@
 #' @title Import the motif databases for RcisTarget.
 #' @param dbFile .feather or .parquet file containing the rankings
-#' @param indexCol Column name containing the feature IDs (e.g. motif names or chip-seq tracks). If NULL, it will take the first column.
+#' @param indexCol Column name containing the feature IDs (e.g. motif names or chip-seq tracks). If NULL, it will try to use 'motifs', 'tracks', or 'features'.
 #' @param colType Colum type. i.e.:'gene'or 'region'
 #' @param columns Columns to load from the .feather or .parquet file
 #' (e.g. to read only specific genes or regions)
@@ -154,7 +154,7 @@ getColumnNames <- function(dbFile) # TODO: Check if they are really genes/region
 .getIndexCol <-  function(allColumns, indexCol=NULL, verbose=TRUE)
 {
   if(is.null(indexCol)) {
-    indexCol <- allColumns[1]
+    indexCol <- intersect(allColumns, c('motifs', 'tracks', 'features'))#  [1]
     if(verbose) message("Using the column '", indexCol, "' as feature index for the ranking database.")
   }else{
     if(!indexCol %in% allColumns) stop(paste0("The index column '", indexCol,"' is not available in the file."))
