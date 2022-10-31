@@ -220,7 +220,10 @@ setMethod("addSignificantGenes", "GeneSetCollection",
     enrRnkT_ByGs
   })
   
-  data.table::rbindlist(signifMotifsAsList)
+  signifMotifsAsList <- data.table::rbindlist(signifMotifsAsList)
+  attr(signifMotifsAsList, "annotationVersion") <- attr(resultsTable, "annotationVersion")
+  
+  return(signifMotifsAsList)
 }
 
 #' @rdname addSignificantGenes

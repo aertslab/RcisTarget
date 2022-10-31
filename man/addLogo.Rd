@@ -4,7 +4,7 @@
 \alias{addLogo}
 \title{Add motif logo to RcisTarget results table}
 \usage{
-addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9", motifCol = "motif")
+addLogo(motifEnrDT, addHTML = TRUE, dbVersion = NULL, motifCol = "motif")
 }
 \arguments{
 \item{motifEnrDT}{Results from RcisTarget (data.table)}
@@ -12,7 +12,9 @@ addLogo(motifEnrDT, addHTML = TRUE, dbVersion = "v9", motifCol = "motif")
 \item{addHTML}{Whether to add the HTML tag <img> around the URL or not
 (boolean).}
 
-\item{dbVersion}{For current databases (mc9nr) use "v9"}
+\item{dbVersion}{The default value 'v10nr_clust' corresponds to the 
+latest version of the databases (currently version 10). 
+For previous databases use 'v8' or 'v9', as appropriate.}
 
 \item{motifCol}{Name of the column which contains the logo ID.}
 }

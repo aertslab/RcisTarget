@@ -60,11 +60,11 @@ geneLists <- list(geneListName=geneList1)
 
 # Select motif database to use (i.e. organism and distance around TSS)
 data(motifAnnotations_hgnc)
-motifRankings <- importRankings("~/databases/hg19-tss-centered-10kb-7species.mc9nr.feather")
+motifRankings <- importRankings("~/databases/hg38_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather")
 
 # Motif enrichment analysis:
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, motifRankings,
-                               motifAnnot=motifAnnotations_hgnc)
+                               motifAnnot=motifAnnotations)
 ```
 
 **Advanced use**: The `cisTarget()` function is enough for most simple analyses.
@@ -77,7 +77,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, 
-                          motifAnnot=motifAnnotations_hgnc)
+                          motifAnnot=motifAnnotations)
 
 # 3. Identify significant genes for each motif
 # (i.e. genes from the gene set in the top of the ranking)
@@ -177,10 +177,11 @@ head(geneLists$hypoxia)
 
 ## Required databases
 
-To analyze the gene list, RcisTarget needs two types of databases: - 1.
-Gene-motif rankings: which provides the rankings (\~score) of all the genes for each motif.
-- 2.
-The annotation of motifs to transcription factors.
+To analyze the gene list, RcisTarget needs two types of databases: 
+
+- 1. Gene-motif rankings: which provides the rankings (based on the motif score) of all the genes for each motif.
+
+- 2. The annotation of motifs to transcription factors.
 
 ### Gene-motif rankings
 
@@ -189,9 +190,9 @@ Therefore, we provide multiple databases ([motif-rankings](https://resources.aer
 
 -   Species: Species of the input gene set. *Available values: Human (Homo sapiens), mouse (Mus musculus) or fly (Drosophila melanogaster)*
 -   Scoring/search space: determine the search space around the transcription start site (TSS). *Available values: 500 bp uptream the TSS, 5kbp or 10kbp around the TSS (e.g. 10kbp upstream and 10kbp downstream of the TSS).*
--   Number of orthologous species taken into account to score the motifs (e.g. conservation of regions). *Available values: 7 or 10 species*
+- Motif collection: We recommend to use the latest one (mc10_clust).
 
-If you don't know which database to choose, for an analisis of a gene list we would suggest using the *500bp upstream TSS*, and a larger search space (e.g. *TSS+/-5kbp* or *TSS+/-10kbp*) with 7 species.
+If you don't know which database to choose, for an analisis of a gene list we would suggest using the *500bp upstream TSS*, and a larger search space (e.g. *TSS+/-5kbp* or *TSS+/-10kbp*).
 Of course, selecting Human, Mouse or fly depending on your input gene list.
 
 For other settings (e.g. **new species**), you can check the tutorial on how to [create databases](https://github.com/aertslab/create_cisTarget_databases).
@@ -199,18 +200,11 @@ For other settings (e.g. **new species**), you can check the tutorial on how to 
 Each database is stored in a `.feather` file.
 Note that the download size is typically over 1GB (100GB for human region databases), we recommend downloading the files with `zsync_curl`\` (see the [Help with downloads](https://resources.aertslab.org/cistarget/help.html)).
 
-For example, to download within R:
-
-```{r downloadDatabases, eval=FALSE}
-featherURL <- "https://resources.aertslab.org/cistarget/databases/homo_sapiens/hg19/refseq_r45/mc9nr/gene_based/hg19-tss-centered-10kb-7species.mc9nr.feather" 
-download.file(featherURL, destfile=basename(featherURL)) # saved in current dir
-```
-
 Once you have the .feather files, they can be loaded with `importRankings()`:
 
 ```{r loadDatabases, eval=FALSE}
 # Search space: 10k bp around TSS - HUMAN
-motifRankings <- importRankings("hg19-tss-centered-10kb-7species.mc9nr.feather")
+motifRankings <- importRankings("hg38_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather")
 # Load the annotation to human transcription factors
 data(motifAnnotations_hgnc)
 ```
@@ -223,7 +217,7 @@ The association of motif to transcription factors are provided in an independent
 In addition to the motifs annotated by the source datatabse (i.e. **direct** annotation), we have also **inferred** some further annotations based on motif similarity and gene ortology (e.g. similarity to other genes annotated to the motif).
 These annotations are typically used with the functions `cisTarget()` or `addMotifAnnotation()`.
 
-For the motifs in version 'mc9nr' of the rankings (24453 motifs), these annotations are already included in RcisTarget package and can be loaded with the command:
+For the motifs in version 'mc10nr' of the rankings, these annotations are already included in RcisTarget package and can be loaded with the command:
 
 ```{r loadAnnot, eval=TRUE}
 # mouse:
@@ -231,7 +225,7 @@ For the motifs in version 'mc9nr' of the rankings (24453 motifs), these annotati
 
 # human:
 data(motifAnnotations_hgnc)
-motifAnnotations_hgnc[199:202,]
+motifAnnotations[199:202,]
 ```
 
 For other versions of the rankings, the function `importAnnotations` allows to import the annotations from the source file.
@@ -239,14 +233,13 @@ For other versions of the rankings, the function `importAnnotations` allows to i
 These annotations can be easily queried to obtain further information about specific motifs or TFs:
 
 ```{r motifAnnotQuery}
-motifAnnotations_hgnc[(directAnnotation==TRUE) 
-                               & 
-                               (TF %in% c("HIF1A")), ]
+showLogo(motifAnnotations[(directAnnotation==TRUE) & keptInRanking 
+                               & (TF %in% c("HIF1A", "HIF2A", "EPAS1")), ])
 ```
 
 #### Database example (subset)
 
-In addition to the full versions of the databases (20k motifs), we also provide a subset containing only the 4.6k motifs from cisbp (human only: *RcisTarget.hg19.motifDBs.cisbpOnly.500bp*).
+In addition to the full versions of the databases (~20k motifs), we also provide a subset containing only the 4.6k motifs from cisbp (human only: *RcisTarget.hg19.motifDBs.cisbpOnly.500bp*).
 These subsets are available in Bioconductor for demonstration purposes.
 They will provide the same AUC score for the existing motifs.
 However, we highly recommend to use the full version (\~20k motifs) for more accurate results, since the normalized enrichment score (NES) of the motif depends on the total number of motifs in the database.
@@ -271,7 +264,7 @@ motifRankings
 
 # Annotations
 data(hg19_motifAnnotation_cisbpOnly) 
-motifAnnotations_hgnc <- hg19_motifAnnotation_cisbpOnly
+motifAnnotations <- hg19_motifAnnotation_cisbpOnly
 ```
 
 ## Running the analysis
@@ -285,7 +278,7 @@ For example, to skip steps, for analyses in which the user is interested in one 
 ```{r eval=FALSE}
 motifEnrichmentTable_wGenes <- cisTarget(geneLists, 
          motifRankings,
-         motifAnnot=motifAnnotations_hgnc)
+         motifAnnot=motifAnnotations)
 ```
 
 ## Advanced: Execute step by step
@@ -321,8 +314,8 @@ Furthermore, this step also allows to add the TFs annotated to the motif.
 
 ```{r addMotifAnnotation, cache=TRUE}
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC, nesThreshold=3,
-     motifAnnot=motifAnnotations_hgnc,
-     highlightTFs=list(hypoxia="HIF1A"))
+     motifAnnot=motifAnnotations,
+     highlightTFs=list(hypoxia=c("HIF1A", "EPAS1")))
 ```
 
 ```{r}
@@ -378,14 +371,8 @@ The final output of RcisTarget is a `data.table` containing the information abou
 -   rankAtMax: Ranking at the maximum enrichment, used to determine the number of enriched genes.
 
 ```{r output}
-motifEnrichmentTable_wGenes_wLogo <- addLogo(motifEnrichmentTable)
-
-resultsSubset <- motifEnrichmentTable_wGenes_wLogo[1:10,]
-
-library(DT)
-datatable(resultsSubset[,-c("enrichedGenes", "TF_lowConf"), with=FALSE], 
-          escape = FALSE, # To show the logo
-          filter="top", options=list(pageLength=5))
+resultsSubset <- motifEnrichmentTable_wGenes[1:10,]
+showLogo(resultsSubset)
 ```
 
 # Follow up examples

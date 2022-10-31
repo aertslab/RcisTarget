@@ -67,6 +67,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
        highlightTFs=NULL,
        keepAnnotationCategory=TRUE)
 {
+  aucDescr <- unname(motifs_AUC@description)
   auc <- getAUC(auc)
   #### Check inputs
   if(!is.null(highlightTFs))
@@ -136,6 +137,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
   # ret <- do.call(rbind, unname(ret))  # Slower?
   # library(data.table)
   ret <- data.table::rbindlist(ret)
+  attr(ret, "annotationVersion") <- aucDescr
   
   if(nrow(ret)>0)
     colnames(ret)[which(colnames(ret) == "ranking")] <- "motif"

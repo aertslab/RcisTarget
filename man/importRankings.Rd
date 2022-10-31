@@ -22,7 +22,7 @@ getColumnNames(dbFile)
 \arguments{
 \item{dbFile}{.feather or .parquet file containing the rankings}
 
-\item{indexCol}{Column name containing the feature IDs (e.g. motif names or chip-seq tracks). If NULL, it will take the first column.}
+\item{indexCol}{Column name containing the feature IDs (e.g. motif names or chip-seq tracks). If NULL, it will try to use 'motifs', 'tracks', or 'features'.}
 
 \item{colType}{Colum type. i.e.:'gene'or 'region'}
 
@@ -58,14 +58,13 @@ with \code{importRankings()}.
 }
 \examples{
 ## Loading from a .feather or .parquet file:
-#motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
-#motifRankings<-importRankings("hg19-500bp-upstream-7species.mc9nr.parquet")
+#motifRankings<-importRankings("hg38_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather")
 
 ## The annotations for Motif collection 9 (sufix 'mc9nr')
-# are already included in RcisTarget, and can be loaded with:
+# are included in RcisTarget, and can be loaded with:
 data(motifAnnotations_hgnc)
 
 ## For other versions, import the appropiate annotation. e.g.:
-# annotDb <- importAnnotations("motifs-v9-nr.hgnc-m0.001-o0.0.tbl")
-# optional: motifsInRanking <- getRanking(motifRankings)$features
+# annotDb <- importAnnotations("motifs-v10nr_clust-nr.hgnc-m0.001-o0.0.tbl")
+# optional: motifsInRanking <- getRanking(motifRankings)$motifs
 }

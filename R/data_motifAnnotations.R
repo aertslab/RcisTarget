@@ -2,34 +2,44 @@
 
 #' @rdname motifAnnotations
 #' @name motifAnnotations
-#' @aliases motifAnnotations_hgnc motifAnnotations_mgi motifAnnotations_dmel motifAnnotations_hgnc_v8 motifAnnotations_mgi_v8 motifAnnotations_dmel_v8
+#' @aliases motifAnnotations_hgnc motifAnnotations_mgi motifAnnotations_dmel 
+#' motifAnnotations_hgnc_v9 motifAnnotations_mgi_v9 motifAnnotations_dmel_v9
+#' motifAnnotations_hgnc_v8 motifAnnotations_mgi_v8 motifAnnotations_dmel_v8
 #' @title Annotations of Motifs to TFs
 #' @description 
 #' \itemize{
 #' \item{\bold{motifAnnotations_hgnc}: }{Annotations to \bold{HUMAN} transcription factors for 
-#'   the rankings using motif collection version 9 ('mc9nr', 24453 motifs).
-#'   
-#'   Source: \emph{motifs-v9-nr.hgnc-m0.001-o0.0.tbl}}
+#'   the rankings using motif collection version 10.
+#'   Source: \emph{motifs-v10nr_clust-nr.hgnc-m0.001-o0.0.tbl}}
+#'  
 #' \item{\bold{motifAnnotations_mgi}: }{Contains the annotations to \bold{MOUSE} transcription factors for 
-#' the rankings using motif collection version 9 ('mc9nr', 24453 motifs).
-#' 
-#' Source: \emph{motifs-v9-nr.mgi-m0.001-o0.0.tbl}}
+#' the rankings using motif collection version 10.
+#' Source: \emph{motifs-v10nr_clust-nr.mgi-m0.001-o0.0.tbl}}
 #' 
 #' \item{\bold{motifAnnotations_dmel}: }{Contains the annotations to \bold{FLY} transcription factors for 
-#' the rankings using motif collection version 9 ('mc9nr', 24453 motifs).
-#' 
-#' Source: \emph{motifs-v9-nr.flybase-m0.001-o0.0.tbl}}
-#' 
-#' \item{\bold{Previous versions}: }{Annotations for motif collection version 8 ('mc8nr').
+#' the rankings using motif collection version 10.
+#' Source: \emph{motifs-v10nr_clust-nr.flybase-m0.001-o0.0.tbl}}
+#' }
+#' \item{\bold{Previous versions}: }{
+#' Annotations for motif collection version 9 ('mc9nr').
+#' \itemize{
+#'     \item{Human: motifAnnotations_hgnc_v9 (\emph{motifs-v9-nr.hgnc-m0.001-o0.0.tbl}})
+#'     \item{Mouse: motifAnnotations_mgi_v9 (\emph{motifs-v9-nr.mgi-m0.001-o0.0.tbl}})
+#'     \item{Fly: motifAnnotations_dmel_v9 (\emph{motifs-v9-nr.flybase-m0.001-o0.0.tbl}})
+#'     }
+#'     
+#' Annotations for motif collection version 8 ('mc8nr').
 #' \itemize{
 #'     \item{Human: motifAnnotations_hgnc_v8 (\emph{motifs-v8-nr.hgnc-m0.001-o0.0.tbl}})
 #'     \item{Mouse: motifAnnotations_mgi_v8 (\emph{motifs-v8-nr.mgi-m0.001-o0.0.tbl}})
-#'     \item{Fly: motifAnnotations_dmel_v8 (\emph{motifs-v8-nr.flybase-m0.001-o0.0.tbl}})}
+#'     \item{Fly: motifAnnotations_dmel_v8 (\emph{motifs-v8-nr.flybase-m0.001-o0.0.tbl}})
 #'     }
 #' }
+#' 
 #' These objects are meant to be provided to RcisTarget without modification, 
 #' but it can also be explored by the user 
 #' to obtain further information about the motifs.
+#' The original files can be downloaded from \code{https://resources.aertslab.org/cistarget/motif2tf/}
 #' Columns:
 #' \itemize{
 #'  \item{\bold{motif}: }{Motif ID.}
@@ -50,4 +60,5 @@
 #' @seealso importAnnotations, RcisTarget
 #' @keywords datasets
 NULL
+
 

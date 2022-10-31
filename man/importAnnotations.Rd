@@ -38,13 +38,15 @@ Columns:
 }
 \description{
 RcisTarget package includes the motif annotations for the rankings 
-using motif collection version 9 ('mc9nr', 24453 motifs): 
+using the latest motif collection (version 10 clustered, 19895 motifs): 
 
 \itemize{
 \item{Human: }{ \code{data(motifAnnotations_hgnc)}}
 \item{Mouse: }{ \code{data(motifAnnotations_mgi)}}
 \item{Fly: }{ \code{data(motifAnnotations_dmel)}}
-\item{Previous versions (Annotations for motif collection version 8:}{
+
+\item{Previous versions (Annotations for motif collection version 9 (24453 motifs) or 8:}{
+motifAnnotations_hgnc_v9 (Human), motifAnnotations_mgi_v9 (Mouse), motifAnnotations_dmel_v9 (Fly)
 motifAnnotations_hgnc_v8 (Human), motifAnnotations_mgi_v8 (Mouse), motifAnnotations_dmel_v8 (Fly)
 }
 }
@@ -52,18 +54,14 @@ motifAnnotations_hgnc_v8 (Human), motifAnnotations_mgi_v8 (Mouse), motifAnnotati
 This function (importAnnotations) allows to import annotations 
 for other versions of the rankings, or to keep extra data columns.
 
-e.g. Source of the annotations (motif collection 9 'mc9nr'):
-\itemize{
-\item{ Human: }{ https://resources.aertslab.org/cistarget/motif2tf/motifs-v9-nr.hgnc-m0.001-o0.0.tbl}
-\item{ Mouse: }{ https://resources.aertslab.org/cistarget/motif2tf/motifs-v9-nr.mgi-m0.001-o0.0.tbl}
-}
+e.g. Source of the annotations: \code{https://resources.aertslab.org/cistarget/motif2tf/}
 }
 \examples{
-# motifAnnotations <- importAnnotations("motifs-v9-nr.hgnc-m0.001-o0.0.tbl")
+# motifAnnotations <- importAnnotations("motifs-v10nr_clust-nr.flybase-m0.001-o0.0.tbl")
 
 ## To save (decrease from ~100MB to 1MB): 
-# attr(motifAnnotations, "version") <- "motifs-v9-nr.hgnc-m0.001-o0.0.tbl"
-# save(motifAnnotations, file="hgnc_motifAnnotations.RData", compress='xz')
+# attr(motifAnnotations, "version") <- "motifs-v10nr_clust-nr.flybase-m0.001-o0.0.tbl"
+# save(motifAnnotations, file="motifAnnotations_human.RData", compress='xz')
 
 # This code would generate the equivalent to
 data(motifAnnotations_hgnc)

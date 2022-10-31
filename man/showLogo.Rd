@@ -7,7 +7,7 @@
 showLogo(
   motifEnrDT,
   motifCol = c("motif", "bestMotif", "MotifID"),
-  dbVersion = "v9",
+  dbVersion = NULL,
   nSignif = 3,
   colsToShow = c(motifEnrichment = c("motifDb", "logo", "NES", "geneSet",
     "TF_highConf"), regulonTargets = c("TF", "gene", "nMotifs", "bestMotif", "logo",
@@ -21,7 +21,7 @@ showLogo(
 
 \item{motifCol}{Name of the column which contains the logo ID.}
 
-\item{dbVersion}{For current databases (mc9nr) use "v9"}
+\item{dbVersion}{For current databases (version 10) use "v10nr_clust"}
 
 \item{nSignif}{Number of digits to show in numeric columns.}
 

@@ -1,8 +1,11 @@
 VERSION 1.15
 ----------------------
+- Default database version has been updated to v10-clust 
+  (including the motif annotations in the package)
 - New function: showLogo() shows the motif enrichment table as HTML.
 - Fix for maxRank checks: Now takes into account number of genes/regions in the database.
 - Support for new database format
+- importAnnotations(): Now adds the imported file name as attribute
 
 VERSION 1.11.+
 ----------------------

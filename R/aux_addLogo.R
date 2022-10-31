@@ -7,7 +7,9 @@
 #' @param motifEnrDT Results from RcisTarget (data.table)
 #' @param addHTML Whether to add the HTML tag <img> around the URL or not
 #' (boolean).
-#' @param dbVersion For current databases (mc9nr) use "v9"
+#' @param dbVersion The default value 'v10nr_clust' corresponds to the 
+#' latest version of the databases (currently version 10). 
+#' For previous databases use 'v8' or 'v9', as appropriate.
 #' @param motifCol Name of the column which contains the logo ID.
 #' @return Returns the results table with a new column: 'logo'.
 #' This column contains either a URL with the logo image, or the HTML code to
@@ -17,8 +19,30 @@
 #' \code{vignette("RcisTarget")}
 #' @example inst/examples/example_addLogo.R
 #' @export
-addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9", motifCol="motif")
+addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion=NULL, motifCol="motif")
 {
+  # Depending on whether it is the motif enrichment or annotation file:
+  annotationVersion <- attr(motifEnrDT, "annotationVersion")
+  if(is.null(annotationVersion)) annotationVersion <- attr(motifEnrDT, "SourceFileName")
+  
+  if(is.null(annotationVersion))
+  {
+    warning("There is no annotation version attribute in the input table ",
+            "(it has probably been loaded with an older version of the package).",
+            "'v9' will be used as it was the old default,",
+            "but we recommend to re-load the annotations and/or re-run the enrichment to make sure everything is consistent.")
+    dbVersion <- 'v9'
+  }
+
+  if(is.null(dbVersion))
+  {
+    if(grepl('v10|10nr', annotationVersion)) dbVersion <- 'v10nr_clust'
+    if(grepl('v8|mc8nr', annotationVersion)) dbVersion <- 'v8'
+    if(grepl('v9|mc9nr', annotationVersion)) dbVersion <- 'v9'
+  }else{
+    dbVersion <- 'v10nr_clust'
+  }
+  
   isNA <- which(motifEnrDT[[motifCol]]=="")
   logos <- paste("http://motifcollections.aertslab.org/",
                 dbVersion,"/logos/",
@@ -40,7 +64,7 @@ addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9", motifCol="motif")
 #' including the motif logos. Note that Transfac-Pro logos cannot be shown.
 #' @param motifEnrDT Results from RcisTarget (data.table)
 #' @param motifCol Name of the column which contains the logo ID.
-#' @param dbVersion For current databases (mc9nr) use "v9"
+#' @param dbVersion For current databases (version 10) use "v10nr_clust"
 #' @param nSignif Number of digits to show in numeric columns.
 #' @param colsToShow Columns to show in the HTML 
 #' (by default, the list of the enriched genes is hidden)
@@ -52,7 +76,7 @@ addLogo <- function(motifEnrDT, addHTML=TRUE, dbVersion="v9", motifCol="motif")
 #' @example inst/examples/example_showLogo.R
 #' @export
 showLogo <- function(motifEnrDT, 
-                       motifCol=c("motif", "bestMotif", "MotifID"), dbVersion="v9",
+                       motifCol=c("motif", "bestMotif", "MotifID"), dbVersion=NULL,
                        nSignif=3,
                        colsToShow=c(motifEnrichment=c("motifDb", "logo", "NES", "geneSet", "TF_highConf"),
                                     regulonTargets=c("TF", "gene", "nMotifs", "bestMotif", "logo", "NES", "highConfAnnot", "Genie3Weight")),
