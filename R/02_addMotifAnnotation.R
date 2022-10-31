@@ -67,7 +67,7 @@ addMotifAnnotation <- function(auc, nesThreshold=3.0, digits=3,
        highlightTFs=NULL,
        keepAnnotationCategory=TRUE)
 {
-  aucDescr <- unname(motifs_AUC@description)
+  aucDescr <- unname(auc@description)
   auc <- getAUC(auc)
   #### Check inputs
   if(!is.null(highlightTFs))

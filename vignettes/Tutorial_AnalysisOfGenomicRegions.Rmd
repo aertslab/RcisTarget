@@ -43,6 +43,9 @@ This analysis requires the region-based databases (for the appropriate organism)
 
 The databases can be downloaded from: https://resources.aertslab.org/cistarget/ 
 
+Note: This example uses an old version of the database (mc9nr), 
+we recommend to use the latest version (v10_clus).
+
 ```{r eval=FALSE}
 library(RcisTarget)
 # Motif rankings

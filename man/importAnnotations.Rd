@@ -57,11 +57,10 @@ for other versions of the rankings, or to keep extra data columns.
 e.g. Source of the annotations: \code{https://resources.aertslab.org/cistarget/motif2tf/}
 }
 \examples{
-# motifAnnotations <- importAnnotations("motifs-v10nr_clust-nr.flybase-m0.001-o0.0.tbl")
+# motifAnnotations <- importAnnotations("motifs-v10nr_clust-nr.hgnc-m0.001-o0.0.tbl")
 
 ## To save (decrease from ~100MB to 1MB): 
-# attr(motifAnnotations, "version") <- "motifs-v10nr_clust-nr.flybase-m0.001-o0.0.tbl"
-# save(motifAnnotations, file="motifAnnotations_human.RData", compress='xz')
+# save(motifAnnotations, file="motifAnnotations_hngc.RData", compress='xz')
 
 # This code would generate the equivalent to
 data(motifAnnotations_hgnc)

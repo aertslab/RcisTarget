@@ -21,12 +21,10 @@
  
 \item{\bold{motifAnnotations_mgi}: }{Contains the annotations to \bold{MOUSE} transcription factors for 
 the rankings using motif collection version 10.
-
 Source: \emph{motifs-v10nr_clust-nr.mgi-m0.001-o0.0.tbl}}
 
 \item{\bold{motifAnnotations_dmel}: }{Contains the annotations to \bold{FLY} transcription factors for 
 the rankings using motif collection version 10.
-
 Source: \emph{motifs-v10nr_clust-nr.flybase-m0.001-o0.0.tbl}}
 }
 \item{\bold{Previous versions}: }{

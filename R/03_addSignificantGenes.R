@@ -370,8 +370,10 @@ setMethod("getSignificantGenes", "GeneSetCollection",
     warning("'signifRankingNames' has not been provided.",
             "The significant genes will be calculated for all rankings.")
   }
-  
   signifRankingNames <- as.character(unname(signifRankingNames))
+  if(any(!signifRankingNames %in% rankings[[indexCol]])) 
+    stop("Some 'signifRankingNames' are missing from the ranking.")
+  
   if(!all(genesFormat %in% c("geneList", "incidMatrix", "none")))
     stop('"genesFormat" should be ither "geneList" and/or "incidMatrix".')
   
@@ -434,7 +436,6 @@ setMethod("getSignificantGenes", "GeneSetCollection",
 
 .maxRank.check <- function(maxRank, rankings, method, nMean){
   maxRankInDb <- min(c(getMaxRank(rankings), getNumColsInDB(rankings)))
-  print(maxRankInDb)
   if(maxRankInDb < Inf)
   {
     if(method %in% c("icistarget")){
