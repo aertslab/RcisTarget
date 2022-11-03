@@ -7,8 +7,8 @@
 getMotifAnnotation(
   motifs,
   motifAnnot,
-  annotCats = c("directAnnotation", "inferredBy_MotifSimilarity",
-    "inferredBy_Orthology", "inferredBy_MotifSimilarity_n_Orthology"),
+  annotCats = c("directAnnotation", "inferredBy_MotifSimilarity", "inferredBy_Orthology",
+    "inferredBy_MotifSimilarity_n_Orthology"),
   idColumn = "motif",
   returnFormat = c("asCharacter", "subset", "list")[1],
   keepAnnotationCategory = TRUE
@@ -65,8 +65,8 @@ data(hg19_500bpUpstream_motifRanking_cispbOnly)
 motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
 
 ## Motif - TF annotation:
-data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
-motifAnnotation <- motifAnnotations_hgnc
+data(motifAnnotations_hgnc_v9) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc_v9
 
 ### Run RcisTarget
 # Step 1. Calculate AUC

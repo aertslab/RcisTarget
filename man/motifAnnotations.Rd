@@ -27,7 +27,8 @@ Source: \emph{motifs-v10nr_clust-nr.mgi-m0.001-o0.0.tbl}}
 the rankings using motif collection version 10.
 Source: \emph{motifs-v10nr_clust-nr.flybase-m0.001-o0.0.tbl}}
 }
-\item{\bold{Previous versions}: }{
+\bold{Previous versions}: 
+
 Annotations for motif collection version 9 ('mc9nr').
 \itemize{
     \item{Human: motifAnnotations_hgnc_v9 (\emph{motifs-v9-nr.hgnc-m0.001-o0.0.tbl}})
@@ -35,13 +36,14 @@ Annotations for motif collection version 9 ('mc9nr').
     \item{Fly: motifAnnotations_dmel_v9 (\emph{motifs-v9-nr.flybase-m0.001-o0.0.tbl}})
     }
     
-Annotations for motif collection version 8 ('mc8nr').
+Annotations for motif collection version 8 ('mc8nr'). 
+- Deprecated: Will be removed in upcoming versions of the package
 \itemize{
     \item{Human: motifAnnotations_hgnc_v8 (\emph{motifs-v8-nr.hgnc-m0.001-o0.0.tbl}})
     \item{Mouse: motifAnnotations_mgi_v8 (\emph{motifs-v8-nr.mgi-m0.001-o0.0.tbl}})
     \item{Fly: motifAnnotations_dmel_v8 (\emph{motifs-v8-nr.flybase-m0.001-o0.0.tbl}})
     }
-}
+
 
 These objects are meant to be provided to RcisTarget without modification, 
 but it can also be explored by the user 
