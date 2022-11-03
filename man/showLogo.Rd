@@ -9,9 +9,9 @@ showLogo(
   motifCol = c("motif", "bestMotif", "MotifID"),
   dbVersion = NULL,
   nSignif = 3,
-  colsToShow = c(motifEnrichment = c("motifDb", "logo", "NES", "geneSet",
-    "TF_highConf"), regulonTargets = c("TF", "gene", "nMotifs", "bestMotif", "logo",
-    "NES", "highConfAnnot", "Genie3Weight")),
+  colsToShow = c(motifEnrichment = c("motifDb", "logo", "NES", "geneSet", "TF_highConf"),
+    regulonTargets = c("TF", "gene", "nMotifs", "bestMotif", "logo", "NES",
+    "highConfAnnot", "Genie3Weight")),
   options = list(pageLength = 50),
   ...
 )
