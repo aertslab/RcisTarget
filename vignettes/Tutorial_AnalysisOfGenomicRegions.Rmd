@@ -51,9 +51,9 @@ library(RcisTarget)
 # Motif rankings
 featherFilePath <- "~/databases/hg19-regions-9species.all_regions.mc9nr.feather"
 
-# Motif-TF annotations
-data("motifAnnotations_hgnc")
-motifAnnotation <- motifAnnotations_hgnc
+## Motif - TF annotation:
+data(motifAnnotations_hgnc_v9) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc_v9
 
 # Regions location *
 data(dbRegionsLoc_hg19)

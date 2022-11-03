@@ -48,8 +48,8 @@ data(hg19_500bpUpstream_motifRanking_cispbOnly)
 motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
 
 ## Motif - TF annotation:
-data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
-motifAnnotation <- motifAnnotations_hgnc
+data(motifAnnotations_hgnc_v9) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc_v9
 
 ### Run RcisTarget
 # Step 1. Calculate AUC

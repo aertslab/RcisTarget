@@ -58,7 +58,8 @@ with \code{importRankings()}.
 }
 \examples{
 ## Loading from a .feather or .parquet file:
-#motifRankings<-importRankings("hg38_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather")
+# dbFilePath = "hg38_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather"
+# motifRankings<-importRankings(dbFilePath)
 
 ## The annotations for Motif collection 9 (sufix 'mc9nr')
 # are included in RcisTarget, and can be loaded with:

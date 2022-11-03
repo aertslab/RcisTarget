@@ -122,8 +122,8 @@ geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
 
 ## Motif - TF annotation:
-data(motifAnnotations_hgnc) # human TFs (for motif collection 9)
-motifAnnotation <- motifAnnotations_hgnc
+data(motifAnnotations_hgnc_v9) # human TFs (for motif collection 9)
+motifAnnotation <- motifAnnotations_hgnc_v9
 ##################################################
 
 #### Run RcisTarget
