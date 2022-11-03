@@ -30,8 +30,6 @@
 #'     
 #' Annotations for motif collection version 8 ('mc8nr').
 #' \itemize{
-#'     \item{Human: motifAnnotations_hgnc_v8 (\emph{motifs-v8-nr.hgnc-m0.001-o0.0.tbl}})
-#'     \item{Mouse: motifAnnotations_mgi_v8 (\emph{motifs-v8-nr.mgi-m0.001-o0.0.tbl}})
 #'     \item{Fly: motifAnnotations_dmel_v8 (\emph{motifs-v8-nr.flybase-m0.001-o0.0.tbl}})
 #'     }
 #' }
