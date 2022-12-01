@@ -13,11 +13,10 @@ geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 #### Load databases
 ## Motif rankings: Select according to organism and distance around TSS
 ## (See the vignette for URLs to download)
-motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+motifRankings <- importRankings("~/databases/hg38_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather")
 
 ## Motif - TF annotation:
-data(motifAnnotations_hgnc_v9) # human TFs (for motif collection 9)
-motifAnnotation <- motifAnnotations_hgnc_v9
+data("motifAnnotations_hgnc") # human TFs (for motif collection 10)
 ##################################################
 
 #### Run RcisTarget
@@ -27,7 +26,7 @@ motifs_AUC <- calcAUC(geneLists, motifRankings)
 
 # Step 2. Select significant motifs, add TF annotation & format as table
 motifEnrichmentTable <- addMotifAnnotation(motifs_AUC,
-                         motifAnnot=motifAnnotation)
+                         motifAnnot=motifAnnotations)
 
 # Step 3 (optional). Identify genes that have the motif significantly enriched
 # (i.e. genes from the gene set in the top of the ranking)
