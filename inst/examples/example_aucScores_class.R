@@ -10,16 +10,12 @@ geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 #### Databases
 ## Motif rankings: Select according to organism and distance around TSS
 ## (See the vignette for URLs to download)
-# motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+# motifRankings <- importRankings("~/databases/hg38_10kbp_up_10kbp_down_full_tx_v10_clust.genes_vs_motifs.rankings.feather")
 
 ## For this example we will use a SUBSET of the ranking/motif databases:
 library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
 data(hg19_500bpUpstream_motifRanking_cispbOnly)
 motifRankings <- hg19_500bpUpstream_motifRanking_cispbOnly
-
-## Motif - TF annotation:
-data(motifAnnotations_hgnc_v9) # human TFs (for motif collection 9)
-motifAnnotation <- motifAnnotations_hgnc_v9
 
 ### Run RcisTarget
 # Step 1. Calculate AUC

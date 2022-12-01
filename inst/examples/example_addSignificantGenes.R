@@ -12,6 +12,7 @@ geneLists <- list(hypoxia=read.table(txtFile, stringsAsFactors=FALSE)[,1])
 ## Motif rankings: Select according to organism and distance around TSS
 ## (See the vignette for URLs to download)
 # motifRankings <- importRankings("hg19-500bp-upstream-7species.mc9nr.feather")
+# data("motifAnnotations_hgnc") # human TFs (for motif collection 10)
 
 ## For this example we will use a SUBSET of the ranking/motif databases:
 library(RcisTarget.hg19.motifDBs.cisbpOnly.500bp)
