@@ -2,11 +2,11 @@ Package: RcisTarget
 Type: Package
 Title: RcisTarget Identify transcription factor binding motifs enriched on a
     list of genes or genomic regions
-Version: 1.23.0
-Date: 2022-12-01
+Version: 1.23.1
+Date: 2024-03-02
 Author: Sara Aibar, Gert Hulselmans, Stein Aerts. Laboratory of Computational Biology. 
     VIB-KU Leuven Center for Brain & Disease Research. Leuven, Belgium
-Maintainer: Sara Aibar <sara.aibar@kuleuven.vib.be>
+Maintainer: Gert Hulselmans <Gert.Hulselmans@kuleuven.be>
 Description: RcisTarget identifies transcription factor binding
     motifs (TFBS) over-represented on a gene list.
     In a first step, RcisTarget selects DNA motifs that are significantly 
