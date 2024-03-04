@@ -29,8 +29,9 @@ packageVersion("RcisTarget")
 ### 1. Prepare/download the input regions
 
 ```{r}
-download.file("https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/examples/input_files/human/peaks/Encode_GATA1_peaks.bed", "Encode_GATA1_peaks.bed")
-regionsList <- rtracklayer::import.bed("Encode_GATA1_peaks.bed")
+# download.file("https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/examples/input_files/human/peaks/Encode_GATA1_peaks.bed", "Encode_GATA1_peaks.bed")
+txtFile <- paste(file.path(system.file('examples', package='RcisTarget')),"Encode_GATA1_peaks.bed", sep="/")
+regionsList <- rtracklayer::import.bed(txtFile)
 regionSets <- list(GATA1_peaks=regionsList)
 ```
 

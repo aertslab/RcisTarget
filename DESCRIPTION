@@ -36,8 +36,9 @@ Imports:
     stats,
     SummarizedExperiment,
     S4Vectors,
-    utils
-Enhances: doMC, doRNG, zoo
+    utils,
+    zoo
+Enhances: doMC, doRNG
 Suggests:
     Biobase,
     BiocStyle,
